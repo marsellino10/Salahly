@@ -1,0 +1,6 @@
+@SalahlyProject_HostAddress = http://localhost:5049
+
+GET {{SalahlyProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
