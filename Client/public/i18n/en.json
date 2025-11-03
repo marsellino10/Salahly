@@ -1,0 +1,16 @@
+{
+  "Translate": {
+    "English": "English",
+    "Arabic": "Arabic"
+  },
+  "Landing":{
+    "title": "Salahly",
+    "home": "Home",
+    "login": "Login",
+    "register": "Register",
+    "Welcome to Salahly!": "Welcome to Salahly!",
+    "Need a hand? Explore our trusted network of technical experts ready to fix anything at your place.": "Need a hand? Explore our trusted network of technical experts ready to fix anything at your place.",
+    "Book your favorite technical and get the job done fast and professionally!": "Book your favorite technical and get the job done fast and professionally!",
+    "View Technicians": "View Technicians"
+  }
+}

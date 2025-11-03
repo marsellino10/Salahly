@@ -1,0 +1,21 @@
+
+.lang-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 0.3rem 1.2rem 0.3rem 0.6rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='18' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l4 4 4-4z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.4rem center;
+  background-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+.lang-select option {
+  color: #000;
+}
