@@ -12,5 +12,12 @@
     "Need a hand? Explore our trusted network of technical experts ready to fix anything at your place.": "Need a hand? Explore our trusted network of technical experts ready to fix anything at your place.",
     "Book your favorite technical and get the job done fast and professionally!": "Book your favorite technical and get the job done fast and professionally!",
     "View Technicians": "View Technicians"
+  },
+  "BlankNavBar":{
+    "Salahly": "Salahly",
+    "Home": "Home",
+    "Browse Technicians": "Browse Technicians",
+    "Login": "Login",
+    "Sign Up": "Sign Up"
   }
 }

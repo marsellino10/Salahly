@@ -12,5 +12,12 @@
     "Need a hand? Explore our trusted network of technical experts ready to fix anything at your place.": "تحتاج لمساعدة؟ استكشف شبكة موثقة من اخصائيات فنية جاهزة لتصليح أي شيء في مكانك.",
     "Book your favorite technical and get the job done fast and professionally!": "حجز الفني المفضل وأحصل على الوظيفة بسرعة ومهنية!",
     "View Technicians": "عرض الفنيين"
+  },
+  "BlankNavBar":{
+    "Salahly": "صلح لي",
+    "Home": "الصفحة الرئيسية",
+    "Browse Technicians": "استكشاف الفنيين",
+    "Login": "تسجيل الدخول",
+    "Sign Up": "انشاء حساب"
   }
 }

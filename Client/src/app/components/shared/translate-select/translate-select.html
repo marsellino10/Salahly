@@ -1,4 +1,4 @@
-<select name="lang" [value]="lang()" id="lang" class="lang-select" (change)="change($event)">
+<select name="lang" [value]="lang()" id="lang" class="lang-select"  [ngStyle]="{'color': color}" (change)="change($event)">
   <option value="en">{{"Translate.English" | translate}}</option>
   <option value="ar">{{"Translate.Arabic" | translate}}</option>
 </select>
