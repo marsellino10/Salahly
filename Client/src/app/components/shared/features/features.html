@@ -1,0 +1,18 @@
+<section class="py-5 bg-light">
+    <div class="container">
+      <div class="text-center mb-4">
+        <h2 class="text-dark mb-3">{{"HomeFeatures.Why Choose Salahly?" |translate}}</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px;">
+          {{"HomeFeatures.We make it easy to find and book trusted service providers in your area" |translate}}
+        </p>
+      </div>
+  
+      <div class="row">
+        @for (feature of features; track feature.title) {
+            <div class="col-md-4 mb-4" >
+                <app-feature-card [Icon]="feature.icon" [Title]="feature.title" [Description]="feature.description"></app-feature-card>
+            </div>
+        }
+      </div>
+    </div>
+</section>
