@@ -1,0 +1,54 @@
+.hero-section {
+  background: linear-gradient(to bottom right, #2563eb, #6d28d9);
+  color: #fff;
+  height: 70vh;
+}
+
+.hero-section h1,
+.hero-section h2 {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.hero-section p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-outline-light {
+  border-color: #fff;
+  color: #fff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background-color: #fff;
+  color: #2563eb;
+}
+
+.btn-light {
+  background-color: #fff;
+  color: #2563eb;
+  transition: all 0.3s ease;
+}
+
+.btn-light:hover {
+  background-color: #e2e8f0;
+}
+
+.bi-arrow-right {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.btn-light:hover .bi-arrow-right {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    text-align: center;
+  }
+
+  .hero-section .d-flex {
+    justify-content: center;
+  }
+}

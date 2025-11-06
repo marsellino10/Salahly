@@ -19,5 +19,12 @@
     "Browse Technicians": "استكشاف الفنيين",
     "Login": "تسجيل الدخول",
     "Sign Up": "انشاء حساب"
+  },
+  "HomeBanner":{
+    "Find Trusted Service Providers": "ابحث عن مقدمي الخدمات الموثقين",
+    "Salahly": "صلح لي",
+    "Connect with verified electricians, plumbers, carpenters, and more. Book services instantly and get your home issues fixed by professionals.": "تواصل مع كهربائيين وسباكين ونجّارين معتمدين والمزيد. احجز الخدمات فورًا واحصل على حلول لمشكلات منزلك على يد محترفين.",
+    "Browse Technicians": "استكشاف الفنيين",
+    "Sign Up Now": "انشاء حساب جديد"
   }
 }

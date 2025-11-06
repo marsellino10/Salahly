@@ -19,5 +19,12 @@
     "Browse Technicians": "Browse Technicians",
     "Login": "Login",
     "Sign Up": "Sign Up"
+  },
+  "HomeBanner":{
+    "Find Trusted Service Providers": "Find Trusted Service Providers",
+    "Salahly": "Salahly",
+    "Connect with verified electricians, plumbers, carpenters, and more. Book services instantly and get your home issues fixed by professionals.": "Connect with verified electricians, plumbers, carpenters, and more. Book services instantly and get your home issues fixed by professionals.",
+    "Browse Technicians": "Browse Technicians",
+    "Sign Up Now": "Sign Up Now"
   }
 }
