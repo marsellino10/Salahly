@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Salahly.DAL.Enteties;
+using Salahly.DAL.Entities;
 using System.ComponentModel.DataAnnotations;
 
 public enum UserType
@@ -22,8 +22,11 @@ public class ApplicationUser : IdentityUser
 
     public UserType UserType { get; set; }
 
+
     // Navigation Properties
     public Admin? Admin { get; set; }
     public Customer? Customer { get; set; }
     public Craftsman? Craftsman { get; set; }
+
+    public ICollection<Notification> Notifications { get; set; }
 }

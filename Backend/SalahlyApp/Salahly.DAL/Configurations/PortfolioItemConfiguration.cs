@@ -1,29 +1,49 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Salahly.DAL.Enteties;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Salahly.DAL.Entities;
 namespace Salahly.DAL.Configurations
 {
     public class PortfolioItemConfiguration : IEntityTypeConfiguration<PortfolioItem>
     {
         public void Configure(EntityTypeBuilder<PortfolioItem> builder)
         {
+            builder.ToTable("PortfolioItems");
+
+            // Primary Key
+            builder.HasKey(p => p.Id);
+
+            // Properties
             builder.Property(p => p.Title)
-                   .HasMaxLength(150)
-                   .IsRequired();
+                .IsRequired()
+                .HasMaxLength(200);
 
             builder.Property(p => p.Description)
-                   .HasMaxLength(500);
+                .HasMaxLength(1000);
 
+            builder.Property(p => p.ImageUrl)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            builder.Property(p => p.DisplayOrder)
+                .HasDefaultValue(0);
+
+            builder.Property(p => p.IsActive)
+                .HasDefaultValue(true);
+
+            builder.Property(p => p.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            // Relationships
             builder.HasOne(p => p.Craftsman)
-                   .WithMany(c => c.Portfolio)
-                   .HasForeignKey(p => p.CraftsmanId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(cr => cr.Portfolio)
+                .HasForeignKey(p => p.CraftsmanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            builder.HasIndex(p => new { p.CraftsmanId, p.IsActive, p.DisplayOrder })
+                .HasDatabaseName("IX_PortfolioItems_Craftsman_Active_Order");
+
+            builder.HasIndex(p => p.CreatedAt);
         }
     }
 }

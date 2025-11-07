@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Salahly.DAL.Entities
+{
+    public class ServiceRequest
+    {
+        public int ServiceRequestId { get; set; }
+        public string CustomerId { get; set; } 
+        public int CraftId { get; set; }
+
+        // Service Details
+        [Required, MaxLength(200)]
+        public string Title { get; set; }
+
+        [Required, MaxLength(2000)]
+        public string Description { get; set; }
+
+        // Location
+        [Required, MaxLength(500)]
+        public string Address { get; set; }
+
+        [Required, MaxLength(100)]
+        public string City { get; set; }
+
+        [Required, MaxLength(100)]
+        public string Area { get; set; }
+
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+
+        // Timing
+        public DateTime PreferredDate { get; set; }
+        public string? PreferredTimeSlot { get; set; }
+
+        // Budget
+        public decimal? CustomerBudget { get; set; }
+
+        // Images
+        public string? ImagesJson { get; set; }
+
+       
+        public int MaxOffers { get; set; } = 10;  // Limit offers
+
+        // Status & Tracking
+        public ServiceRequestStatus Status { get; set; } 
+        public int OffersCount { get; set; }
+        public DateTime ExpiresAt { get; set; }
+
+        // Timestamps
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? AcceptedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
+
+        // Navigation Properties
+        public Customer Customer { get; set; }
+        public Craft Craft { get; set; }
+        public ICollection<CraftsmanOffer> CraftsmanOffers { get; set; }
+        public Booking? Booking { get; set; }
+    }
+
+    
+    public enum ServiceRequestStatus
+    {
+        Open = 0,
+        HasOffers = 1,
+        OfferAccepted = 2,
+        InProgress = 3,
+        Completed = 4,
+        Cancelled = 5,
+        Expired = 6
+    }
+}

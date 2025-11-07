@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Salahly.DAL.Enteties
+namespace Salahly.DAL.Entities
 {
     public class Admin
     {
-        public string Id { get; set; }
+        public string Id { get; set; } 
+        public string? Department { get; set; }
+        public DateTime? HiredAt { get; set; }
 
-        // Navigation
         public ApplicationUser User { get; set; }
     }
 }

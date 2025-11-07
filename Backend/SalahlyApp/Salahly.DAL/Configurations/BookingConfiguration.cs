@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Salahly.DAL.Enteties;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Salahly.DAL.Entities;
 
 namespace Salahly.DAL.Configurations
 {
@@ -13,22 +8,83 @@ namespace Salahly.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Booking> builder)
         {
-            builder.Property(b => b.Price)
-                   .HasColumnType("decimal(10,2)")
-                   .IsRequired();
+            builder.ToTable("Bookings");
 
+            // Primary Key
+            builder.HasKey(b => b.BookingId);
+
+            // Properties
+            builder.Property(b => b.Duration)
+                .IsRequired();
+
+            builder.Property(b => b.TotalAmount)
+                .IsRequired()
+                .HasPrecision(10, 2);
+
+            builder.Property(b => b.Status)
+                .IsRequired()
+                .HasConversion<int>();
+
+            builder.Property(b => b.Notes)
+                .HasMaxLength(1000);
+
+            builder.Property(b => b.CancellationReason)
+                .HasMaxLength(500);
+
+            builder.Property(b => b.CompletionNotes)
+                .HasMaxLength(1000);
+
+            builder.Property(b => b.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            // Relationships
             builder.HasOne(b => b.Customer)
-                   .WithMany(c => c.Bookings)
-                   .HasForeignKey(b => b.CustomerId);
+                .WithMany(c => c.Bookings)
+                .HasForeignKey(b => b.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(b => b.Craftsman)
-                   .WithMany(c => c.Bookings)
-                   .HasForeignKey(b => b.CraftsmanId);
+                .WithMany(cr => cr.Bookings)
+                .HasForeignKey(b => b.CraftsmanId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(b => b.Craft)
-                   .WithMany()
-                   .HasForeignKey(b => b.CraftId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(c => c.Bookings)
+                .HasForeignKey(b => b.CraftId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(b => b.ServiceRequest)
+                .WithOne(sr => sr.Booking)
+                .HasForeignKey<Booking>(b => b.ServiceRequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(b => b.AcceptedOffer)
+                .WithOne(co => co.Booking)
+                .HasForeignKey<Booking>(b => b.AcceptedOfferId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(b => b.Payment)
+                .WithOne(p => p.Booking)
+                .HasForeignKey<Payment>(p => p.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(b => b.Review)
+                .WithOne(r => r.Booking)
+                .HasForeignKey<Review>(r => r.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            builder.HasIndex(b => new { b.CustomerId, b.Status })
+                .HasDatabaseName("IX_Bookings_Customer_Status");
+
+            builder.HasIndex(b => new { b.CraftsmanId, b.Status, b.BookingDate })
+                .HasDatabaseName("IX_Bookings_Craftsman_Status_Date");
+
+            builder.HasIndex(b => b.BookingDate);
+
+            builder.HasIndex(b => b.ServiceRequestId)
+                .IsUnique()
+                .HasFilter("[ServiceRequestId] IS NOT NULL");
         }
     }
 }
