@@ -17,4 +17,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Salahly.DAL\Salahly.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
