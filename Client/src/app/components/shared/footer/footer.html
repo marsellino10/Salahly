@@ -1,0 +1,58 @@
+<footer class="bg-dark text-light mt-auto">
+  <div class="container py-5">
+    <div class="row gy-4">
+      <!-- Brand -->
+      <div class="col-12 col-md-3">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <img src="./favicon.png" width="50" height="50" alt="">
+          <span class="text-white fs-3 fst-italic">{{ 'Footer.Salahly' | translate }}</span>
+        </div>
+        <p class="small text-secondary mb-0">
+          {{ 'Footer.Connecting customers with trusted service providers across Egypt.' | translate }}
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-12 col-md-3">
+        <h5 class="text-white mb-3">{{ 'Footer.Quick Links' | translate }}</h5>
+        <ul class="list-unstyled">
+          @for (link of quickLinks; track $index) {
+            <li class="mb-2">
+              <a [routerLink]="link.path" class="text-secondary text-decoration-none hover-text-light small">
+                {{ link.label | translate }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div class="col-12 col-md-3">
+        <h5 class="text-white mb-3">{{ 'Footer.Services' | translate }}</h5>
+        <ul class="list-unstyled small text-secondary">
+          @for (service of services; track $index) {
+            <li class="mb-2">{{ service | translate }}</li>
+          }
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="col-12 col-md-3">
+        <h5 class="text-white mb-3">{{ 'Footer.Contact Us' | translate }}</h5>
+        <ul class="list-unstyled small">
+          @for (item of contact; track $index) {
+            <li class="d-flex align-items-center gap-2 mb-2 text-secondary">
+              <i [class]="item.icon"></i>
+              <span>{{ item.text | translate }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <hr class="border-secondary mt-5 mb-3">
+    <div class="text-center small text-secondary">
+      {{ 'Footer.© 2025 Salahly. All rights reserved.' | translate }}
+    </div>
+  </div>
+</footer>

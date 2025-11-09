@@ -46,5 +46,24 @@
     "Certified electricians for all your needs":"نجارين موثقين لجميع احتياجاتك",
     "Trusted plumbers for home repairs":"سباكين موثقين لجميع احتياجاتك",
     "Skilled carpenters for furniture & repairs":"نجّارين ماهر لجميع احتياجاتك"
+  },
+  "Footer":{
+    "Salahly":"صلح لي",
+    "Quick Links":"الروابط السريعة",
+    "Services":"الخدمات",
+    "Contact Us":"اتصل بنا",
+    "Connecting customers with trusted service providers across Egypt.": "توصيل العملاء إلى مقدمي الخدمات الموثقين في جميع أنحاء مصر.",
+    "© 2025 Salahly. All rights reserved.": "جميع الحقوق محفوظة © 2025 صلح لي.",
+    "Cairo, Egypt":"القاهرة, مصر",
+    "Electrician":"الكهرباء",
+    "Plumber":"سباك",
+    "Carpenter":"نجّار",
+    "Painter":"نقاش",
+    "HVAC Specialist":"متخصصات HVAC",
+    "Locksmith":"متخصصات تأمين",
+    "Home":"الرئيسية",
+    "Browse Technicals":"استكشاف الفنيين",
+    "Login":"تسجيل الدخول",
+    "Sign Up":"انشاء حساب"
   }
 }

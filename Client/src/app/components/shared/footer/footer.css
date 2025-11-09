@@ -1,0 +1,11 @@
+footer {
+  background-color: #111827; /* Tailwind's gray-900 */
+}
+
+.text-secondary {
+  color: #9ca3af !important; /* Tailwind's gray-400 */
+}
+
+.hover-text-light:hover {
+  color: #ffffff !important;
+}
