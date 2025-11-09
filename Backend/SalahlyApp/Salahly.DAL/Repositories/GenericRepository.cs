@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Salahly.DAL.Data;
 using Salahly.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,10 @@ namespace Salahly.DAL.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public GenericRepository(DbContext context)
+        public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();

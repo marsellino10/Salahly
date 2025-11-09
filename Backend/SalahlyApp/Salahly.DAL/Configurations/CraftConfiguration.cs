@@ -41,14 +41,7 @@ namespace Salahly.DAL.Configurations
 
             builder.HasIndex(c => new { c.IsActive, c.DisplayOrder });
 
-            // Seed Data
-            builder.HasData(
-                new Craft { Id = 1, Name = "Electrician", Description = "Electrical repairs and installations", DisplayOrder = 1, IsActive = true },
-                new Craft { Id = 2, Name = "Plumber", Description = "Plumbing services", DisplayOrder = 2, IsActive = true },
-                new Craft { Id = 3, Name = "Carpenter", Description = "Carpentry and woodwork", DisplayOrder = 3, IsActive = true },
-                new Craft { Id = 4, Name = "Painter", Description = "Painting services", DisplayOrder = 4, IsActive = true },
-                new Craft { Id = 5, Name = "AC Technician", Description = "Air conditioning repair and maintenance", DisplayOrder = 5, IsActive = true }
-            );
+            
         }
     }
 }

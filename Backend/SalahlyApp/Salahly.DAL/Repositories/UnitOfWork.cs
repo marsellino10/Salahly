@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Salahly.DAL.Data;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using System;
@@ -11,7 +12,7 @@ namespace Salahly.DAL.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public IGenericRepository<Admin> Admins { get; }
         public IGenericRepository<ApplicationUser> ApplicationUsers { get; }
@@ -27,7 +28,7 @@ namespace Salahly.DAL.Repositories
         public IGenericRepository<Review> Reviews { get; }
         public IGenericRepository<ServiceRequest> ServiceRequests { get; }
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
 

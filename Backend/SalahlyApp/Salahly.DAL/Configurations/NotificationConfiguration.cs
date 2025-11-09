@@ -1,13 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Salahly.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Salahly.DAL.Configurations
+namespace Salahly.DAL.Data.Configurations
 {
     public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
     {
@@ -46,20 +41,21 @@ namespace Salahly.DAL.Configurations
                 .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // ✅ FIX: Change all these to Restrict or NoAction
             builder.HasOne(n => n.ServiceRequest)
-                .WithMany()  
+                .WithMany()
                 .HasForeignKey(n => n.ServiceRequestId)
-                .OnDelete(DeleteBehavior.SetNull); 
+                .OnDelete(DeleteBehavior.Restrict);  // ✅ Changed from SetNull
 
             builder.HasOne(n => n.CraftsmanOffer)
                 .WithMany()
                 .HasForeignKey(n => n.CraftsmanOfferId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);  // ✅ Changed from SetNull
 
             builder.HasOne(n => n.Booking)
                 .WithMany()
                 .HasForeignKey(n => n.BookingId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);  // ✅ Changed from SetNull
 
             // Indexes
             builder.HasIndex(n => new { n.UserId, n.IsRead, n.CreatedAt })
