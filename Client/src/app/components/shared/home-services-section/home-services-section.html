@@ -1,0 +1,16 @@
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="text-dark mb-3">{{"HomeServicesSection.Browse by Service" |translate}}</h2>
+      <p class="text-secondary">{{"HomeServicesSection.Find the right service provider for your needs" |translate}}</p>
+    </div>
+
+    <div class="row">
+      @for (category of categories; track $index) {
+        <div class="col-12 col-sm-6 col-lg-4 mb-4">
+          <app-feature-card [Icon]="category.icon" [Title]="category.name" [Description]="category.description"></app-feature-card>
+        </div>
+      }
+    </div>
+  </div>
+</section>

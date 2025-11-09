@@ -36,5 +36,15 @@
     "Book services quickly and easily with just a few clicks": "Book services quickly and easily with just a few clicks",
     "Direct Communication": "Direct Communication",
     "Chat or call technicians directly to discuss your service needs": "Chat or call technicians directly to discuss your service needs"
+  },
+  "HomeServicesSection":{
+    "Browse by Service": "Browse by Service",
+    "Find the right service provider for your needs": "Find the right service provider for your needs",
+    "Electricians": "Electricians",
+    "Plumbers": "Plumbers",
+    "Carpenters": "Carpenters",
+    "Certified electricians for all your needs": "Certified electricians for all your needs",
+    "Trusted plumbers for home repairs": "Trusted plumbers for home repairs",
+    "Skilled carpenters for furniture & repairs": "Skilled carpenters for furniture & repairs"
   }
 }

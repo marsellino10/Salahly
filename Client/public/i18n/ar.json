@@ -36,5 +36,15 @@
     "Book services quickly and easily with just a few clicks": "احجز الخدمات بسرعة وسهولة ببضع نقرات فقط",
     "Direct Communication": "التواصل المباشر",
     "Chat or call technicians directly to discuss your service needs": "اتصل بالفنيين مباشرة لمناقشة حاجاتك الخدمية"
+  },
+  "HomeServicesSection":{
+    "Browse by Service": "البحث بالخدمات",
+    "Find the right service provider for your needs": "ابحث عن مقدمي الخدمات الموثقين",
+    "Electricians": "الكهرباء",
+    "Plumbers": "سباك",
+    "Carpenters": "نجّار",
+    "Certified electricians for all your needs":"نجارين موثقين لجميع احتياجاتك",
+    "Trusted plumbers for home repairs":"سباكين موثقين لجميع احتياجاتك",
+    "Skilled carpenters for furniture & repairs":"نجّارين ماهر لجميع احتياجاتك"
   }
 }
