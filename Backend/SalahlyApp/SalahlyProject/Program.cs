@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Salahly.DAL.Data;
 using Salahly.DAL.Interfaces;
 using Salahly.DAL.Repositories;
+using Salahly.DSL.DTOs;
 
 namespace SalahlyProject
 {
@@ -101,6 +102,10 @@ namespace SalahlyProject
                     options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
                 });
 
+            // ========================================
+            // 6. Mapster CONFIGURATION
+            // ========================================
+            MapsterConfiguration.RegisterMappings();
             // ========================================
             // BUILD APP
             // ========================================

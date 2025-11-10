@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Salahly.DAL\Salahly.DAL.csproj" />
+    <ProjectReference Include="..\Salahly.DSL\Salahly.DSL.csproj" />
   </ItemGroup>
 
 </Project>
