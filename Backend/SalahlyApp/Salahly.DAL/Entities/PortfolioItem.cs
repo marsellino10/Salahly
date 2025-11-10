@@ -11,7 +11,7 @@ namespace Salahly.DAL.Entities
     public class PortfolioItem
     {
         public int Id { get; set; }
-        public string CraftsmanId { get; set; } 
+        public int CraftsmanId { get; set; } 
 
         [Required, MaxLength(200)]
         public string Title { get; set; }

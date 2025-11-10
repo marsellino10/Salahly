@@ -10,7 +10,7 @@ namespace Salahly.DAL.Entities
     public class Notification
     {
         public int NotificationId { get; set; }
-        public string UserId { get; set; } 
+        public int UserId { get; set; } 
         public NotificationType Type { get; set; } 
 
         // Content

@@ -9,7 +9,7 @@ namespace Salahly.DAL.Data
         public static async Task SeedAsync(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole<int>> roleManager)
         {
             // Ensure database is created
             await context.Database.MigrateAsync();
@@ -32,7 +32,7 @@ namespace Salahly.DAL.Data
             await context.SaveChangesAsync();
         }
 
-        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+        private static async Task SeedRolesAsync(RoleManager<IdentityRole<int>> roleManager)
         {
             string[] roles = { "Admin", "Customer", "Craftsman" };
 
@@ -40,7 +40,7 @@ namespace Salahly.DAL.Data
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(new IdentityRole(role));
+                    await roleManager.CreateAsync(new IdentityRole<int>(role));
                     Console.WriteLine($"✅ Role '{role}' created");
                 }
             }

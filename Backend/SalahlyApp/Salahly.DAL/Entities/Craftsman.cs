@@ -8,7 +8,7 @@ namespace Salahly.DAL.Entities
 {
     public class Craftsman
     {
-        public string Id { get; set; } 
+        public int Id { get; set; } 
         public int CraftId { get; set; }
         public decimal RatingAverage { get; set; }
         public int TotalCompletedBookings { get; set; }

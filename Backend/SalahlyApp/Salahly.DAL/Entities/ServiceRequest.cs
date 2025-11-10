@@ -10,7 +10,7 @@ namespace Salahly.DAL.Entities
     public class ServiceRequest
     {
         public int ServiceRequestId { get; set; }
-        public string CustomerId { get; set; } 
+        public int CustomerId { get; set; } 
         public int CraftId { get; set; }
 
         // Service Details

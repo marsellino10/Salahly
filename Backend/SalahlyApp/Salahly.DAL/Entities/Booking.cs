@@ -6,8 +6,8 @@ namespace Salahly.DAL.Entities
     public class Booking
     {
         public int BookingId { get; set; }
-        public string CustomerId { get; set; }
-        public string CraftsmanId { get; set; }
+        public int CustomerId { get; set; }
+        public int CraftsmanId { get; set; }
         public int CraftId { get; set; }
 
         // Links to Request & Offer

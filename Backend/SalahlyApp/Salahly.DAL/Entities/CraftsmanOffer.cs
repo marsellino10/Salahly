@@ -10,7 +10,7 @@ namespace Salahly.DAL.Entities
     {
         public int CraftsmanOfferId { get; set; }
         public int ServiceRequestId { get; set; }
-        public string CraftsmanId { get; set; }
+        public int CraftsmanId { get; set; }
 
         // Offer Details
         public decimal OfferedPrice { get; set; }

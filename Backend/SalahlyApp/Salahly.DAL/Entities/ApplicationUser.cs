@@ -9,7 +9,7 @@ public enum UserType
     Craftsman
 }
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser<int>
 {
     [Required, MaxLength(100)]
     public string FullName { get; set; }

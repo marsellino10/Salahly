@@ -9,7 +9,7 @@ namespace Salahly.DAL.Entities
     public class CraftsmanServiceArea
     {
         public int CraftsmanServiceAreaId { get; set; }
-        public string CraftsmanId { get; set; } 
+        public int CraftsmanId { get; set; } 
 
         // Area Coverage
         public string City { get; set; }

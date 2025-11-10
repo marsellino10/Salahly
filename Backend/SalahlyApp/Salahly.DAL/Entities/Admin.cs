@@ -8,7 +8,7 @@ namespace Salahly.DAL.Entities
 {
     public class Admin
     {
-        public string Id { get; set; } 
+        public int Id { get; set; } 
         public string? Department { get; set; }
         public DateTime? HiredAt { get; set; }
 

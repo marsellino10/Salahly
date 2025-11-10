@@ -41,7 +41,7 @@ namespace SalahlyProject
             // ========================================
             // 2. IDENTITY CONFIGURATION
             // ========================================
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
             {
                 // Password settings
                 options.Password.RequireDigit = true;
@@ -119,7 +119,7 @@ namespace SalahlyProject
                 {
                     var context = services.GetRequiredService<ApplicationDbContext>();
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
                     Console.WriteLine("🌱 Starting database seeding...");
                     await DbSeeder.SeedAsync(context, userManager, roleManager);

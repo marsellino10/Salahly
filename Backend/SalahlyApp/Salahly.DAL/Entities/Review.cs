@@ -11,8 +11,8 @@ namespace Salahly.DAL.Entities
     {
         public int Id { get; set; }
         public int BookingId { get; set; }
-        public string CustomerId { get; set; } 
-        public string CraftsmanId { get; set; }
+        public int CustomerId { get; set; } 
+        public int CraftsmanId { get; set; }
 
         [Range(1, 5)]  
         public int Rating { get; set; }
