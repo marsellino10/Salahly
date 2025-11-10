@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Salahly.DAL.Repositories
@@ -47,6 +48,6 @@ namespace Salahly.DAL.Repositories
             ServiceRequests = new GenericRepository<ServiceRequest>(_context);
         }
 
-        public int Save() => _context.SaveChanges();
+        public Task<int> SaveAsync(CancellationToken cancellationToken = default) => _context.SaveChangesAsync(cancellationToken);
     }
 }

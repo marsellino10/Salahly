@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Salahly.DAL.Interfaces
@@ -22,7 +23,7 @@ namespace Salahly.DAL.Interfaces
         IGenericRepository<PortfolioItem> PortfolioItems { get; }
         IGenericRepository<Review> Reviews { get; }
         IGenericRepository<ServiceRequest> ServiceRequests { get; }
-        int Save();
+        Task<int> SaveAsync(CancellationToken cancellationToken = default);
     }
 
 }
