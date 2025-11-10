@@ -6,10 +6,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { inject } from '@angular/core';
+import { CustomerRegistrationForm } from "../../../components/shared/customer-registration-form/customer-registration-form";
+import { CraftmanRegistrationForm } from "../../../components/shared/craftman-registration-form/craftman-registration-form";
 
 @Component({
   selector: 'app-registration',
-  imports: [CommonModule, FormsModule,RouterLink,TranslateModule,ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, ReactiveFormsModule, CustomerRegistrationForm, CraftmanRegistrationForm],
   templateUrl: './registration.html',
   styleUrl: './registration.css',
 })
