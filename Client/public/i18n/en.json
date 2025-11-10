@@ -65,5 +65,19 @@
     "Browse Technicals":"Browse Technicals",
     "Login":"Login",
     "Sign Up":"Sign Up"
+  },
+  "Login":{
+    "Login":"Login",
+    "Choose your account type to login":"Choose your account type to login",
+    "Customer":"Customer",
+    "Technician":"Technician",
+    "Admin":"Admin",
+    "Email":"Email",
+    "Password":"Password",
+    "Login as Customer":"Login as Customer",
+    "Login as Technician":"Login as Technician",
+    "Login as Admin":"Login as Admin",
+    "Don't have an account?":"Don't have an account?",
+    "signup":"signup"
   }
 }

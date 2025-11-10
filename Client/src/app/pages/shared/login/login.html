@@ -1,0 +1,52 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5 px-3">
+  <div class="card w-100" style="max-width: 30rem;">
+    <div class="card-header text-center bg-white border-0 mt-2">
+      <h2 class="card-title">{{"Login.Login" | translate}}</h2>
+      <p class="card-text">
+        {{  "Login.Choose your account type to login" | translate }}
+      </p>
+    </div>
+
+    <div class="card-body">
+      <!-- Tabs -->
+      <div class="btn-group d-flex justify-content-center gap-2 mb-3 tab" role="group" >
+        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'customer'" [class.active]="activeTab === 'customer'">{{"Login.Customer" | translate}}</button>
+        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'craftsman'" [class.active]="activeTab === 'craftsman'">{{"Login.Technician" | translate}}</button>
+        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'admin'" [class.active]="activeTab === 'admin'">{{"Login.Admin" | translate}}</button>
+      </div>
+      <!-- Tab Content -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label">{{  'Login.Email' | translate}}</label>
+          <input type="email" class="form-control" formControlName="email" placeholder="sarah@example.com" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">{{  'Login.Password' | translate}}</label>
+          <input type="password" class="form-control" formControlName="password" />
+        </div>
+        @switch(activeTab) {
+          @case('customer') {          
+            <button class="btn loginBtn w-100" type="submit">
+              {{  "Login.Login as Customer" | translate }}
+            </button>
+          }
+          @case('craftsman') {
+            <button class="btn loginBtn w-100" type="submit">
+              {{  "Login.Login as Technician" | translate }}
+            </button>
+          }
+          @case('admin') {
+            <button class="btn loginBtn w-100" type="submit">
+              {{  "Login.Login as Admin" | translate }}
+            </button>
+          }
+        }
+      </form>
+      <div class="small text-muted mt-2 text-center">
+        {{  "Login.Don't have an account?" | translate }}
+        <button class="btn btn-link p-0" [routerLink]= "['/signup']">
+          {{ "Login.signup" | translate }}
+        </button>
+      </div>
+  </div>
+</div>

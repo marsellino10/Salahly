@@ -65,5 +65,19 @@
     "Browse Technicals":"استكشاف الفنيين",
     "Login":"تسجيل الدخول",
     "Sign Up":"انشاء حساب"
+  },
+  "Login":{
+    "Login":"تسجيل الدخول",
+    "Choose your account type to login":"اختر نوع حسابك للدخول",
+    "Customer":"عميل",
+    "Technician":"فني",
+    "Admin":"مدير",
+    "Email":"البريد الالكتروني",
+    "Password":"كلمة المرور",
+    "Login as Customer":"تسجيل الدخول كعميل",
+    "Login as Technician":"تسجيل الدخول كفني",
+    "Login as Admin":"تسجيل الدخول كمدير",
+    "Don't have an account?":"ليس لديك حساب؟",
+    "signup":"انشاء حساب"
   }
 }

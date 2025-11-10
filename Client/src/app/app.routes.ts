@@ -10,6 +10,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', loadComponent: () => import('./pages/shared/home/home').then(c => c.Home) },
+      { path: 'login', loadComponent: () => import('./pages/shared/login/login').then(c => c.Login) },
     ],
   },
 ];
