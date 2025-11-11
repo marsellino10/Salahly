@@ -1,9 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Salahly.DAL.Data;
+using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DAL.Repositories;
 using Salahly.DSL.DTOs;
+using Salahly.DSL.Interfaces;
+using Salahly.DSL.Services;
 
 namespace SalahlyProject
 {
@@ -12,6 +20,7 @@ namespace SalahlyProject
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration;
 
             // ========================================
             // 1. DATABASE CONFIGURATION
@@ -29,7 +38,6 @@ namespace SalahlyProject
                         maxRetryDelay: TimeSpan.FromSeconds(30),
                         errorNumbersToAdd: null);
                 });
-
                 // Enable detailed errors in development
                 if (builder.Environment.IsDevelopment())
                 {
@@ -39,7 +47,7 @@ namespace SalahlyProject
             });
 
             // ========================================
-            // 2. IDENTITY CONFIGURATION
+            // 2.1 IDENTITY CONFIGURATION
             // ========================================
             builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
             {
@@ -65,11 +73,41 @@ namespace SalahlyProject
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+            // 2.2 JWT settings
+            var jwtSettingsSection = configuration.GetSection("JwtSettings");
+            builder.Services.Configure<JwtSettings>(jwtSettingsSection);
+            var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+            if (jwtSettings == null) throw new Exception("JwtSettings not found in configuration.");
+
+            // 2.3 Authentication with JWT Bearer
+            var key = Encoding.UTF8.GetBytes(jwtSettings.Secret);
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false; // true in production
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = jwtSettings.Audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
             // ========================================
             // 3. DEPENDENCY INJECTION
             // ========================================
             // Repository Pattern
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             // Add your services here when you create them
             // builder.Services.AddScoped<IAuthService, AuthService>();
@@ -112,25 +150,25 @@ namespace SalahlyProject
             var app = builder.Build();
 
             // ✅ SEED DATABASE
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<ApplicationDbContext>();
-                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    try
+            //    {
+            //        var context = services.GetRequiredService<ApplicationDbContext>();
+            //        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            //        var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-                    Console.WriteLine("🌱 Starting database seeding...");
-                    await DbSeeder.SeedAsync(context, userManager, roleManager);
-                    Console.WriteLine("✅ Database seeding completed!");
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "❌ An error occurred while seeding the database.");
-                }
-            }
+            //        Console.WriteLine("🌱 Starting database seeding...");
+            //        await DbSeeder.SeedAsync(context, userManager, roleManager);
+            //        Console.WriteLine("✅ Database seeding completed!");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = services.GetRequiredService<ILogger<Program>>();
+            //        logger.LogError(ex, "❌ An error occurred while seeding the database.");
+            //    }
+            //}
 
             // ========================================
             // MIDDLEWARE PIPELINE
