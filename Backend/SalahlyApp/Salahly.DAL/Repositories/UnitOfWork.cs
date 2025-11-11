@@ -27,7 +27,8 @@ namespace Salahly.DAL.Repositories
         public IGenericRepository<Payment> Payments { get; }
         public IGenericRepository<PortfolioItem> PortfolioItems { get; }
         public IGenericRepository<Review> Reviews { get; }
-        public IGenericRepository<ServiceRequest> ServiceRequests { get; }
+        public IServiceRequestRepository ServiceRequests { get; }
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -45,7 +46,7 @@ namespace Salahly.DAL.Repositories
             Payments = new GenericRepository<Payment>(_context);
             PortfolioItems = new GenericRepository<PortfolioItem>(_context);
             Reviews = new GenericRepository<Review>(_context);
-            ServiceRequests = new GenericRepository<ServiceRequest>(_context);
+            ServiceRequests = new ServiceRequestRepository(_context);
         }
 
         public Task<int> SaveAsync(CancellationToken cancellationToken = default) => _context.SaveChangesAsync(cancellationToken);

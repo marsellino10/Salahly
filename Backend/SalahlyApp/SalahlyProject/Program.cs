@@ -105,24 +105,17 @@ namespace SalahlyProject
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+
             // ========================================
             // 3. DEPENDENCY INJECTION
             // ========================================
             // Repository Pattern
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-
-            // Business Services
-            builder.Services.AddScoped<ICraftService, CraftService>();
-            
-            // File Upload Service
-            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
-            builder.Services.AddHttpContextAccessor();
-            
+            builder.Services.AddScoped<IServiceRequestService, ServiceRequestService>();
+            builder.Services.AddScoped<ICustomerService, CustomerServicecs>();
             // Add your services here when you create them
-            // builder.Services.AddScoped<IAuthService, AuthService>();
-            // builder.Services.AddScoped<ICustomerService, CustomerService>();
-            // builder.Services.AddScoped<ICraftsmanService, CraftsmanService>();
+
 
             // ========================================
             // 4. CORS CONFIGURATION
@@ -194,26 +187,7 @@ namespace SalahlyProject
             // ========================================
             var app = builder.Build();
 
-            // ✅ SEED DATABASE
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    try
-            //    {
-            //        var context = services.GetRequiredService<ApplicationDbContext>();
-            //        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            //        var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
-
-            //        Console.WriteLine("🌱 Starting database seeding...");
-            //        await DbSeeder.SeedAsync(context, userManager, roleManager);
-            //        Console.WriteLine("✅ Database seeding completed!");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        var logger = services.GetRequiredService<ILogger<Program>>();
-            //        logger.LogError(ex, "❌ An error occurred while seeding the database.");
-            //    }
-            //}
+            
 
             // ========================================
             // MIDDLEWARE PIPELINE

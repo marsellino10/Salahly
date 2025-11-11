@@ -9,5 +9,7 @@ namespace Salahly.DAL.Interfaces
 {
     public interface IServiceRequestRepository : IGenericRepository<ServiceRequest>
     {
+        Task<IEnumerable<ServiceRequest>> GetAllByCustomerAsync(int customerId);
+        Task<bool> DeleteByCustomerAsync(int id, int customerId);
     }
 }

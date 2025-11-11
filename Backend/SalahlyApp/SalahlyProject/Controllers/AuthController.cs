@@ -29,7 +29,7 @@ namespace SalahlyProject.Controllers
         [HttpPost("register-technician")]
         public async Task<IActionResult> RegisterTechnician([FromBody] RegisterDto dto)
         {
-            var success = await _authService.RegisterAsync(dto, "CraftsMan");
+            var success = await _authService.RegisterAsync(dto, "Craftsman");
             if (!success)
                 return BadRequest("Registration failed.");
             return Ok("Technician registered successfully.");
