@@ -13,3 +13,4 @@ obj/
 *.log
 *.vsidx
 *.dbmdl
+**/appsettings.json
