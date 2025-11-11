@@ -20,9 +20,9 @@ namespace Salahly.DAL.Repositories
             _dbSet = context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IQueryable<T>> GetAllAsync()
         {
-            return await _dbSet.AsNoTracking().ToListAsync();
+            return _dbSet.AsNoTracking().AsQueryable();
         }
 
         public async Task<T?> GetByIdAsync(int id)

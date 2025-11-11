@@ -9,7 +9,7 @@ namespace Salahly.DAL.Interfaces
     public interface IGenericRepository<T> where T : class
     {
         // Async methods
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IQueryable<T>> GetAllAsync();
         Task<T?> GetByIdAsync(int id);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);

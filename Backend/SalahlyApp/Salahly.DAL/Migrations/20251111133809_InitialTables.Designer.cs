@@ -12,7 +12,7 @@ using Salahly.DAL.Data;
 namespace Salahly.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251110210009_InitialTables")]
+    [Migration("20251111133809_InitialTables")]
     partial class InitialTables
     {
         /// <inheritdoc />

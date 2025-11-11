@@ -17,6 +17,9 @@ namespace Salahly.DAL.Entities
         [MaxLength(500)]
         public string? Description { get; set; }
 
+        /// <summary>
+        /// Full URL of the craft icon from Cloudinary
+        /// </summary>
         public string? IconUrl { get; set; }
 
         public bool IsActive { get; set; } = true;

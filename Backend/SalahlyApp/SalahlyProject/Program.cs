@@ -9,7 +9,10 @@ using Salahly.DAL.Data;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DAL.Repositories;
+using Salahly.DAL.Services;
 using Salahly.DSL.DTOs;
+using SalahlyProject.Services;
+using SalahlyProject.Services.Interfaces;
 using Salahly.DSL.Interfaces;
 using Salahly.DSL.Services;
 
@@ -109,6 +112,13 @@ namespace SalahlyProject
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
+            // Business Services
+            builder.Services.AddScoped<ICraftService, CraftService>();
+            
+            // File Upload Service
+            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+            builder.Services.AddHttpContextAccessor();
+            
             // Add your services here when you create them
             // builder.Services.AddScoped<IAuthService, AuthService>();
             // builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -127,7 +137,42 @@ namespace SalahlyProject
                           .AllowCredentials();
                 });
             });
+            #region Swagger configration
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Salahly API",
+                    Version = "v1",
+                    Description = "A Web API for managing Craftsman and Customer"
+                });
 
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter JWT as: **Bearer {your token}**"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                            {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            Array.Empty<string>()
+                        }
+                            });
+            });
+            #endregion
             // ========================================
             // 5. CONTROLLERS
             // ========================================
@@ -178,6 +223,8 @@ namespace SalahlyProject
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
             else
             {

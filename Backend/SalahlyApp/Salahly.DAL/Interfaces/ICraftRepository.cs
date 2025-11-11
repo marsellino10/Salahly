@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Salahly.DAL.Interfaces
 {
-    public interface ICraftRepository : IGenericRepository<Payment>
+    public interface ICraftRepository : IGenericRepository<Craft>
     {
     }
 }

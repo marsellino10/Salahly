@@ -17,11 +17,17 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.26.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Salahly.DAL\Salahly.DAL.csproj" />
     <ProjectReference Include="..\Salahly.DSL\Salahly.DSL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
