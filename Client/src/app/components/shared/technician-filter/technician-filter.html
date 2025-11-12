@@ -1,0 +1,31 @@
+<div class="filter-container">
+  <div class="filter-wrapper">
+    
+    <!-- Search -->
+    <div class="search-box">
+      <i class="bi bi-search search-icon"></i>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search by name, location, or service..."
+        [(ngModel)]="searchQuery"
+        (input)="onFiltersChange()"
+      />
+    </div>
+
+    <!-- Category Filter -->
+    <div class="filter-select">
+      <select 
+        class="select-input" 
+        [(ngModel)]="selectedCategory"
+        (change)="onFiltersChange()"
+      >
+        <option value="">All Services</option>
+        @for (cat of categories; track $index) {
+          <option [value]="cat.id">{{ cat.name }}</option>
+        }
+      </select>
+      <i class="bi bi-chevron-down select-arrow"></i>
+    </div>
+  </div>
+</div>
