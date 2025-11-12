@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs;
+using Salahly.DSL.DTOs.PortfolioDtos;
 using Salahly.DSL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -164,45 +165,6 @@ namespace Salahly.DSL.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<PortfolioItemDto> AddPortfolioItemAsync(AddPortfolioItemDto dto)
-        {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
-
-            var craftsman = await _unitOfWork.Craftsmen.GetByIdAsync(dto.CraftsmanId);
-            if (craftsman == null) throw new KeyNotFoundException($"Craftsman with ID {dto.CraftsmanId} not found.");
-
-            if (string.IsNullOrWhiteSpace(dto.ImageUrl))
-                throw new ArgumentException("Portfolio image URL is required", nameof(dto.ImageUrl));
-
-            var item = new PortfolioItem
-            {
-                CraftsmanId = dto.CraftsmanId,
-                Title = dto.Title,
-                Description = dto.Description,
-                ImageUrl = dto.ImageUrl,
-                DisplayOrder = dto.DisplayOrder,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _unitOfWork.PortfolioItems.AddAsync(item);
-            await _unitOfWork.SaveAsync();
-
-            return item.Adapt<PortfolioItemDto>();
-        }
-
-        public async Task<string?> DeletePortfolioItemAsync(int portfolioItemId)
-        {
-            if (portfolioItemId <= 0) return null;
-            var item = await _unitOfWork.PortfolioItems.GetByIdAsync(portfolioItemId);
-            if (item == null) return null;
-
-            var url = item.ImageUrl;
-
-            await _unitOfWork.PortfolioItems.DeleteAsync(item);
-            await _unitOfWork.SaveAsync();
-            return url;
-        }
 
         /// <summary>
         /// Updates the craftsman profile image by persisting it to the associated user

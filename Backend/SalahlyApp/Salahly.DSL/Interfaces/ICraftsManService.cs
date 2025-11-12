@@ -1,4 +1,5 @@
 ﻿using Salahly.DSL.DTOs;
+using Salahly.DSL.DTOs.PortfolioDtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,10 +15,5 @@ namespace Salahly.DSL.Interfaces
 
         Task<CraftsmanDto> UpdateCraftsManImageAsync(int craftsManId, string iconUrl);
 
-        Task<PortfolioItemDto> AddPortfolioItemAsync(AddPortfolioItemDto dto);
-        /// <summary>
-        /// Deletes portfolio item and returns the image URL that was stored (so caller can delete from cloud)
-        /// </summary>
-        Task<string?> DeletePortfolioItemAsync(int portfolioItemId);
     }
 }

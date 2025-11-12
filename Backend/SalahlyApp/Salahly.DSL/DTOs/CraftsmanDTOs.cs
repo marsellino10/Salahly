@@ -1,3 +1,4 @@
+using Salahly.DSL.DTOs.PortfolioDtos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,7 +22,7 @@ namespace Salahly.DSL.DTOs
         public string? ProfileImageUrl { get; set; }
         public string? FullName { get; set; }
 
-        public IEnumerable<PortfolioItemDto> Portfolio { get; set; } = new List<PortfolioItemDto>();
+        public IEnumerable<PortfolioItemResponseDto> Portfolio { get; set; } = new List<PortfolioItemResponseDto>();
         // Changed to use simplified ServiceAreaDto instead of CraftsmanServiceAreaDto
         public IEnumerable<ServiceAreaDto> ServiceAreas { get; set; } = new List<ServiceAreaDto>();
     }
@@ -80,25 +81,25 @@ namespace Salahly.DSL.DTOs
         public DateTime CreatedAt { get; set; }
     }
 
-    public class PortfolioItemDto
-    {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string? Description { get; set; }
-        public string ImageUrl { get; set; }
-        public int DisplayOrder { get; set; }
-        public bool IsActive { get; set; }
-    }
+    //public class PortfolioItemDto
+    //{
+    //    public int Id { get; set; }
+    //    public string Title { get; set; }
+    //    public string? Description { get; set; }
+    //    public string ImageUrl { get; set; }
+    //    public int DisplayOrder { get; set; }
+    //    public bool IsActive { get; set; }
+    //}
 
-    public class AddPortfolioItemDto
-    {
-        [Required]
-        public int CraftsmanId { get; set; }
-        [Required]
-        public string Title { get; set; }
-        public string? Description { get; set; }
-        [Required]
-        public string ImageUrl { get; set; }
-        public int DisplayOrder { get; set; }
-    }
+    //public class AddPortfolioItemDto
+    //{
+    //    [Required]
+    //    public int CraftsmanId { get; set; }
+    //    [Required]
+    //    public string Title { get; set; }
+    //    public string? Description { get; set; }
+    //    [Required]
+    //    public string ImageUrl { get; set; }
+    //    public int DisplayOrder { get; set; }
+    //}
 }

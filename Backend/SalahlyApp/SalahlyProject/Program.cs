@@ -118,14 +118,12 @@ namespace SalahlyProject
             // Business Services
             builder.Services.AddScoped<ICraftService, CraftService>();
             builder.Services.AddScoped<IAreaService, AreaService>();
+            builder.Services.AddScoped<ICraftsManService, CraftsManService>();
+            builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 
             // File Upload Service
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
             builder.Services.AddHttpContextAccessor();
-            
-            // Add your services here when you create them
-             builder.Services.AddScoped<ICraftsManService, CraftsManService>();
-
 
             // ========================================
             // 4. CORS CONFIGURATION
