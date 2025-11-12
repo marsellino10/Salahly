@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Salahly.DAL.Data;
 
@@ -11,9 +12,11 @@ using Salahly.DAL.Data;
 namespace Salahly.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251111180934_newModelAreaAdded")]
+    partial class newModelAreaAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -569,7 +572,13 @@ namespace Salahly.DAL.Migrations
 
             modelBuilder.Entity("Salahly.DAL.Entities.CraftsmanServiceArea", b =>
                 {
-                    b.Property<int>("AreaId")
+                    b.Property<int>("CraftsmanServiceAreaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CraftsmanServiceAreaId"));
+
+                    b.Property<int?>("AreaId")
                         .HasColumnType("int");
 
                     b.Property<int>("CraftsmanId")
@@ -593,7 +602,9 @@ namespace Salahly.DAL.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("AreaId", "CraftsmanId");
+                    b.HasKey("CraftsmanServiceAreaId");
+
+                    b.HasIndex("AreaId");
 
                     b.HasIndex("CraftsmanId");
 
@@ -1116,8 +1127,7 @@ namespace Salahly.DAL.Migrations
                     b.HasOne("Salahly.DAL.Entities.Area", "Area")
                         .WithMany("CraftsmanServiceAreas")
                         .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Salahly.DAL.Entities.Craftsman", "Craftsman")
                         .WithMany("CraftsmanServiceAreas")

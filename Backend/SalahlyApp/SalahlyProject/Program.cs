@@ -114,7 +114,17 @@ namespace SalahlyProject
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IServiceRequestService, ServiceRequestService>();
             builder.Services.AddScoped<ICustomerService, CustomerServicecs>();
+
+            // Business Services
+            builder.Services.AddScoped<ICraftService, CraftService>();
+            builder.Services.AddScoped<IAreaService, AreaService>();
+
+            // File Upload Service
+            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+            builder.Services.AddHttpContextAccessor();
+            
             // Add your services here when you create them
+             builder.Services.AddScoped<ICraftsManService, CraftsManService>();
 
 
             // ========================================

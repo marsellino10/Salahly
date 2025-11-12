@@ -8,15 +8,17 @@ namespace Salahly.DAL.Entities
 {
     public class CraftsmanServiceArea
     {
-        public int CraftsmanServiceAreaId { get; set; }
+        //public int CraftsmanServiceAreaId { get; set; }
         public int CraftsmanId { get; set; } 
 
-        // Area Coverage
-        public string City { get; set; }
-        public string Area { get; set; }
+        // Link to canonical Area entity
+        public int? AreaId { get; set; }
+        public Area? Area { get; set; }
+
+        // Coverage radius
         public int ServiceRadiusKm { get; set; }
 
-      
+        
         public bool IsActive { get; set; } = true;  // Can disable area temporarily
 
         // Timestamps

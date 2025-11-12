@@ -246,16 +246,14 @@ namespace SalahlyProject.Services
 
             try
             {
-                // If it's already just a public ID (doesn't start with http), return it
-                if (!cloudinaryUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && 
+                // If it's already just a public ID (not a full URL), return it as-is
+                if (!cloudinaryUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
                     !cloudinaryUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                 {
                     return cloudinaryUrl;
                 }
 
-                // Parse URL: https://res.cloudinary.com/{cloud}/image/upload/v{version}/{public_id}
-                // We need to extract everything after the last /upload/ segment
-                var uploadSegment = "/upload/";
+                const string uploadSegment = "/upload/";
                 var uploadIndex = cloudinaryUrl.IndexOf(uploadSegment, StringComparison.OrdinalIgnoreCase);
 
                 if (uploadIndex == -1)
@@ -264,7 +262,7 @@ namespace SalahlyProject.Services
                     return null;
                 }
 
-                // Start after "/upload/" and skip any version info (v123/)
+                // Start after "/upload/"
                 var startIndex = uploadIndex + uploadSegment.Length;
                 var remainder = cloudinaryUrl.Substring(startIndex);
 
@@ -278,12 +276,24 @@ namespace SalahlyProject.Services
                     }
                 }
 
-                // Extract public ID (everything after upload/v{version}/)
-                // Remove any trailing query parameters or fragments
+                // Remove query params/fragments
                 var publicId = remainder.Split(new[] { '?', '#' }, StringSplitOptions.None)[0];
 
-                // URL decode it
+                // Decode URL-encoded characters
                 publicId = System.Net.WebUtility.UrlDecode(publicId);
+
+                //  Remove file extension (.png, .jpg, .jpeg, .gif, .webp, etc.)
+                var lastDotIndex = publicId.LastIndexOf('.');
+                if (lastDotIndex != -1)
+                {
+                    var extension = publicId.Substring(lastDotIndex + 1).ToLowerInvariant();
+                    var knownExtensions = new[] { "jpg", "jpeg", "png", "gif", "bmp", "tiff", "webp", "svg", "heic", "heif" };
+
+                    if (knownExtensions.Contains(extension))
+                    {
+                        publicId = publicId.Substring(0, lastDotIndex);
+                    }
+                }
 
                 return !string.IsNullOrWhiteSpace(publicId) ? publicId : null;
             }
@@ -293,5 +303,6 @@ namespace SalahlyProject.Services
                 return null;
             }
         }
+
     }
 }

@@ -11,16 +11,7 @@ namespace Salahly.DAL.Configurations
             builder.ToTable("CraftsmanServiceAreas");
 
             // Primary Key
-            builder.HasKey(csa => csa.CraftsmanServiceAreaId);
-
-            // Properties
-            builder.Property(csa => csa.City)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(csa => csa.Area)
-                .IsRequired()
-                .HasMaxLength(100);
+            builder.HasKey(csa => new { csa.AreaId, csa.CraftsmanId });
 
             builder.Property(csa => csa.ServiceRadiusKm)
                 .IsRequired()
@@ -38,15 +29,14 @@ namespace Salahly.DAL.Configurations
                 .HasForeignKey(csa => csa.CraftsmanId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Indexes
-            builder.HasIndex(csa => new { csa.City, csa.Area, csa.IsActive })
-                .HasDatabaseName("IX_CraftsmanServiceAreas_Location_Active");
+            // Optional relation to canonical Area table
+            builder.HasOne(csa => csa.Area)
+                .WithMany(a => a.CraftsmanServiceAreas)
+                .HasForeignKey(csa => csa.AreaId)
+                .OnDelete(DeleteBehavior.SetNull);
 
+            // Indexes: index on CraftsmanId only; location indexes moved to Areas table
             builder.HasIndex(csa => csa.CraftsmanId);
-
-            builder.HasIndex(csa => new { csa.CraftsmanId, csa.City, csa.Area })
-                .IsUnique() 
-                .HasDatabaseName("IX_CraftsmanServiceAreas_Unique");
         }
     }
 }

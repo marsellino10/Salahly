@@ -26,6 +26,7 @@ namespace Salahly.DAL.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<PortfolioItem> PortfolioItems { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Area> Areas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

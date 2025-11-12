@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Salahly.DAL.Interfaces
 {
-    public interface ICraftsmanServiceAreaRepository : IGenericRepository<CraftsmanServiceArea>
+    public interface 
+        AreaRepository : IGenericRepository<CraftsmanServiceArea>
     {
     }
 }

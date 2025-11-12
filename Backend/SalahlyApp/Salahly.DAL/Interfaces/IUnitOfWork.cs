@@ -22,6 +22,8 @@ namespace Salahly.DAL.Interfaces
         IGenericRepository<Payment> Payments { get; }
         IGenericRepository<PortfolioItem> PortfolioItems { get; }
         IGenericRepository<Review> Reviews { get; }
+
+        IGenericRepository<Area> Areas { get; }
         IServiceRequestRepository ServiceRequests { get; }
         Task<int> SaveAsync(CancellationToken cancellationToken = default);
     }

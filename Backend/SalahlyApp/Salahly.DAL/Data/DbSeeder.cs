@@ -329,12 +329,25 @@ namespace Salahly.DAL.Data
                     await context.Craftsmen.AddAsync(craftsman);
                     await context.SaveChangesAsync();
 
-                    // Add service area
+                    // Ensure canonical Area exists (use City as Region and Area as City in Area table)
+                    var existingArea = await context.Areas.FirstOrDefaultAsync(a => a.Region == craftsmanData.City && a.City == craftsmanData.Area);
+                    if (existingArea == null)
+                    {
+                        existingArea = new Area
+                        {
+                            Region = craftsmanData.City,
+                            City = craftsmanData.Area
+                        };
+
+                        await context.Areas.AddAsync(existingArea);
+                        await context.SaveChangesAsync();
+                    }
+
+                    // Add service area linking to canonical Area
                     var serviceArea = new CraftsmanServiceArea
                     {
                         CraftsmanId = craftsman.Id,
-                        City = craftsmanData.City,
-                        Area = craftsmanData.Area,
+                        AreaId = existingArea.Id,
                         ServiceRadiusKm = 10,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
