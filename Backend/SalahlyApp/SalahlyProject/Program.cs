@@ -1,6 +1,6 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,10 +11,12 @@ using Salahly.DAL.Interfaces;
 using Salahly.DAL.Repositories;
 using Salahly.DAL.Services;
 using Salahly.DSL.DTOs;
-using SalahlyProject.Services;
-using SalahlyProject.Services.Interfaces;
 using Salahly.DSL.Interfaces;
 using Salahly.DSL.Services;
+using SalahlyProject.Response.Error;
+using SalahlyProject.Services;
+using SalahlyProject.Services.Interfaces;
+using System.Text;
 
 namespace SalahlyProject
 {
@@ -105,7 +107,7 @@ namespace SalahlyProject
                         ClockSkew = TimeSpan.Zero
                     };
                 });
-
+            
             // ========================================
             // 3. DEPENDENCY INJECTION
             // ========================================
@@ -190,6 +192,27 @@ namespace SalahlyProject
             // 6. Mapster CONFIGURATION
             // ========================================
             MapsterConfiguration.RegisterMappings();
+
+            // ========================================
+            // 7. CUSTOM VALIDATION RESPONSE
+            // ========================================
+            #region Add Custom Validation Response
+            builder.Services.Configure<ApiBehaviorOptions>(opt =>
+            {
+                opt.InvalidModelStateResponseFactory = (actionContext) =>
+                {
+                    var errors = actionContext.ModelState.Where(e => e.Value.Errors.Count > 0)
+                                                         .SelectMany(e => e.Value.Errors)
+                                                         .Select(e => e.ErrorMessage)
+                                                         .ToArray();
+                    var validationErrorResponse = new ValidationErrorResponse()
+                    {
+                        Errors = errors
+                    };
+                    return new BadRequestObjectResult(validationErrorResponse);
+                };
+            });
+            #endregion
             // ========================================
             // BUILD APP
             // ========================================
@@ -219,7 +242,7 @@ namespace SalahlyProject
             // ========================================
             // MIDDLEWARE PIPELINE
             // ========================================
-
+            
             // Development environment
             if (app.Environment.IsDevelopment())
             {
