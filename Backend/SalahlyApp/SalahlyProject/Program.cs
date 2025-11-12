@@ -196,8 +196,27 @@ namespace SalahlyProject
             // BUILD APP
             // ========================================
             var app = builder.Build();
+            // ✅ SEED DATABASE
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    try
+            //    {
+            //        var context = services.GetRequiredService<ApplicationDbContext>();
+            //        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            //        var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-            
+            //        Console.WriteLine("🌱 Starting database seeding...");
+            //        await DbSeeder.SeedAsync(context, userManager, roleManager);
+            //        Console.WriteLine("✅ Database seeding completed!");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = services.GetRequiredService<ILogger<Program>>();
+            //        logger.LogError(ex, "❌ An error occurred while seeding the database.");
+            //    }
+            //}
+
 
             // ========================================
             // MIDDLEWARE PIPELINE

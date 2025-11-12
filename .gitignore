@@ -14,3 +14,4 @@ obj/
 *.vsidx
 *.dbmdl
 **/appsettings.json
+Backend/SalahlyApp/SalahlyProject/appsettings.json
