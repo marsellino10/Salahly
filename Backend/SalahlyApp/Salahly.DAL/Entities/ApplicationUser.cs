@@ -21,6 +21,7 @@ public class ApplicationUser : IdentityUser<int>
     public bool IsActive { get; set; } = true;
 
     public UserType UserType { get; set; }
+    public bool IsProfileCompleted { get; set; } = false;
 
 
     // Navigation Properties
