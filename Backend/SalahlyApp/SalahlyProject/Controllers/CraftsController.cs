@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs;
 using SalahlyProject.Services.Interfaces;
+using SalahlyProject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,20 +41,20 @@ namespace SalahlyProject.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CraftDto>>> GetAllCrafts([FromQuery] bool isActiveOnly = false)
+        public async Task<ActionResult<ApiResponse<IEnumerable<CraftDto>>>> GetAllCrafts([FromQuery] bool isActiveOnly = false)
         {
             try
             {
                 _logger.LogInformation("Getting all crafts with filters - IsActive: {IsActive}",isActiveOnly);
 
                 var result = await _craftService.GetAllCraftsAsync(isActiveOnly);
-                return Ok(result);
+                return Ok(new ApiResponse<IEnumerable<CraftDto>>(200, "Crafts retrieved successfully", result));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving crafts");
                 return StatusCode(StatusCodes.Status500InternalServerError, 
-                    new { message = "Error retrieving crafts", error = ex.Message });
+                    new ApiResponse<IEnumerable<CraftDto>>(500, $"Error retrieving crafts: {ex.Message}"));
             }
         }
 
@@ -65,19 +66,19 @@ namespace SalahlyProject.Controllers
         [HttpGet("active")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CraftDto>>> GetActiveCrafts()
+        public async Task<ActionResult<ApiResponse<IEnumerable<CraftDto>>>> GetActiveCrafts()
         {
             try
             {
                 _logger.LogInformation("Getting active crafts for display");
                 var result = await _craftService.GetActiveCraftsForDisplayAsync();
-                return Ok(result);
+                return Ok(new ApiResponse<IEnumerable<CraftDto>>(200, "Active crafts retrieved successfully", result));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving active crafts");
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error retrieving active crafts", error = ex.Message });
+                    new ApiResponse<IEnumerable<CraftDto>>(500, $"Error retrieving active crafts: {ex.Message}"));
             }
         }
 
@@ -90,26 +91,26 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CraftDto>> GetCraftById(int id)
+        public async Task<ActionResult<ApiResponse<CraftDto>>> GetCraftById(int id)
         {
             try
             {
                 if (id <= 0)
-                    return BadRequest(new { message = "Invalid craft ID" });
+                    return BadRequest(new ApiResponse<CraftDto>(400, "Invalid craft ID"));
 
                 _logger.LogInformation("Getting craft with ID: {CraftId}", id);
                 var craft = await _craftService.GetCraftByIdAsync(id);
 
                 if (craft == null)
-                    return NotFound(new { message = $"Craft with ID {id} not found" });
+                    return NotFound(new ApiResponse<CraftDto>(404, $"Craft with ID {id} not found"));
 
-                return Ok(craft);
+                return Ok(new ApiResponse<CraftDto>(200, "Craft retrieved successfully", craft));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving craft with ID: {CraftId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error retrieving craft", error = ex.Message });
+                    new ApiResponse<CraftDto>(500, $"Error retrieving craft: {ex.Message}"));
             }
         }
 
@@ -122,26 +123,26 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CraftDto>> GetCraftByName(string name)
+        public async Task<ActionResult<ApiResponse<CraftDto>>> GetCraftByName(string name)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(name))
-                    return BadRequest(new { message = "Craft name cannot be empty" });
+                    return BadRequest(new ApiResponse<CraftDto>(400, "Craft name cannot be empty"));
 
                 _logger.LogInformation("Getting craft by name: {CraftName}", name);
                 var craft = await _craftService.GetCraftByNameAsync(name);
 
                 if (craft == null)
-                    return NotFound(new { message = $"Craft with name '{name}' not found" });
+                    return NotFound(new ApiResponse<CraftDto>(404, $"Craft with name '{name}' not found"));
 
-                return Ok(craft);
+                return Ok(new ApiResponse<CraftDto>(200, "Craft retrieved successfully", craft));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving craft by name: {CraftName}", name);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error retrieving craft", error = ex.Message });
+                    new ApiResponse<CraftDto>(500, $"Error retrieving craft: {ex.Message}"));
             }
         }
 
@@ -157,12 +158,12 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<CraftDto>> CreateCraft([FromForm] CreateCraftDto createCraftDto, IFormFile? iconFile)
+        public async Task<ActionResult<ApiResponse<CraftDto>>> CreateCraft([FromForm] CreateCraftDto createCraftDto, IFormFile? iconFile)
         {
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new ApiResponse<CraftDto>(400, "Invalid model state", null));
 
                 _logger.LogInformation("Creating craft: {CraftName}", createCraftDto.Name);
                 var createdCraft = await _craftService.CreateCraftAsync(createCraftDto);
@@ -182,18 +183,19 @@ namespace SalahlyProject.Controllers
                     }
                 }
 
-                return CreatedAtAction(nameof(GetCraftById), new { id = createdCraft.Id }, createdCraft);
+                return CreatedAtAction(nameof(GetCraftById), new { id = createdCraft.Id }, 
+                    new ApiResponse<CraftDto>(201, "Craft created successfully", createdCraft));
             }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Conflict while creating craft: {CraftName}", createCraftDto.Name);
-                return Conflict(new { message = ex.Message });
+                return Conflict(new ApiResponse<CraftDto>(409, ex.Message));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating craft: {CraftName}", createCraftDto.Name);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error creating craft", error = ex.Message });
+                    new ApiResponse<CraftDto>(500, $"Error creating craft: {ex.Message}"));
             }
         }
 
@@ -211,18 +213,18 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<CraftDto>> UpdateCraft(int id, [FromForm] UpdateCraftDto updateCraftDto, IFormFile? iconFile)
+        public async Task<ActionResult<ApiResponse<CraftDto>>> UpdateCraft(int id, [FromForm] UpdateCraftDto updateCraftDto, IFormFile? iconFile)
         {
             try
             {
                 if (id <= 0)
-                    return BadRequest(new { message = "Invalid craft ID" });
+                    return BadRequest(new ApiResponse<CraftDto>(400, "Invalid craft ID"));
 
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new ApiResponse<CraftDto>(400, "Invalid model state", null));
 
                 if (updateCraftDto.Id != id)
-                    return BadRequest(new { message = "ID in URL does not match ID in request body" });
+                    return BadRequest(new ApiResponse<CraftDto>(400, "ID in URL does not match ID in request body"));
 
                 _logger.LogInformation("Updating craft with ID: {CraftId}", id);
                 var updatedCraft = await _craftService.UpdateCraftAsync(updateCraftDto);
@@ -260,23 +262,23 @@ namespace SalahlyProject.Controllers
                     }
                 }
 
-                return Ok(updatedCraft);
+                return Ok(new ApiResponse<CraftDto>(200, "Craft updated successfully", updatedCraft));
             }
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Craft not found for update: {CraftId}", id);
-                return NotFound(new { message = ex.Message });
+                return NotFound(new ApiResponse<CraftDto>(404, ex.Message));
             }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Conflict while updating craft: {CraftId}", id);
-                return Conflict(new { message = ex.Message });
+                return Conflict(new ApiResponse<CraftDto>(409, ex.Message));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating craft with ID: {CraftId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error updating craft", error = ex.Message });
+                    new ApiResponse<CraftDto>(500, $"Error updating craft: {ex.Message}"));
             }
         }
 
@@ -291,34 +293,34 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> DeleteCraft(int id)
+        public async Task<ActionResult<ApiResponse<object>>> DeleteCraft(int id)
         {
             try
             {
                 if (id <= 0)
-                    return BadRequest(new { message = "Invalid craft ID" });
+                    return BadRequest(new ApiResponse<object>(400, "Invalid craft ID"));
                 var existingCraft = await _craftService.GetCraftByIdAsync(id);
                 _logger.LogInformation("Deleting craft with ID: {CraftId}", id);
                 await _craftService.DeleteCraftAsync(id);
                 await _fileUploadService.DeleteFileAsync(existingCraft.IconUrl ?? string.Empty);
 
-                return Ok(new { message = $"Craft with ID {id} successfully deleted" });
+                return Ok(new ApiResponse<object>(200, $"Craft with ID {id} successfully deleted", new { id }));
             }
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Craft not found for deletion: {CraftId}", id);
-                return NotFound(new { message = ex.Message });
+                return NotFound(new ApiResponse<object>(404, ex.Message));
             }
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning(ex, "Cannot delete craft due to business rule: {CraftId}", id);
-                return Conflict(new { message = ex.Message });
+                return Conflict(new ApiResponse<object>(409, ex.Message));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting craft with ID: {CraftId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error deleting craft", error = ex.Message });
+                    new ApiResponse<object>(500, $"Error deleting craft: {ex.Message}"));
             }
         }
 
@@ -333,28 +335,28 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CraftDto>> ToggleCraftStatus(int id, [FromQuery] bool isActive)
+        public async Task<ActionResult<ApiResponse<CraftDto>>> ToggleCraftStatus(int id, [FromQuery] bool isActive)
         {
             try
             {
                 if (id <= 0)
-                    return BadRequest(new { message = "Invalid craft ID" });
+                    return BadRequest(new ApiResponse<CraftDto>(400, "Invalid craft ID"));
 
                 _logger.LogInformation("Toggling craft status - ID: {CraftId}, IsActive: {IsActive}", id, isActive);
                 var updatedCraft = await _craftService.ToggleCraftActiveStatusAsync(id, isActive);
 
-                return Ok(updatedCraft);
+                return Ok(new ApiResponse<CraftDto>(200, "Craft status toggled successfully", updatedCraft));
             }
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Craft not found for status toggle: {CraftId}", id);
-                return NotFound(new { message = ex.Message });
+                return NotFound(new ApiResponse<CraftDto>(404, ex.Message));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error toggling craft status: {CraftId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error updating craft status", error = ex.Message });
+                    new ApiResponse<CraftDto>(500, $"Error updating craft status: {ex.Message}"));
             }
         }
 
@@ -367,23 +369,23 @@ namespace SalahlyProject.Controllers
         [HttpGet("check-name-unique")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<object>> CheckNameUnique([FromQuery] string name, [FromQuery] int? excludeId = null)
+        public async Task<ActionResult<ApiResponse<object>>> CheckNameUnique([FromQuery] string name, [FromQuery] int? excludeId = null)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(name))
-                    return BadRequest(new { message = "Craft name cannot be empty" });
+                    return BadRequest(new ApiResponse<object>(400, "Craft name cannot be empty"));
 
                 _logger.LogInformation("Checking craft name uniqueness: {CraftName}", name);
                 var isUnique = await _craftService.IsCraftNameUniqueAsync(name, excludeId);
 
-                return Ok(new { isUnique, message = isUnique ? "Name is available" : "Name is already taken" });
+                return Ok(new ApiResponse<object>(200, isUnique ? "Name is available" : "Name is already taken", new { isUnique }));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error checking craft name uniqueness");
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error checking name uniqueness", error = ex.Message });
+                    new ApiResponse<object>(500, $"Error checking name uniqueness: {ex.Message}"));
             }
         }
     }

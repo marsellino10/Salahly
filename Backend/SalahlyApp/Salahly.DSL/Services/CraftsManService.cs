@@ -5,6 +5,7 @@ using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.DTOs.PortfolioDtos;
+using Salahly.DSL.Filters;
 using Salahly.DSL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -196,6 +197,34 @@ namespace Salahly.DSL.Services
 
             return await GetByIdAsync(craftsmanId)!
                    ?? throw new InvalidOperationException("Failed to retrieve updated craftsman");
+        }
+
+        /// <summary>
+        /// Get all craftsmen with filtering and pagination support
+        /// </summary>
+        public async Task<PaginatedResponse<CraftsmanDto>> GetAllWithFiltersAsync(CraftsmanFilterDto filter)
+        {
+            if (filter == null)
+                throw new ArgumentNullException(nameof(filter));
+
+            _logger.LogInformation("Getting craftsmen with filters - SearchName: {SearchName}, CraftId: {CraftId}, AreaId: {AreaId}, PageNumber: {PageNumber}, PageSize: {PageSize}",
+                filter.SearchName, filter.CraftId, filter.AreaId, filter.PageNumber, filter.PageSize);
+
+            // Get base query
+            var query = await _unitOfWork.Craftsmen.GetAllAsync();
+
+            // Apply filters and pagination
+            var paginatedCraftsmen = await ApplyFilters.ApplyAsync(query, filter);
+
+            // Map entities to DTOs
+            var dtos = paginatedCraftsmen.Items.Select(c => MapToDto(c)).ToList();
+
+            // Return paginated response with DTOs
+            return new PaginatedResponse<CraftsmanDto>(
+                dtos,
+                paginatedCraftsmen.TotalCount,
+                paginatedCraftsmen.PageNumber,
+                paginatedCraftsmen.PageSize);
         }
 
         // Helper mapper

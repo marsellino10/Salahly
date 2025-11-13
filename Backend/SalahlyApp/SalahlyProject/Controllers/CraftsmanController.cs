@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using SalahlyProject.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using SalahlyProject.Response;
+using Salahly.DSL.Filters;
 
 namespace SalahlyProject.Controllers
 {
@@ -29,24 +31,40 @@ namespace SalahlyProject.Controllers
         }
 
         /// <summary>
-        /// Get all craftsmen
+        /// Get all craftsmen with optional filtering and pagination
         /// </summary>
+        /// <param name="searchName">Search by craftsman full name (partial match)</param>
+        /// <param name="craftId">Filter by craft ID</param>
+        /// <param name="areaId">Filter by service area ID</param>
+        /// <param name="isAvailable">Filter by availability status</param>
+        /// <param name="minRating">Minimum rating average (0-5)</param>
+        /// <param name="maxHourlyRate">Maximum hourly rate</param>
+        /// <param name="pageNumber">Page number (default: 1)</param>
+        /// <param name="pageSize">Number of items per page (default: 10, max: 100)</param>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CraftsmanDto>>> GetAll()
+        public async Task<ActionResult<ApiResponse<PaginatedResponse<CraftsmanDto>>>> GetAll([FromQuery] CraftsmanFilterDto craftmanFilter)
         {
             try
             {
-                _logger.LogInformation("Getting all craftsmen");
-                var list = await _service.GetAllAsync();
-                return Ok(list);
+                _logger.LogInformation("Getting all craftsmen with filters - SearchName: {SearchName}, CraftId: {CraftId}, AreaId: {AreaId}, PageNumber: {PageNumber}, PageSize: {PageSize}",
+                    craftmanFilter.SearchName, craftmanFilter.CraftId, craftmanFilter.AreaId, craftmanFilter.PageNumber, craftmanFilter.PageSize);
+
+
+                // Get filtered and paginated results
+                var result = await _service.GetAllWithFiltersAsync(craftmanFilter);
+
+                return Ok(new ApiResponse<PaginatedResponse<CraftsmanDto>>(
+                    200,
+                    "Craftsmen retrieved successfully",
+                    result));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving craftsmen");
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error retrieving craftsmen", error = ex.Message });
+                    new ApiResponse<PaginatedResponse<CraftsmanDto>>(500, $"Error retrieving craftsmen: {ex.Message}"));
             }
         }
 
@@ -57,25 +75,25 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CraftsmanDto>> Get(int id)
+        public async Task<ActionResult<ApiResponse<CraftsmanDto>>> Get(int id)
         {
             try
             {
                 if (id <= 0)
-                    return BadRequest(new { message = "Invalid craftsman ID" });
+                    return BadRequest(new ApiResponse<CraftsmanDto>(400, "Invalid craftsman ID"));
 
                 _logger.LogInformation("Getting craftsman with ID: {CraftsmanId}", id);
                 var item = await _service.GetByIdAsync(id);
                 if (item == null)
-                    return NotFound(new { message = $"Craftsman with ID {id} not found" });
+                    return NotFound(new ApiResponse<CraftsmanDto>(404, $"Craftsman with ID {id} not found"));
 
-                return Ok(item);
+                return Ok(new ApiResponse<CraftsmanDto>(200, "Craftsman retrieved successfully", item));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving craftsman with ID: {CraftsmanId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error retrieving craftsman", error = ex.Message });
+                    new ApiResponse<CraftsmanDto>(500, $"Error retrieving craftsman: {ex.Message}"));
             }
         }
 
@@ -87,12 +105,12 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CraftsmanDto>> Create([FromForm] CreateCraftsmanDto dto, IFormFile? profileImage, [FromForm] string? serviceAreasJson)
+        public async Task<ActionResult<ApiResponse<CraftsmanDto>>> Create([FromForm] CreateCraftsmanDto dto, IFormFile? profileImage, [FromForm] string? serviceAreasJson)
         {
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new ApiResponse<CraftsmanDto>(400, "Invalid model state", null));
 
                 _logger.LogInformation("Creating craftsman with name: {FullName}", dto.FullName);
 
@@ -111,7 +129,7 @@ namespace SalahlyProject.Controllers
                     catch (JsonException ex)
                     {
                         _logger.LogWarning(ex, "Invalid JSON format for serviceAreasJson");
-                        return BadRequest(new { message = "Invalid JSON format for serviceAreasJson", error = ex.Message });
+                        return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Invalid JSON format for serviceAreasJson: {ex.Message}"));
                     }
                 }
 
@@ -136,23 +154,24 @@ namespace SalahlyProject.Controllers
                     }
                 }
 
-                return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+                return CreatedAtAction(nameof(Get), new { id = created.Id }, 
+                    new ApiResponse<CraftsmanDto>(201, "Craftsman created successfully", created));
             }
             catch (ArgumentNullException ex)
             {
                 _logger.LogWarning(ex, "Invalid input for craftsman creation");
-                return BadRequest(new { message = "Invalid input", error = ex.Message });
+                return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Invalid input: {ex.Message}"));
             }
             catch (ArgumentException ex)
             {
                 _logger.LogWarning(ex, "Validation error during craftsman creation");
-                return BadRequest(new { message = "Validation error", error = ex.Message });
+                return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Validation error: {ex.Message}"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating craftsman");
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error creating craftsman", error = ex.Message });
+                    new ApiResponse<CraftsmanDto>(500, $"Error creating craftsman: {ex.Message}"));
             }
         }
 
@@ -165,18 +184,18 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CraftsmanDto>> Update(int id, [FromForm] UpdateCraftsmanDto dto, IFormFile? profileImage, [FromForm] string? serviceAreasJson)
+        public async Task<ActionResult<ApiResponse<CraftsmanDto>>> Update(int id, [FromForm] UpdateCraftsmanDto dto, IFormFile? profileImage, [FromForm] string? serviceAreasJson)
         {
             try
             {
                 if (id <= 0)
-                    return BadRequest(new { message = "Invalid craftsman ID" });
+                    return BadRequest(new ApiResponse<CraftsmanDto>(400, "Invalid craftsman ID"));
 
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new ApiResponse<CraftsmanDto>(400, "Invalid model state", null));
 
                 if (id != dto.Id)
-                    return BadRequest(new { message = "ID in URL does not match ID in request body" });
+                    return BadRequest(new ApiResponse<CraftsmanDto>(400, "ID in URL does not match ID in request body"));
 
                 _logger.LogInformation("Updating craftsman with ID: {CraftsmanId}", id);
 
@@ -195,7 +214,7 @@ namespace SalahlyProject.Controllers
                     catch (JsonException ex)
                     {
                         _logger.LogWarning(ex, "Invalid JSON format for serviceAreasJson");
-                        return BadRequest(new { message = "Invalid JSON format for serviceAreasJson", error = ex.Message });
+                        return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Invalid JSON format for serviceAreasJson: {ex.Message}"));
                     }
                 }
 
@@ -207,7 +226,7 @@ namespace SalahlyProject.Controllers
                         // Get existing craftsman to retrieve old profile image URL
                         var existingCraftsman = await _service.GetByIdAsync(id);
                         if (existingCraftsman == null)
-                            return NotFound(new { message = $"Craftsman with ID {id} not found" });
+                            return NotFound(new ApiResponse<CraftsmanDto>(404, $"Craftsman with ID {id} not found"));
 
                         // Delete old profile image if it exists
                         if (!string.IsNullOrWhiteSpace(existingCraftsman.ProfileImageUrl))
@@ -238,23 +257,23 @@ namespace SalahlyProject.Controllers
 
                 // Update craftsman properties
                 var updated = await _service.UpdateAsync(dto);
-                return Ok(updated);
+                return Ok(new ApiResponse<CraftsmanDto>(200, "Craftsman updated successfully", updated));
             }
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Craftsman not found for update: {CraftsmanId}", id);
-                return NotFound(new { message = ex.Message });
+                return NotFound(new ApiResponse<CraftsmanDto>(404, ex.Message));
             }
             catch (ArgumentException ex)
             {
                 _logger.LogWarning(ex, "Validation error during craftsman update");
-                return BadRequest(new { message = "Validation error", error = ex.Message });
+                return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Validation error: {ex.Message}"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating craftsman with ID: {CraftsmanId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error updating craftsman", error = ex.Message });
+                    new ApiResponse<CraftsmanDto>(500, $"Error updating craftsman: {ex.Message}"));
             }
         }
 
@@ -266,19 +285,19 @@ namespace SalahlyProject.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult<ApiResponse<object>>> Delete(int id)
         {
             try
             {
                 if (id <= 0)
-                    return BadRequest(new { message = "Invalid craftsman ID" });
+                    return BadRequest(new ApiResponse<object>(400, "Invalid craftsman ID"));
 
                 _logger.LogInformation("Deleting craftsman with ID: {CraftsmanId}", id);
 
                 // Get existing craftsman to retrieve profile and portfolio images
                 var existingCraftsman = await _service.GetByIdAsync(id);
                 if (existingCraftsman == null)
-                    return NotFound(new { message = $"Craftsman with ID {id} not found" });
+                    return NotFound(new ApiResponse<object>(404, $"Craftsman with ID {id} not found"));
 
                 // Delete profile image
                 if (!string.IsNullOrWhiteSpace(existingCraftsman.ProfileImageUrl))
@@ -319,18 +338,18 @@ namespace SalahlyProject.Controllers
                 // Delete craftsman from database
                 await _service.DeleteAsync(id);
 
-                return Ok(new { message = $"Craftsman with ID {id} successfully deleted" });
+                return Ok(new ApiResponse<object>(200, $"Craftsman with ID {id} successfully deleted", new { id }));
             }
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Craftsman not found for deletion: {CraftsmanId}", id);
-                return NotFound(new { message = ex.Message });
+                return NotFound(new ApiResponse<object>(404, ex.Message));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting craftsman with ID: {CraftsmanId}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error deleting craftsman", error = ex.Message });
+                    new ApiResponse<object>(500, $"Error deleting craftsman: {ex.Message}"));
             }
         }
     }
