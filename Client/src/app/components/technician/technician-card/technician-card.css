@@ -1,0 +1,161 @@
+.provider-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.provider-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Provider Avatar Section */
+.provider-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.provider-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-initials {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.provider-basic-info {
+  flex: 1;
+}
+
+.provider-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.25rem 0;
+}
+
+.provider-profession {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+/* Provider Details */
+.provider-details {
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.detail-icon {
+  color: #6b7280;
+  font-size: 0.875rem;
+  width: 16px;
+}
+
+.detail-text {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.stars i {
+  font-size: 0.875rem;
+}
+
+.star-filled {
+  color: #fbbf24;
+}
+
+.star-empty {
+  color: #d1d5db;
+}
+
+.rating-text {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+/* Provider Description */
+.provider-description {
+  margin-bottom: 1.5rem;
+}
+
+.description-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Provider Footer */
+.provider-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.pricing-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.hourly-rate-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.hourly-rate-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #6366f1;
+}
+
+.view-profile-btn {
+  background-color: #1f2937;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.view-profile-btn:hover {
+  background-color: #374151;
+}

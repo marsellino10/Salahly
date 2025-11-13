@@ -1,0 +1,34 @@
+<div class="browse-technicians-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="page-title">Browse Service Providers</h1>
+    <p class="page-subtitle">Find the perfect professional for your needs</p>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <app-technician-filter></app-technician-filter>
+
+  <!-- Results Count -->
+  <div class="results-info">
+    <p class="results-count">Showing {{ filteredCraftsmen.length }} craftsmen</p>
+  </div>
+
+  <!-- Craftsmen Grid -->
+  <div class="providers-grid">
+    @for (craftsman of filteredCraftsmen; track $index) {
+      <app-technician-card [craftsman]="craftsman"></app-technician-card>
+    }
+    
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="filteredCraftsmen.length === 0" class="empty-state">
+    <div class="empty-state-content">
+      <i class="bi bi-search empty-state-icon"></i>
+      <h3 class="empty-state-title">No craftsmen found</h3>
+      <p class="empty-state-message">
+        Try adjusting your search criteria or browse all categories
+      </p>
+    </div>
+  </div>
+</div>

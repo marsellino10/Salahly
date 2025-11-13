@@ -1,0 +1,65 @@
+<div
+      class="provider-card"
+    >
+      <!-- Craftsman Avatar -->
+      <div class="provider-avatar-section">
+        <div
+          class="provider-avatar"
+          style="background-color: #6366f1"
+        >
+          <span class="avatar-initials">{{ getInitials(craftsman.fullName) }}</span>
+        </div>
+        <div class="provider-basic-info">
+          <h3 class="provider-name">{{ craftsman.fullName }}</h3>
+          <p class="provider-profession">{{ craftsman.fullName }}</p>
+        </div>
+      </div>
+
+      <!-- Craftsman Details -->
+      <div class="provider-details">
+        <div class="detail-item">
+          <i class="bi bi-geo-alt detail-icon"></i>
+          <span class="detail-text">{{ getLocation(craftsman) }}</span>
+        </div>
+        
+        <div class="detail-item">
+          <i class="bi bi-clock detail-icon"></i>
+          <span class="detail-text">{{ craftsman.yearsOfExperience || 0 }} years experience</span>
+        </div>
+        
+        <div class="rating-section">
+          <div class="stars">
+            @for (star of getStarArray(craftsman.ratingAverage); track $index) {
+              <i
+                class="bi"
+                [class.bi-star-fill]="star"
+                [class.bi-star]="!star"
+              [class.star-filled]="star"
+              [class.star-empty]="!star"
+            ></i>
+            }
+          </div>
+          <span class="rating-text">{{ craftsman.ratingAverage }} ({{ craftsman.totalCompletedBookings }} bookings)</span>
+        </div>
+      </div>
+
+      <!-- Craftsman Description -->
+      <div class="provider-description">
+        <p class="description-text">{{ craftsman.bio || 'No description available' }}</p>
+      </div>
+
+      <!-- Pricing and Action -->
+      <div class="provider-footer">
+        <div class="pricing-section">
+          <span class="hourly-rate-label">Hourly Rate</span>
+          <span class="hourly-rate-value">{{ craftsman.hourlyRate || 0 }} SAR/hr</span>
+        </div>
+        
+        <button
+          class="view-profile-btn"
+          (click)="viewProfile(craftsman.id)"
+        >
+          View Profile
+        </button>
+      </div>
+    </div>
