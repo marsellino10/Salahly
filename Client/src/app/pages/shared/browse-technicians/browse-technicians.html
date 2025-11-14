@@ -14,11 +14,15 @@
   </div>
 
   <!-- Craftsmen Grid -->
-  <div class="providers-grid">
+  <div class="providers-grid"
+    infiniteScroll
+    [infiniteScrollDistance]="1"
+    [infiniteScrollThrottle]="300"
+    (scrolled)="onScrollDown()"
+  >
     @for (craftsman of filteredCraftsmen; track $index) {
       <app-technician-card [craftsman]="craftsman"></app-technician-card>
     }
-    
   </div>
 
   <!-- Empty State -->

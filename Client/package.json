@@ -39,6 +39,7 @@
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "express": "^5.1.0",
+    "ngx-infinite-scroll": "^20.0.0",
     "ngx-owl-carousel-o": "^20.0.1",
     "ngx-spinner": "^19.0.0",
     "ngx-toastr": "^19.1.0",

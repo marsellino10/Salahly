@@ -19,7 +19,21 @@
       <div class="provider-details">
         <div class="detail-item">
           <i class="bi bi-geo-alt detail-icon"></i>
-          <span class="detail-text">{{ getLocation(craftsman) }}</span>
+          <span class="detail-text">
+            @if (craftsman.serviceAreas.length > 0) {
+              @for (area of craftsman.serviceAreas; track $index) {
+                @if ($last) {
+                  <span class="detail-text">{{ area.city }}, {{ area.region }}</span>
+                }
+                @else {
+                  <span class="detail-text">{{ area.city }}, {{ area.region }} | </span>
+                }
+              }
+            }
+            @else {
+              <span class="detail-text">Location not specified</span>
+            }
+          </span>
         </div>
         
         <div class="detail-item">
@@ -52,7 +66,7 @@
       <div class="provider-footer">
         <div class="pricing-section">
           <span class="hourly-rate-label">Hourly Rate</span>
-          <span class="hourly-rate-value">{{ craftsman.hourlyRate || 0 }} SAR/hr</span>
+          <span class="hourly-rate-value">{{ craftsman.hourlyRate?.toFixed(2) || 0 }} EGP</span>
         </div>
         
         <button

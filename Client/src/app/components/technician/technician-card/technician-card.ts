@@ -11,14 +11,6 @@ export class TechnicianCard {
   @Input() craftsman!: Craftsman;
 
 
-  getLocation(craftsman: Craftsman): string {
-    if (craftsman.serviceAreas.length > 0) {
-      const area = craftsman.serviceAreas[0];
-      return `${area.city}, ${area.region}`;
-    }
-    return 'Location not specified';
-  }
-
   getInitials(fullName: string): string {
     return fullName.split(' ').map(name => name.charAt(0)).join('').toUpperCase();
   }

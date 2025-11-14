@@ -1,19 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Craft } from '../../../core/models/Craft';
 import { Craftsman } from '../../../core/models/Craftman';
 import { TechnicianCard } from "../../../components/technician/technician-card/technician-card";
 import { TechnicianFilter } from '../../../components/shared/technician-filter/technician-filter';
-
+import { TechnicianService } from '../../../core/services/technician-service';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 @Component({
   selector: 'app-browse-technicians',
-  imports: [CommonModule, FormsModule, TechnicianCard, TechnicianFilter],
+  imports: [CommonModule, FormsModule, TechnicianCard, TechnicianFilter,InfiniteScrollDirective],
   templateUrl: './browse-technicians.html',
   styleUrl: './browse-technicians.css',
 })
 export class BrowseTechnicians implements OnInit {
-  
+
+  private readonly _TechnicianService: TechnicianService = inject(TechnicianService);
+  craftsTotalCount: number = 0;
+  pageNumber: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 0;
+  hasNextPage!: boolean;
+  hasPreviousPage!: boolean;
+  isLoading = false;
   crafts: Craft[] = [
     {
       id: 0,
@@ -61,83 +70,39 @@ export class BrowseTechnicians implements OnInit {
     }
   ];
   
-  craftsmen: Craftsman[] = [
-    {
-      id: 1,
-      fullName: 'Khalid Abdullah',
-      craftId: 1,
-      ratingAverage: 4.9,
-      totalCompletedBookings: 68,
-      isAvailable: true,
-      hourlyRate: 140,
-      bio: 'Expert plumber with over 12 years of experience. Specialized in pipe repairs, water heater installation, and emergency plumbing services.',
-      yearsOfExperience: 12,
-      verifiedAt: '2023-01-15T10:00:00Z',
-      profileImageUrl: null,
-      portfolio: [],
-      serviceAreas: [
-        {
-          areaId: 1,
-          region: 'Western Region',
-          city: 'Jeddah',
-          serviceRadiusKm: 25,
-          isActive: true
-        }
-      ]
-    },
-    {
-      id: 2,
-      fullName: 'Faisal Al-Ghamdi',
-      craftId: 3,
-      ratingAverage: 4.9,
-      totalCompletedBookings: 51,
-      isAvailable: true,
-      hourlyRate: 160,
-      bio: 'HVAC specialist with 9 years of experience in air conditioning installation, maintenance, and repair services.',
-      yearsOfExperience: 9,
-      verifiedAt: '2023-02-20T10:00:00Z',
-      profileImageUrl: null,
-      portfolio: [],
-      serviceAreas: [
-        {
-          areaId: 2,
-          region: 'Central Region',
-          city: 'Riyadh',
-          serviceRadiusKm: 30,
-          isActive: true
-        }
-      ]
-    },
-    {
-      id: 3,
-      fullName: 'Ahmed Hassan',
-      craftId: 2,
-      ratingAverage: 4.8,
-      totalCompletedBookings: 42,
-      isAvailable: true,
-      hourlyRate: 150,
-      bio: 'Certified electrician with 8 years of experience in residential and commercial electrical work.',
-      yearsOfExperience: 8,
-      verifiedAt: '2023-03-10T10:00:00Z',
-      profileImageUrl: null,
-      portfolio: [],
-      serviceAreas: [
-        {
-          areaId: 2,
-          region: 'Central Region',
-          city: 'Riyadh',
-          serviceRadiusKm: 20,
-          isActive: true
-        }
-      ]
-    }
-  ];
+  craftsmen: Craftsman[] = [];
 
   filteredCraftsmen: Craftsman[] = [];
 
   ngOnInit(): void {
-    this.filteredCraftsmen = [...this.craftsmen];
+    this.GetTechnicians();
   }
 
+  GetTechnicians(PageNumber: number = 1,PageSize: number = 3): void {
+    this._TechnicianService.getTechnicians(PageNumber,PageSize).subscribe((data) => {
+      console.log(data);
+      this.craftsmen = [...this.craftsmen,...data.data.items];
+      this.craftsTotalCount = data.data.totalCount;
+      this.pageNumber = data.data.pageNumber;
+      this.pageSize = data.data.pageSize;
+      this.totalPages = data.data.totalPages;
+      this.hasNextPage = data.data.hasNextPage;
+      this.hasPreviousPage = data.data.hasPreviousPage;
+      this.filteredCraftsmen = [...this.craftsmen];
+      this.isLoading = false;
+    });
+  }
 
+  loadResults() {
+    if (this.isLoading || !this.hasNextPage) return;
+    this.isLoading = true;
+    this.GetTechnicians(this.pageNumber + 1, this.pageSize);
+    
+  }
+onScrollDown() {
+    // this._Router.queryParams.subscribe((params: any) => {
+    //   this.loadResults(params);
+    // });
+    this.loadResults();
+  }
 }
