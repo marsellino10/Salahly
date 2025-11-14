@@ -29,6 +29,9 @@ namespace Salahly.DSL.DTOs
 
     public class CreateCraftsmanDto
     {
+        //[Required]
+        public int UserId { get; set; }
+
         [Required]
         public int CraftId { get; set; }
 
@@ -42,10 +45,21 @@ namespace Salahly.DSL.DTOs
         public IEnumerable<AddServiceAreaDto> ServiceAreas { get; set; } = new List<AddServiceAreaDto>();
     }
 
-    public class UpdateCraftsmanDto : CreateCraftsmanDto
+    public class UpdateCraftsmanDto
     {
         [Required]
         public int Id { get; set; }
+        [Required]
+        public int CraftId { get; set; }
+
+        [Required]
+        public string FullName { get; set; }
+        public decimal? HourlyRate { get; set; }
+        public string? Bio { get; set; }
+        public int YearsOfExperience { get; set; }
+
+        // Service areas referenced by AreaId (pre-existing Area entity)
+        public IEnumerable<AddServiceAreaDto> ServiceAreas { get; set; } = new List<AddServiceAreaDto>();
     }
 
     public class AddServiceAreaDto

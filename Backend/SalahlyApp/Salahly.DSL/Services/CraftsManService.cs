@@ -55,9 +55,18 @@ namespace Salahly.DSL.Services
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
+            if (dto.UserId <= 0)
+                throw new ArgumentException("Invalid user ID", nameof(dto.UserId));
+
+            // Verify that the user exists
+            var user = await _unitOfWork.ApplicationUsers.GetByIdAsync(dto.UserId);
+            if (user == null)
+                throw new KeyNotFoundException($"User with ID {dto.UserId} not found.");
+
             // Map DTO to entity
             var craftsman = new Craftsman
             {
+                Id = dto.UserId,
                 CraftId = dto.CraftId,
                 Bio = dto.Bio,
                 YearsOfExperience = dto.YearsOfExperience,

@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using SalahlyProject.Response;
 using Salahly.DSL.Filters;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace SalahlyProject.Controllers
 {
@@ -100,6 +102,7 @@ namespace SalahlyProject.Controllers
         /// <summary>
         /// Create a new craftsman with optional profile image and service areas
         /// </summary>
+        [Authorize(Roles ="Craftsman")]
         [HttpPost]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -109,10 +112,7 @@ namespace SalahlyProject.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(new ApiResponse<CraftsmanDto>(400, "Invalid model state", null));
-
-                _logger.LogInformation("Creating craftsman with name: {FullName}", dto.FullName);
+                _logger.LogInformation("Creating craftsman with UserId: {UserId}, CraftId: {CraftId}", dto.UserId, dto.CraftId);
 
                 // Deserialize serviceAreasJson if provided
                 if (!string.IsNullOrWhiteSpace(serviceAreasJson))
@@ -132,7 +132,10 @@ namespace SalahlyProject.Controllers
                         return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Invalid JSON format for serviceAreasJson: {ex.Message}"));
                     }
                 }
-
+                dto.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (dto.UserId <= 0) {
+                    return BadRequest(new ApiResponse<CraftsmanDto>(400, "Invalid UserId in token"));
+                }
                 // Create the craftsman first
                 var created = await _service.CreateAsync(dto);
 
@@ -166,6 +169,11 @@ namespace SalahlyProject.Controllers
             {
                 _logger.LogWarning(ex, "Validation error during craftsman creation");
                 return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Validation error: {ex.Message}"));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "User not found for craftsman creation");
+                return NotFound(new ApiResponse<CraftsmanDto>(404, $"User not found: {ex.Message}"));
             }
             catch (Exception ex)
             {

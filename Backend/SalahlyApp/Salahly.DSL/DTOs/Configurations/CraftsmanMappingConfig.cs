@@ -33,6 +33,7 @@ namespace Salahly.DSL.DTOs.Configurations
 
             // CreateCraftsmanDto to Craftsman
             config.NewConfig<CreateCraftsmanDto, Craftsman>()
+                //.Map(dest => dest.Id, src => src.UserId)
                 .Map(dest => dest.CraftId, src => src.CraftId)
                 .Map(dest => dest.Bio, src => src.Bio)
                 .Map(dest => dest.YearsOfExperience, src => src.YearsOfExperience)
