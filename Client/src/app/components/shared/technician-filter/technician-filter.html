@@ -7,25 +7,53 @@
       <input 
         type="text" 
         class="search-input" 
-        placeholder="Search by name, location, or service..."
+        placeholder="{{ 'Filter.Search by name, location, or service...' | translate }}"
         [(ngModel)]="searchQuery"
-        (input)="onFiltersChange()"
       />
     </div>
-
-    <!-- Category Filter -->
+    <!-- Region Filter -->
     <div class="filter-select">
       <select 
         class="select-input" 
-        [(ngModel)]="selectedCategory"
-        (change)="onFiltersChange()"
+        [(ngModel)]="selectedRegion"
+        (change)="OnRegionChange(selectedRegion)"
       >
-        <option value="">All Services</option>
-        @for (cat of categories; track $index) {
-          <option [value]="cat.id">{{ cat.name }}</option>
+        <option value="">{{ 'Filter.All Regions' | translate }}</option>
+        @for (region of regions; track $index) {
+          <option [value]="region">{{ region }}</option>
         }
       </select>
       <i class="bi bi-chevron-down select-arrow"></i>
     </div>
+    <!-- City Filter -->
+    <div class="filter-select">
+      <select 
+        class="select-input" 
+        [(ngModel)]="selectedCity"
+        (change)="OnCityChange(selectedCity)"
+      >
+        <option value="">{{ 'Filter.All Cities' | translate }}</option>
+        @for (city of cities; track $index) {
+          <option [value]="city">{{ city }}</option>
+        }
+      </select>
+      <i class="bi bi-chevron-down select-arrow"></i>
+    </div>
+    <!-- Category Filter -->
+    <div class="filter-select">
+      <select 
+        class="select-input" 
+        [(ngModel)]="selectedCraftId"
+      >
+        <option value="0">{{ 'Filter.All Services' | translate }}</option>
+        @for (craft of crafts; track $index) {
+          <option [value]="craft.id">{{ craft.name }}</option>
+        }
+      </select>
+      <i class="bi bi-chevron-down select-arrow"></i>
+    </div>
+    <button class="search-button" (click)="onSubmit()">
+      <span class="me-1">{{ 'Filter.Search' | translate }}</span>
+    </button>
   </div>
 </div>

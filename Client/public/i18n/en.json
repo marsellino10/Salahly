@@ -125,5 +125,23 @@
     "Enter area":"Enter area",
     "Remove":"Remove",
     "Add Another Service Area":"Add Another Service Area"
+  },
+  "BrowseTechnicians":{
+    "Browse Service Providers":"Browse Service Providers",
+    "Find the perfect professional for your needs":"Find the perfect professional for your needs",
+    "Showing":"Showing",
+    "craftsmen":"craftsmen",
+    "No craftsmen found":"No craftsmen found",
+    "Try adjusting your search criteria or browse all categories":"Try adjusting your search criteria or browse all categories"
+  },
+  "Filter":{
+    "Search by name, location, or service...":"Search by name, location, or service...",
+    "All Regions":"All Regions",
+    "Select Region":"Select Region",
+    "All Cities":"All Cities",
+    "Select City":"Select City",
+    "All Services":"All Services",
+    "Select Service":"Select Service",
+    "Search":"Search"
   }
 }

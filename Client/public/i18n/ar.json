@@ -125,5 +125,23 @@
     "Enter area":"أدخل المنطقة",
     "Remove":"إزالة",
     "Add Another Service Area":"إضافة منطقة خدمة أخرى"
+  },
+  "BrowseTechnicians":{
+    "Browse Service Providers":"استكشاف مقدمي الخدمات",
+    "Find the perfect professional for your needs":"ابحث عن مقدمي الخدمات الموثقين",
+    "Showing":"عرض",
+    "craftsmen":"مقدمي الخدمات",
+    "No craftsmen found":"لم يتم العثور على مقدمي الخدمات",
+    "Try adjusting your search criteria or browse all categories":"حاول تعديل معأئر البحث أو استكشاف جميع الفئات"
+  },
+  "Filter":{
+    "Search by name, location, or service...":"بحث بالاسم، الموقع، أو الخدمة...",
+    "All Regions":"جميع المناطق",
+    "Select Region":"اختر منطقة",
+    "All Cities":"جميع المدن",
+    "Select City":"اختر مدينة",
+    "All Services":"جميع الخدمات",
+    "Select Service":"اختر خدمة",
+    "Search":"بحث"
   }
 }

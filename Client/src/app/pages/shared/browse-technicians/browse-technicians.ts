@@ -7,15 +7,18 @@ import { TechnicianCard } from "../../../components/technician/technician-card/t
 import { TechnicianFilter } from '../../../components/shared/technician-filter/technician-filter';
 import { TechnicianService } from '../../../core/services/technician-service';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-browse-technicians',
-  imports: [CommonModule, FormsModule, TechnicianCard, TechnicianFilter,InfiniteScrollDirective],
+  imports: [CommonModule, FormsModule, TechnicianCard, TechnicianFilter,InfiniteScrollDirective,TranslateModule],
   templateUrl: './browse-technicians.html',
   styleUrl: './browse-technicians.css',
 })
 export class BrowseTechnicians implements OnInit {
 
   private readonly _TechnicianService: TechnicianService = inject(TechnicianService);
+  private readonly _Router: ActivatedRoute = inject(ActivatedRoute);
   craftsTotalCount: number = 0;
   pageNumber: number = 1;
   pageSize: number = 10;
@@ -70,25 +73,25 @@ export class BrowseTechnicians implements OnInit {
     }
   ];
   
-  craftsmen: Craftsman[] = [];
-
-  filteredCraftsmen: Craftsman[] = [];
+  craftsmans: Craftsman[] = [];
 
   ngOnInit(): void {
-    this.GetTechnicians();
+    this._Router.queryParams.subscribe((params: any) => {
+      this.GetTechnicians(this.pageNumber,this.pageSize,params.searchQuery,params.selectedCraftId,params.areaId,true);
+    });
+    // this.GetTechnicians();
   }
 
-  GetTechnicians(PageNumber: number = 1,PageSize: number = 3): void {
-    this._TechnicianService.getTechnicians(PageNumber,PageSize).subscribe((data) => {
+  GetTechnicians(PageNumber: number = 1,PageSize: number = 3,SearchName: string = '',CraftId: number = 0,AreaId: number = 0,IsAvailable: boolean = true): void {
+    this._TechnicianService.getTechnicians(PageNumber,PageSize,SearchName,CraftId,AreaId,IsAvailable).subscribe((data) => {
       console.log(data);
-      this.craftsmen = [...this.craftsmen,...data.data.items];
+      this.craftsmans = data.data.items;
       this.craftsTotalCount = data.data.totalCount;
       this.pageNumber = data.data.pageNumber;
       this.pageSize = data.data.pageSize;
       this.totalPages = data.data.totalPages;
       this.hasNextPage = data.data.hasNextPage;
       this.hasPreviousPage = data.data.hasPreviousPage;
-      this.filteredCraftsmen = [...this.craftsmen];
       this.isLoading = false;
     });
   }
