@@ -12,5 +12,6 @@ namespace Salahly.DSL.Interfaces
     {
         Task<CustomerResponseDto?> GetByIdAsync(int id, int currentCustomerId);
         Task<CustomerResponseDto?> UpdateAsync(int id, CustomerUpdateDto dto, int currentCustomerId);
+        Task<CustomerResponseDto?> CreateAsync(CreateCustomerDto dto);
     }
 }

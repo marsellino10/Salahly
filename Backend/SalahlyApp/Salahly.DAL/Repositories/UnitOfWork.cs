@@ -54,5 +54,10 @@ namespace Salahly.DAL.Repositories
         }
 
         public Task<int> SaveAsync(CancellationToken cancellationToken = default) => _context.SaveChangesAsync(cancellationToken);
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
     }
 }

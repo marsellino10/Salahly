@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Salahly.DAL.Interfaces
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork: IDisposable
     {
         IGenericRepository<Admin> Admins { get; }
         IGenericRepository<ApplicationUser> ApplicationUsers { get; }

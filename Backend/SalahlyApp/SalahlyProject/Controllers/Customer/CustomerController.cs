@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Salahly.DSL.DTOs;
+using Salahly.DSL.DTOs.CustomerDtos;
 using Salahly.DSL.Interfaces;
-using System.Security.Claims;
+using SalahlyProject.Response;
 
 namespace SalahlyProject.Controllers.Customer
 {
@@ -37,6 +39,33 @@ namespace SalahlyProject.Controllers.Customer
             if (result == null) return Unauthorized(new { message = "Access denied or customer not found." });
             return Ok(result);
         }
+        [HttpPost("create")]
+        public async Task<ActionResult<ApiResponse<CreateCustomerDto>>> CreateCustomer([FromForm] CreateCustomerDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            dto.UserId = userId;
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(new ApiResponse<string>(400, string.Join(", ", errors), null));
+            }
+
+            var createdCustomer = await _service.CreateAsync(dto);
+
+            if (createdCustomer == null)
+            {
+                return BadRequest(new ApiResponse<string>(400, "Failed to create customer", "false"));
+            }
+
+            return Ok(new ApiResponse<CustomerResponseDto>(200, "customer created successfully", createdCustomer));
+
+        }
+
     }
 
 }

@@ -1,4 +1,6 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
+using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.DTOs.CustomerDtos;
@@ -45,5 +47,22 @@ namespace Salahly.DSL.Services
 
             return customer.Adapt<CustomerResponseDto>();
         }
+        public async Task<CustomerResponseDto> CreateAsync(CreateCustomerDto dto)
+        {
+            var customer = new Customer
+            {
+                Id = int.Parse(dto.UserId),
+                Address = dto.Address,
+                City = dto.City,
+                Area = dto.Area,
+                PhoneNumber = dto.PhoneNumber,
+                DateOfBirth = dto.DateOfBirth
+            };
+            _unitOfWork.Customers.AddAsync(customer);
+            await _unitOfWork.SaveAsync();
+            dto.FullName = customer.User.FullName;
+            return customer.Adapt<CustomerResponseDto>();
+        }
+
     }
 }
