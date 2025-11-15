@@ -1,13 +1,10 @@
 ﻿using Salahly.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salahly.DAL.Interfaces
 {
-    public interface ICraftsmanOfferRepository : IGenericRepository<CraftsmanOffer>
+    public interface ICraftsmanOfferRepository 
     {
+        Task<IEnumerable<CraftsmanOffer>> GetOffersForCustomerRequestAsync(int requestId, int customerId);
+        Task<CraftsmanOffer?> GetOfferForCustomerByIdAsync(int offerId, int customerId);
     }
 }

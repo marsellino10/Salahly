@@ -15,7 +15,6 @@ namespace Salahly.DAL.Interfaces
         IGenericRepository<Booking> Bookings { get; }
         IGenericRepository<Craft> Crafts { get; }
         IGenericRepository<Craftsman> Craftsmen { get; }
-        IGenericRepository<CraftsmanOffer> CraftsmanOffers { get; }
         IGenericRepository<CraftsmanServiceArea> CraftsmanServiceAreas { get; }
         IGenericRepository<Customer> Customers { get; }
         IGenericRepository<Notification> Notifications { get; }
@@ -25,6 +24,7 @@ namespace Salahly.DAL.Interfaces
 
         IGenericRepository<Area> Areas { get; }
         IServiceRequestRepository ServiceRequests { get; }
+        ICraftsmanOfferRepository CraftsmanOffers { get; }
         Task<int> SaveAsync(CancellationToken cancellationToken = default);
     }
 

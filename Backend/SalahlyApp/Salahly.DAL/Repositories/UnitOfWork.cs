@@ -20,7 +20,7 @@ namespace Salahly.DAL.Repositories
         public IGenericRepository<Booking> Bookings { get; }
         public IGenericRepository<Craft> Crafts { get; }
         public IGenericRepository<Craftsman> Craftsmen { get; }
-        public IGenericRepository<CraftsmanOffer> CraftsmanOffers { get; }
+        public ICraftsmanOfferRepository CraftsmanOffers { get; }
         public IGenericRepository<CraftsmanServiceArea> CraftsmanServiceAreas { get; }
         public IGenericRepository<Customer> Customers { get; }
         public IGenericRepository<Notification> Notifications { get; }
@@ -41,7 +41,7 @@ namespace Salahly.DAL.Repositories
             Bookings = new GenericRepository<Booking>(_context);
             Crafts = new GenericRepository<Craft>(_context);
             Craftsmen = new GenericRepository<Craftsman>(_context);
-            CraftsmanOffers = new GenericRepository<CraftsmanOffer>(_context);
+            CraftsmanOffers = new CraftsmanOfferRepository(_context);
             CraftsmanServiceAreas = new GenericRepository<CraftsmanServiceArea>(_context);
             Customers = new GenericRepository<Customer>(_context);
             Notifications = new GenericRepository<Notification>(_context);
