@@ -1,8 +1,10 @@
 ﻿using Mapster;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
+using Salahly.DAL.Repositories;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
+using System.Text.Json;
 
 namespace Salahly.DSL.Services
 {
@@ -107,6 +109,94 @@ namespace Salahly.DSL.Services
 
             await _unitOfWork.SaveAsync();
             return request.Adapt<ServiceRequestResponseDto>();
+        }
+
+        public async Task<ServiceResponse<IEnumerable<ServiceRequestDto>>> GetRequestsWithCraftsmanOffersAsync(int craftsmanId)
+        {
+            try
+            {
+                var serviceRequests = await _unitOfWork.ServiceRequests
+                    .GetServiceRequestsWithCraftsmanOffersAsync(craftsmanId);
+
+                var serviceRequestDtos = serviceRequests
+                    .Select(sr => MapToDto(sr))
+                    .ToList();
+
+                if (!serviceRequestDtos.Any())
+                {
+                    return ServiceResponse<IEnumerable<ServiceRequestDto>>.FailureResponse(
+                        "This craftsman has not made any offers yet."
+                    );
+                }
+
+                return ServiceResponse<IEnumerable<ServiceRequestDto>>.SuccessResponse(
+                    serviceRequestDtos,
+                    $"Found {serviceRequestDtos.Count} service requests with offers from this craftsman."
+                );
+            }
+            catch (Exception ex)
+            {
+                return ServiceResponse<IEnumerable<ServiceRequestDto>>.FailureResponse(
+                    $"Error retrieving service requests with craftsman offers: {ex.Message}"
+                );
+            }
+        }
+
+        public async Task<ServiceResponse<ServiceRequestDto>> GetServiceRequestForCraftsmanAsync(int craftsmanId, int requestId)
+        {
+            try
+            {
+                var serviceRequest = await _unitOfWork.ServiceRequests
+                    .GetServiceRequestForCraftsmanByIdAsync(craftsmanId, requestId);
+
+                if (serviceRequest == null)
+                    return ServiceResponse<ServiceRequestDto>.FailureResponse("Request not accessible by this craftsman.");
+
+                var dto = MapToDto(serviceRequest);
+                return ServiceResponse<ServiceRequestDto>.SuccessResponse(dto, "Service request retrieved successfully.");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResponse<ServiceRequestDto>.FailureResponse($"Error retrieving service request: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResponse<IEnumerable<ServiceRequestDto>>> GetAvailableOpportunitiesAsync(int craftsmanId)
+        {
+            try
+            {
+                var serviceRequests = await _unitOfWork.ServiceRequests
+                    .GetActiveServiceRequestsForCraftsmanAsync(craftsmanId);
+
+                var serviceRequestDtos = serviceRequests
+                    .Select(sr => MapToDto(sr))
+                    .ToList();
+
+                return ServiceResponse<IEnumerable<ServiceRequestDto>>.SuccessResponse(
+                    serviceRequestDtos,
+                    $"Found {serviceRequestDtos.Count} available opportunities"
+                );
+            }
+            catch (Exception ex)
+            {
+                return ServiceResponse<IEnumerable<ServiceRequestDto>>.FailureResponse(
+                    $"Error retrieving opportunities: {ex.Message}"
+                );
+            }
+        }
+
+        private ServiceRequestDto MapToDto(ServiceRequest sr)
+        {
+            var dto = sr.Adapt<ServiceRequestDto>();
+
+            dto.Status = sr.Status.ToString();
+            dto.CraftName = sr.Craft?.Name;
+            dto.CustomerName = sr.Customer?.User?.FullName ?? "Unknown";
+            dto.Images = string.IsNullOrEmpty(sr.ImagesJson)
+                ? new List<string>()
+                : JsonSerializer.Deserialize<List<string>>(sr.ImagesJson);
+
+            return dto;
         }
     }
 }
