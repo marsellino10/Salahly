@@ -5,7 +5,7 @@ import { AreaService } from '../../../core/services/area-service';
 import { Area } from '../../../core/models/Area';
 import { Craft } from '../../../core/models/Craft';
 import { CraftService } from '../../../core/services/craft-service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -18,6 +18,7 @@ export class TechnicianFilter implements OnInit {
   private readonly _areaService: AreaService = inject(AreaService);
   private readonly _craftService: CraftService = inject(CraftService);
   private readonly _router: Router = inject(Router);
+  private readonly _activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   searchQuery: string = '';
   selectedCraftId: number = 0;
   selectedRegion: string = '';
@@ -28,6 +29,12 @@ export class TechnicianFilter implements OnInit {
   cities: string[] = [];
 
   ngOnInit(): void {
+    this._activatedRoute.queryParams.subscribe((params: any) => {
+      if(params.searchQuery) this.searchQuery = params.searchQuery;
+      if(params.selectedCraftId) this.selectedCraftId = params.selectedCraftId;
+      if(params.region) this.selectedRegion = params.region;
+      if(params.city) this.selectedCity = params.city;
+    });
     this._craftService.GetAllCrafts().subscribe({
       next: (res) => {
         console.log(res);
@@ -67,7 +74,7 @@ export class TechnicianFilter implements OnInit {
     }
     this.selectedRegion = region;
     this.cities = this.GroupAreaByRegion()[region].map((area: Area) => area.city);
-    this.selectedCity = this.cities[0];
+    this.selectedCity = '';
   }
   
   OnCityChange(city: string) {
@@ -77,19 +84,19 @@ export class TechnicianFilter implements OnInit {
       return;
     }
     this.selectedCity = city;
-    this.selectedRegion = this.areas.find((area: Area) => area.city === city)!.region;
   }
   GetAreaIdFromCityAndRegion(city: string, region: string) {
     return this.areas.find((area: Area) => area.city === city && area.region === region)?.id ?? 0;
   }
   // You can watch/filter technicians using these properties
   onSubmit() {
-    let areaId = this.GetAreaIdFromCityAndRegion(this.selectedCity, this.selectedRegion);
+    // let areaId = this.GetAreaIdFromCityAndRegion(this.selectedCity, this.selectedRegion);
     this._router.navigate(['/browse'], {
       queryParams: {
         searchQuery: this.searchQuery,
         selectedCraftId: this.selectedCraftId,
-        areaId: areaId,
+        region: this.selectedRegion,
+        city: this.selectedCity,
         isAvailable: true,
       },
     });

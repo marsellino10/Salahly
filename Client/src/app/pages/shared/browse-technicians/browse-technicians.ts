@@ -21,91 +21,48 @@ export class BrowseTechnicians implements OnInit {
   private readonly _Router: ActivatedRoute = inject(ActivatedRoute);
   craftsTotalCount: number = 0;
   pageNumber: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 3;
   totalPages: number = 0;
   hasNextPage!: boolean;
   hasPreviousPage!: boolean;
   isLoading = false;
-  crafts: Craft[] = [
-    {
-      id: 0,
-      name: 'All Categories',
-      description: 'All available crafts',
-      iconUrl: '',
-      displayOrder: 0,
-      isActive: true,
-      createdAt: '',
-      craftsmenCount: 0,
-      activeServiceRequestsCount: 0
-    },
-    {
-      id: 1,
-      name: 'Plumber',
-      description: 'Plumbing services',
-      iconUrl: '',
-      displayOrder: 1,
-      isActive: true,
-      createdAt: '',
-      craftsmenCount: 15,
-      activeServiceRequestsCount: 5
-    },
-    {
-      id: 2,
-      name: 'Electrician',
-      description: 'Electrical services',
-      iconUrl: '',
-      displayOrder: 2,
-      isActive: true,
-      createdAt: '',
-      craftsmenCount: 12,
-      activeServiceRequestsCount: 3
-    },
-    {
-      id: 3,
-      name: 'HVAC',
-      description: 'Heating, ventilation, and air conditioning',
-      iconUrl: '',
-      displayOrder: 3,
-      isActive: true,
-      createdAt: '',
-      craftsmenCount: 8,
-      activeServiceRequestsCount: 2
-    }
-  ];
+  isLastPage = false;
   
   craftsmans: Craftsman[] = [];
 
   ngOnInit(): void {
     this._Router.queryParams.subscribe((params: any) => {
-      this.GetTechnicians(this.pageNumber,this.pageSize,params.searchQuery,params.selectedCraftId,params.areaId,true);
+      this.craftsmans = [];
+      this.isLastPage = false;
+      this.pageNumber = 1;
+      this.pageSize = 3;
+      this.loadResults(params);
     });
     // this.GetTechnicians();
   }
 
-  GetTechnicians(PageNumber: number = 1,PageSize: number = 3,SearchName: string = '',CraftId: number = 0,AreaId: number = 0,IsAvailable: boolean = true): void {
-    this._TechnicianService.getTechnicians(PageNumber,PageSize,SearchName,CraftId,AreaId,IsAvailable).subscribe((data) => {
-      console.log(data);
-      this.craftsmans = data.data.items;
+  GetTechnicians(PageNumber: number = 1,PageSize: number = 3,SearchName: string = '',CraftId: number = 0,Region: string = '',City: string = '',IsAvailable: boolean = true): void {
+    this._TechnicianService.getTechnicians(PageNumber,PageSize,SearchName,CraftId,Region,City,IsAvailable).subscribe((data) => {
+      this.craftsmans = [...this.craftsmans,...data.data.items];
       this.craftsTotalCount = data.data.totalCount;
-      this.pageNumber = data.data.pageNumber;
-      this.pageSize = data.data.pageSize;
       this.totalPages = data.data.totalPages;
       this.hasNextPage = data.data.hasNextPage;
+      this.pageNumber = data.data.pageNumber;
       this.hasPreviousPage = data.data.hasPreviousPage;
+      this.isLastPage = this.pageNumber === this.totalPages;
       this.isLoading = false;
     });
   }
 
-  loadResults() {
-    if (this.isLoading || !this.hasNextPage) return;
+  loadResults(params: any) {
+    if (this.isLoading || this.isLastPage) return;
     this.isLoading = true;
-    this.GetTechnicians(this.pageNumber + 1, this.pageSize);
-    
+    this.GetTechnicians(this.pageNumber, this.pageSize,params.searchQuery,params.selectedCraftId,params.region,params.city,true);
   }
 onScrollDown() {
-    // this._Router.queryParams.subscribe((params: any) => {
-    //   this.loadResults(params);
-    // });
-    this.loadResults();
+    this._Router.queryParams.subscribe((params: any) => {
+      this.pageNumber++;
+      this.loadResults(params);
+    });
   }
 }

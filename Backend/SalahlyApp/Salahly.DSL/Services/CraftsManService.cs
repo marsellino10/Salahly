@@ -216,8 +216,8 @@ namespace Salahly.DSL.Services
             if (filter == null)
                 throw new ArgumentNullException(nameof(filter));
 
-            _logger.LogInformation("Getting craftsmen with filters - SearchName: {SearchName}, CraftId: {CraftId}, AreaId: {AreaId}, PageNumber: {PageNumber}, PageSize: {PageSize}",
-                filter.SearchName, filter.CraftId, filter.AreaId, filter.PageNumber, filter.PageSize);
+            _logger.LogInformation("Getting craftsmen with filters - SearchName: {SearchName}, CraftId: {CraftId}, Region: {Region}, City: {City}, PageNumber: {PageNumber}, PageSize: {PageSize}",
+                filter.SearchName, filter.CraftId, filter.Region, filter.City, filter.PageNumber, filter.PageSize);
 
             // Get base query
             var query = await _unitOfWork.Craftsmen.GetAllAsync();

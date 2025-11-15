@@ -18,7 +18,17 @@ namespace Salahly.DSL.Filters
         /// <summary>
         /// Filter by service area ID
         /// </summary>
-        public int? AreaId { get; set; }
+        //public int? AreaId { get; set; }
+
+        /// <summary>
+        /// Filter by Region
+        /// </summary>
+        public string? Region { get; set; }
+
+        /// <summary>
+        /// Filter by City
+        /// </summary>
+        public string? City { get; set; }
 
         /// <summary>
         /// Filter by availability status

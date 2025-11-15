@@ -14,13 +14,15 @@ export class TechnicianService {
     pageSize: number = 10,
     SearchName: string = '',
     CraftId: number = 0,
-    AreaId: number = 0,
+    Region: string = '',
+    City: string = '',
     IsAvailable: boolean = true,
   ): Observable<any> {
     let url = `${environment.baseApi}craftsman?pageNumber=${pageNumber}&pageSize=${pageSize}`;
     if (SearchName != '') url += `&searchName=${SearchName}`;
     if (CraftId != 0) url += `&craftId=${CraftId}`;
-    if (AreaId != 0) url += `&areaId=${AreaId}`;
+    if (Region != '') url += `&region=${Region}`;
+    if (City != '') url += `&city=${City}`;
     if (IsAvailable) url += `&isAvailable=${IsAvailable}`;
     return this._HttpClient.get<any>(url);
   }

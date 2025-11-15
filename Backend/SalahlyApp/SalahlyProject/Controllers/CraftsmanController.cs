@@ -50,8 +50,8 @@ namespace SalahlyProject.Controllers
         {
             try
             {
-                _logger.LogInformation("Getting all craftsmen with filters - SearchName: {SearchName}, CraftId: {CraftId}, AreaId: {AreaId}, PageNumber: {PageNumber}, PageSize: {PageSize}",
-                    craftmanFilter.SearchName, craftmanFilter.CraftId, craftmanFilter.AreaId, craftmanFilter.PageNumber, craftmanFilter.PageSize);
+                _logger.LogInformation("Getting all craftsmen with filters - SearchName: {SearchName}, CraftId: {CraftId}, Region: {Region}, City: {City}, PageNumber: {PageNumber}, PageSize: {PageSize}",
+                    craftmanFilter.SearchName, craftmanFilter.CraftId, craftmanFilter.Region, craftmanFilter.City, craftmanFilter.PageNumber, craftmanFilter.PageSize);
 
 
                 // Get filtered and paginated results

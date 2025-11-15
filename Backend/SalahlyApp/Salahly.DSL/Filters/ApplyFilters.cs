@@ -39,9 +39,14 @@ namespace Salahly.DSL.Filters
             }
 
             // Apply area filter
-            if (filter.AreaId.HasValue && filter.AreaId.Value > 0)
+            if (!string.IsNullOrWhiteSpace(filter.Region))
             {
-                query = query.Where(c => c.CraftsmanServiceAreas.Any(sa => sa.AreaId == filter.AreaId.Value && sa.IsActive));
+                query = query.Where(c => c.CraftsmanServiceAreas.Any(sa => sa.Area.Region.ToLower() == filter.Region.ToLower() && sa.IsActive));
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.City))
+            {
+                query = query.Where(c => c.CraftsmanServiceAreas.Any(sa => sa.Area.City.ToLower() == filter.City.ToLower() && sa.IsActive));
             }
 
             // Apply availability filter
