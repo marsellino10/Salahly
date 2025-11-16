@@ -52,7 +52,7 @@ namespace Salahly.DSL.Services
             return true;
         }
 
-        public async Task<string?> LoginAsync(LoginDto dto)
+        public async Task<Tuple<ApplicationUser?, string?>> LoginAsync(LoginDto dto)
         {
             var user = await _userManager.FindByNameAsync(dto.UserName);
             if (user == null)
@@ -65,7 +65,7 @@ namespace Salahly.DSL.Services
             var roles = await _userManager.GetRolesAsync(user);
             var token = GenerateJwtToken(user, roles);
 
-            return token;
+            return new Tuple<ApplicationUser?,string?>(user,token);
         }
 
         private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
@@ -76,13 +76,13 @@ namespace Salahly.DSL.Services
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName ?? ""),
-            new Claim("IsProfileCompleted", user.IsProfileCompleted.ToString())
+            new Claim("NameIdentifier", user.Id.ToString()),
+            new Claim("Name", user.UserName ?? ""),
+            new Claim("IsProfileCompleted", user.IsProfileCompleted.ToString()),
         };
 
             foreach (var role in roles)
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim("Role", role));
 
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,

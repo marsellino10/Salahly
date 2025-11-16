@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.Interfaces;
+using SalahlyProject.Response;
 
 namespace SalahlyProject.Controllers
 {
@@ -22,8 +23,8 @@ namespace SalahlyProject.Controllers
         {
             var success = await _authService.RegisterAsync(dto, "Customer");
             if (!success)
-                return BadRequest("Registration failed.");
-            return Ok("Customer registered successfully.");
+                return BadRequest(new ApiResponse<string>(400, "Registration failed.", null));
+            return Ok(new ApiResponse<string>(200, "Customer registered successfully.", null));
         }
 
         [HttpPost("register-technician")]
@@ -31,17 +32,17 @@ namespace SalahlyProject.Controllers
         {
             var success = await _authService.RegisterAsync(dto, "Craftsman");
             if (!success)
-                return BadRequest("Registration failed.");
-            return Ok("Technician registered successfully.");
+                return BadRequest(new ApiResponse<string>(400, "Registration failed.", null));
+            return Ok(new ApiResponse<string>(200,"Technician registered successfully.",null));
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var token = await _authService.LoginAsync(dto);
-            if (token == null)
-                return Unauthorized("Invalid credentials.");
-            return Ok(token);
+            var UserTuple = await _authService.LoginAsync(dto);
+            if (UserTuple is null || UserTuple.Item1 == null)
+                return Unauthorized(new ApiResponse<string>(401, "Invalid credentials.", null));
+            return Ok(new ApiResponse<object>(200, "Login successfully.", new { IsProfileCompleted =  UserTuple.Item1.IsProfileCompleted,UserType = UserTuple.Item1.UserType.ToString(),Token = UserTuple.Item2 }));
         }
     }
 

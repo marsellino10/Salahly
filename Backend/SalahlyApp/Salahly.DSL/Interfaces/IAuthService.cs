@@ -13,7 +13,7 @@ namespace Salahly.DSL.Interfaces
     public interface IAuthService
     {
         Task<bool> RegisterAsync(RegisterDto dto, string role);
-        Task<string?> LoginAsync(LoginDto dto);
+        Task<Tuple<ApplicationUser?, string?>> LoginAsync(LoginDto dto);
     }
 
 }
