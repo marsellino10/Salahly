@@ -104,10 +104,11 @@ export class TechnicianService {
     name: string | null;
     nameIdentifier: string | null;
     role: string | null;
+    fullName: string | null;
   } {
     const token = this._authService.getToken();
     if (!token) {
-      return { name: null, nameIdentifier: null, role: null };
+      return { name: null, nameIdentifier: null, role: null, fullName: null };
     }
 
     const payload = this.decodeJwtPayload(token);
@@ -120,8 +121,8 @@ export class TechnicianService {
       'Id',
     ]);
     const role = this.extractClaim(payload, ['role', 'Role', 'userType', 'UserType']);
-
-    return { name, nameIdentifier, role };
+    const fullName = this.extractClaim(payload, ['fullName', 'FullName', 'unique_name']);
+    return { name, nameIdentifier, role, fullName };
   }
 
   private buildCraftsmanFormData(

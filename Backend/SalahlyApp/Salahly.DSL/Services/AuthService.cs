@@ -78,6 +78,7 @@ namespace Salahly.DSL.Services
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("NameIdentifier", user.Id.ToString()),
             new Claim("Name", user.UserName ?? ""),
+            new Claim("FullName", user.FullName ?? ""),
             new Claim("IsProfileCompleted", user.IsProfileCompleted.ToString()),
         };
 
