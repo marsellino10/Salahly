@@ -1,17 +1,113 @@
-.tab {
-  background-color: #e9ecef;
-  border: none !important;
-  font-size: 15px;
+.login-page {
+  min-height: 80vh;
+  background: linear-gradient(135deg, #f5f7ff, #e8ecff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.tab.active {
-  background-color: white;
-  color: #000 !important;
-  margin: 0.2rem;
-  border-radius: 15px;
-  border: none;
+.login-card {
+  width: min(100%, 960px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  background: #fff;
 }
-.loginBtn{
-  background-color: #1c1b2a;
+
+.login-hero {
+  background: linear-gradient(160deg, #1c1b2a, #4e54c8);
+  background-image: url('/assets/images/login.png');
+  background-size: cover;
+  background-position: bottom;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.overline {
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.login-form {
+  background: #fff;
+}
+
+.icon-circle {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: #f5f6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4e54c8;
+  font-size: 1.25rem;
+}
+
+.modern-input .input-group-text {
+  background: transparent;
+  border-right: none;
+  color: #6c63ff;
+}
+
+.modern-input .form-control {
+  border-left: none;
+  box-shadow: none;
+}
+
+.modern-input.invalid {
+  border: 1px solid #f56c6c;
+  border-radius: 0.5rem;
+}
+
+.loginBtn {
+  background: linear-gradient(160deg, #6c63ff, #4e54c8);
   color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.loginBtn:disabled {
+  opacity: 0.7;
+}
+
+.loginBtn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(76, 84, 200, 0.35);
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 35%;
+  height: 1px;
+  background: #e3e6f0;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
 }

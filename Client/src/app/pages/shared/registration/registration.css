@@ -1,16 +1,97 @@
-.tab {
-  background-color: #e9ecef;
-  border: none !important;
-  font-size: 15px;
+.registration-page {
+  min-height: 100vh;
+  background: linear-gradient(125deg, #f0f4ff, #e2eeff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.tab.active {
-  background-color: white;
-  color: #000 !important;
-  margin: 0.2rem;
-  border-radius: 15px;
-  border: none;
+.registration-card {
+  width: min(100%, 1100px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  background: #fff;
 }
+
+.registration-hero {
+  background: linear-gradient(160deg, #1c1b2a, #4e54c8);
+  /* max-height: 600px; */
+  /* background-image: url('/assets/images/login.png'); */
+  background-image: url('/assets/images/signup.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.registration-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.hero-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.tab-toggle {
+  background: #f5f7ff;
+  border-radius: 999px;
+  padding: 0.35rem;
+}
+
+.tab-pill {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.25rem;
+  background: transparent;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.tab-pill small {
+  display: block;
+  color: #7a7d95;
+}
+
+.tab-pill .pill-label {
+  font-weight: 600;
+  color: #1c1b2a;
+}
+
+.tab-pill.active {
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(108, 99, 255, 0.15);
+}
+
+.form-shell {
+  background: #fdfdff;
+  border: 1px solid #eef1ff;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+.registration-form .btn-link {
+  color: #4e54c8;
+}
+
 .signupBtn{
   background-color: #1c1b2a;
   color: #fff;

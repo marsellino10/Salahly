@@ -39,7 +39,7 @@
 
   <!-- Mobile Menu -->
   @if(mobileMenuOpen){
-    <div class="d-md-none border-top bg-white">
+    <div class="d-md-none border-top bg-white w-100">
       <div class="px-4 py-4">
         <a
           routerLink="/"
@@ -72,6 +72,9 @@
           >
             Sign Up
           </button>
+          <div class="pt-3">
+            <app-translate-select [color]="'black'"></app-translate-select>
+          </div>
         </div>
       </div>
     </div>

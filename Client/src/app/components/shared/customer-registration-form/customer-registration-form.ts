@@ -11,6 +11,7 @@ import { EventEmitter } from '@angular/core';
 })
 export class CustomerRegistrationForm {
  @Input() customerForm!: FormGroup;
+ @Input() isSubmitting = false;
  @Output() onSubmit = new EventEmitter<void>();
 
  onSubmitForm() {

@@ -1,0 +1,109 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <!-- Logo -->
+      <a [routerLink]="['/home']" class="d-flex align-items-center gap-2 text-decoration-none">
+        <img src="./favicon.png" width="48" height="48" alt="Salahly logo">
+        <span class="text-secondary fs-3 fst-italic">{{ 'BlankNavBar.Salahly' | translate }}</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="d-none d-md-flex align-items-center gap-4">
+        <a routerLink="/home" routerLinkActive="active" class="d-flex align-items-center gap-2 text-secondary nav-link">
+          <i class="fa-regular fa-house"></i>
+          <span>{{ 'BlankNavBar.Home' | translate }}</span>
+        </a>
+
+        <a routerLink="/browse" routerLinkActive="active" class="d-flex align-items-center gap-2 text-secondary nav-link">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>{{ 'BlankNavBar.Browse Technicians' | translate }}</span>
+        </a>
+
+        <app-translate-select [color]="'black'"></app-translate-select>
+
+        <div class="position-relative">
+          <button class="btn p-0 border-0 bg-transparent" (click)="toggleUserMenu($event)">
+            @if(user.imageUrl){
+              <img [src]="user.imageUrl" alt="Avatar" class="avatar-image" />
+            }@else{
+              <div class="avatar-circle">{{ userInitials }}</div>
+            }
+          </button>
+
+          @if(userMenuOpen){
+            <div class="user-dropdown shadow-sm">
+              <button class="dropdown-item" (click)="navigate('/profile')">
+                <i class="fa-regular fa-user"></i>
+                <span>{{ 'TechnicianNav.Profile' | translate }}</span>
+              </button>
+              <button class="dropdown-item" (click)="navigate('/portfolio')">
+                <!-- <i class="fa-regular fa-briefcase"></i> -->
+                <i class="fa-solid fa-briefcase"></i>
+                <span>{{ 'TechnicianNav.Portfolio' | translate }}</span>
+              </button>
+              <button class="dropdown-item text-danger" (click)="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>{{ 'TechnicianNav.Logout' | translate }}</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="navbar-toggler d-md-none border-0" type="button" (click)="toggleMenu()" aria-label="Toggle navigation">
+        <i [class]="mobileMenuOpen ? 'fa-solid fa-xmark fs-3' : 'fa-solid fa-bars fs-3'"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  @if(mobileMenuOpen){
+    <div class="d-md-none border-top bg-white w-100">
+      <div class="px-4 py-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="avatar-circle">
+            @if(user.imageUrl){
+              <img [src]="user.imageUrl" alt="Avatar" class="avatar-image" />
+            }@else{
+              <div class="avatar-circle">{{ userInitials }}</div>
+            }
+          </div>
+          <div>
+            <p class="fw-semibold mb-0">{{ user.name }}</p>
+            <small class="text-muted">Technician</small>
+          </div>
+        </div>
+
+        <a routerLink="/home" (click)="closeMobileMenu()" class="d-flex align-items-center gap-2 text-secondary nav-link py-2">
+          <i class="fa-regular fa-house"></i>
+          <span>{{ 'BlankNavBar.Home' | translate }}</span>
+        </a>
+
+        <a routerLink="/browse" (click)="closeMobileMenu()" class="d-flex align-items-center gap-2 text-secondary nav-link py-2">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>{{ 'BlankNavBar.Browse Technicians' | translate }}</span>
+        </a>
+
+        <div class="pt-3 border-top mt-3">
+          <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigate('/profile')">
+            <i class="fa-regular fa-user"></i>
+            <span>{{ 'TechnicianNav.Profile' | translate }}</span>
+          </button>
+          <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigate('/portfolio')">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>{{ 'TechnicianNav.Portfolio' | translate }}</span>
+          </button>
+          <button class="btn btn-outline-danger w-100 d-flex align-items-center gap-2" (click)="logout()">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>{{ 'TechnicianNav.Logout' | translate }}</span>
+          </button>
+        </div>
+
+        <div class="pt-3">
+          <app-translate-select [color]="'black'"></app-translate-select>
+        </div>
+      </div>
+    </div>
+  }
+</nav>

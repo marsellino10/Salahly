@@ -1,4 +1,9 @@
-<app-nav-blank></app-nav-blank>
+@if (showTechnicianNavBar) {
+  <app-technician-nav-bar></app-technician-nav-bar>
+} @else {
+  <app-nav-blank></app-nav-blank>
+}
+
 <div class="">
   <router-outlet></router-outlet>
 </div>

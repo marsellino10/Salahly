@@ -1,52 +1,62 @@
-<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5 px-3">
-  <div class="card w-100" style="max-width: 30rem;">
-    <div class="card-header text-center bg-white border-0 mt-2">
-      <h2 class="card-title">{{"Login.Login" | translate}}</h2>
-      <p class="card-text">
-        {{  "Login.Choose your account type to login" | translate }}
-      </p>
+<section class="login-page py-5 px-3">
+  <div class="login-card shadow-lg rounded-4 overflow-hidden">
+    <div class="login-hero text-white">
+      
     </div>
 
-    <div class="card-body">
-      <!-- Tabs -->
-      <div class="btn-group d-flex justify-content-center gap-2 mb-3 tab" role="group" >
-        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'customer'" [class.active]="activeTab === 'customer'">{{"Login.Customer" | translate}}</button>
-        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'craftsman'" [class.active]="activeTab === 'craftsman'">{{"Login.Technician" | translate}}</button>
-        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'admin'" [class.active]="activeTab === 'admin'">{{"Login.Admin" | translate}}</button>
+    <div class="login-form bg-white p-4 p-md-5">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <div class="icon-circle">
+          <i class="bi bi-shield-lock"></i>
+        </div>
+        <div>
+          <p class="text-muted mb-0">{{ 'Login.Welcome back' | translate }}</p>
+          <h3 class="fw-semibold mb-0">{{ 'Login.Sign in to your account' | translate }}</h3>
+        </div>
       </div>
-      <!-- Tab Content -->
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label class="form-label">{{  'Login.Email' | translate}}</label>
-          <input type="email" class="form-control" formControlName="email" placeholder="sarah@example.com" />
+
+      <p class="text-muted mb-4">{{ 'Login.Enter your account details below to continue.' | translate }}</p>
+
+      @if(errorMessage){
+        <div class="alert alert-danger py-2">
+          {{ errorMessage }}
         </div>
-        <div class="mb-3">
-          <label class="form-label">{{  'Login.Password' | translate}}</label>
-          <input type="password" class="form-control" formControlName="password" />
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column gap-3">
+        <div>
+          <label class="form-label">{{ 'Login.Username' | translate }}</label>
+          <div class="input-group modern-input" [class.invalid]="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input type="text" class="form-control" formControlName="userName" placeholder="e.g. salahly_user" />
+          </div>
         </div>
-        @switch(activeTab) {
-          @case('customer') {          
-            <button class="btn loginBtn w-100" type="submit">
-              {{  "Login.Login as Customer" | translate }}
-            </button>
+
+        <div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label mb-0">{{ 'Login.Password' | translate }}</label>
+            <a class="text-decoration-none small" href="#">{{ 'Login.Forgot password?' | translate }}</a>
+          </div>
+          <div class="input-group modern-input" [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" formControlName="password" placeholder="••••••••" />
+          </div>
+        </div>
+
+        <button class="btn loginBtn w-100 d-flex align-items-center justify-content-center gap-2" type="submit" [disabled]="isSubmitting">
+          @if(isSubmitting){
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           }
-          @case('craftsman') {
-            <button class="btn loginBtn w-100" type="submit">
-              {{  "Login.Login as Technician" | translate }}
-            </button>
-          }
-          @case('admin') {
-            <button class="btn loginBtn w-100" type="submit">
-              {{  "Login.Login as Admin" | translate }}
-            </button>
-          }
-        }
+          <span>{{ 'Login.Login' | translate }}</span>
+        </button>
       </form>
-      <div class="small text-muted mt-2 text-center">
-        {{  "Login.Don't have an account?" | translate }}
-        <button class="btn btn-link p-0" [routerLink]= "['/signup']">
-          {{ "Login.signup" | translate }}
+
+      <div class="small text-muted text-center">
+        {{ "Login.Don't have an account?" | translate }}
+        <button class="btn btn-link p-0" [routerLink]="['/signup']">
+          {{ 'Login.signup' | translate }}
         </button>
       </div>
+    </div>
   </div>
-</div>
+</section>

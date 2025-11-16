@@ -1,87 +1,90 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { inject } from '@angular/core';
 import { CustomerRegistrationForm } from "../../../components/shared/customer-registration-form/customer-registration-form";
 import { CraftmanRegistrationForm } from "../../../components/shared/craftman-registration-form/craftman-registration-form";
+import { AuthService, RegisterPayload } from '../../../core/services/auth-service';
 
 @Component({
   selector: 'app-registration',
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, ReactiveFormsModule, CustomerRegistrationForm, CraftmanRegistrationForm],
+  imports: [CommonModule, RouterLink, TranslateModule, ReactiveFormsModule, CustomerRegistrationForm, CraftmanRegistrationForm],
   templateUrl: './registration.html',
   styleUrl: './registration.css',
 })
 export class Registration {
   activeTab: 'customer' | 'craftsman' = 'customer';
-  private readonly _FormBuilder: FormBuilder = inject(FormBuilder);
-  
+  private readonly _formBuilder: FormBuilder = inject(FormBuilder);
+  private readonly _authService = inject(AuthService);
+  private readonly _router = inject(Router);
+
+  isSubmitting = false;
+  errorMessage: string | null = null;
+
   // Customer Registration Form
-  customerForm: FormGroup = this._FormBuilder.group({
+  RegistrationForm: FormGroup = this._formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     fullName: ['', [Validators.required]],
-    profileImageUrl: [''],
+    userName: ['', [Validators.required]],
     userType: ['customer'],
-    address: ['', [Validators.required]],
-    city: ['', [Validators.required]],
-    area: ['', [Validators.required]],
-    phoneNumber: ['', [Validators.required, Validators.pattern(/^(010|011|012|015)[0-9]{8}$/)]],
-    dateOfBirth: ['', [Validators.required]],
   });
 
   // Craftsman Registration Form
-  craftsmanForm: FormGroup = this._FormBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    fullName: ['', [Validators.required]],
-    profileImageUrl: [''],
-    userType: ['craftsman'],
-    bio: ['', [Validators.required]],
-    yearsOfExperience: ['', [Validators.required, Validators.min(0)]],
-    serveAreas: this._FormBuilder.array([
-      this._FormBuilder.group({
-        city: ['', [Validators.required]],
-        area: ['', [Validators.required]]
-      })
-    ])
-  });
+  // craftsmanForm: FormGroup = this._formBuilder.group({
+  //   email: ['', [Validators.required, Validators.email]],
+  //   password: ['', [Validators.required, Validators.minLength(6)]],
+  //   fullName: ['', [Validators.required]],
+  //   userName: ['', [Validators.required]],
+  //   userType: ['craftsman'],
+  // });
 
-  get serveAreas() {
-    return this.craftsmanForm.get('serveAreas') as any;
+  setActiveTab(tab: 'customer' | 'craftsman'): void {
+    if (this.isSubmitting) return;
+    this.activeTab = tab;
+    this.RegistrationForm.get('userType')?.setValue(tab);
+    this.errorMessage = null;
   }
 
-  addServeArea() {
-    this.serveAreas.push(
-      this._FormBuilder.group({
-        city: ['', [Validators.required]],
-        area: ['', [Validators.required]]
-      })
-    );
-  }
-
-  removeServeArea(index: number) {
-    if (this.serveAreas.length > 1) {
-      this.serveAreas.removeAt(index);
-    }
-  }
-
-  onSubmit() {
-    const currentForm = this.activeTab === 'customer' ? this.customerForm : this.craftsmanForm;
-    
-    if (currentForm.invalid) {
+  onSubmit(): void {
+    const currentForm = this.RegistrationForm;
+    console.log(currentForm.value);
+    if (currentForm.invalid || this.isSubmitting) {
       currentForm.markAllAsTouched();
       return;
     }
 
-    const formData = currentForm.value;
-    console.log(`Registering ${this.activeTab}:`, formData);
+    const payload: RegisterPayload = {
+      fullName: currentForm.value.fullName?.trim() ?? '',
+      userName: currentForm.value.userName?.trim() ?? '',
+      email: currentForm.value.email?.trim() ?? '',
+      password: currentForm.value.password ?? '',
+    };
 
-    // TODO: Replace with actual registration logic
-    // For customer: send customerForm.value to API
-    // For craftsman: send craftsmanForm.value to API (will be reviewed before activation)
+    this.isSubmitting = true;
+    this.errorMessage = null;
+
+    const request$ =
+      this.activeTab === 'customer'
+        ? this._authService.registerCustomer(payload)
+        : this._authService.registerTechnician(payload);
+
+    request$.subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        currentForm.reset();
+        this.activeTab = 'customer';
+        this._router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.log(error);
+        this.isSubmitting = false;
+        this.errorMessage =
+          typeof error?.error === 'string'
+            ? error.error
+            : 'Unable to complete registration right now. Please try again.';
+      },
+    });
   }
 }

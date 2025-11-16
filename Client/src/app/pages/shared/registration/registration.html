@@ -1,34 +1,72 @@
-<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5 px-3">
-  <div class="card w-100" style="max-width: 30rem;">
-    <div class="card-header text-center bg-white border-0 mt-2">
-      <h2 class="card-title">{{"Signup.Create Account" | translate}}</h2>
-      <p class="card-text">
-        {{  "Signup.Choose your account type to get started" | translate }}
-      </p>
+<section class="registration-page py-5 px-3">
+  <div class="registration-card shadow-lg rounded-4 overflow-hidden">
+    <div class="registration-hero text-white">
+      <!-- <div class="hero-content glass p-4 p-md-5">
+        <p class="overline mb-2">{{ 'Signup.Create Account' | translate }}</p>
+        <h2 class="fw-semibold mb-3">{{ 'Signup.Choose your account type to get started' | translate }}</h2>
+        <ul class="hero-list list-unstyled mb-4">
+          <li><i class="bi bi-check-circle me-2"></i>{{ 'Signup.Signup as Customer' | translate }}</li>
+          <li><i class="bi bi-check-circle me-2"></i>{{ 'Signup.Signup as Technician' | translate }}</li>
+          <li><i class="bi bi-lock me-2"></i>{{ 'Signup.Your account will be reviewed before activation' | translate }}</li>
+        </ul>
+        <p class="small text-white-50 mb-0">{{ 'Signup.Already have an account?' | translate }}
+          <a class="text-white text-decoration-underline" [routerLink]="['/login']">{{ 'Signup.login' | translate }}</a>
+        </p>
+      </div> -->
     </div>
 
-    <div class="card-body">
-      <!-- Tabs -->
-      <div class="btn-group d-flex justify-content-center gap-2 mb-3 tab" role="group" >
-        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'customer'" [class.active]="activeTab === 'customer'">{{"Login.Customer" | translate}}</button>
-        <button type="button" class="btn rounded-end-4 tab" (click)="activeTab = 'craftsman'" [class.active]="activeTab === 'craftsman'">{{"Login.Technician" | translate}}</button>
+    <div class="registration-form bg-white p-4 p-md-5">
+      <div class="d-flex flex-column gap-1 mb-4">
+        <p class="text-muted text-uppercase small mb-0">{{ 'Signup.Create Account' | translate }}</p>
+        <h3 class="fw-semibold mb-1">
+          @if(activeTab === 'customer') {
+            {{ 'Signup.Signup as Customer' | translate }}
+          } @else {
+            {{ 'Signup.Signup as Technician' | translate }}
+          }
+        </h3>
+        <p class="text-muted mb-0">{{ 'Signup.Choose your account type to get started' | translate }}</p>
       </div>
-      
-      <!-- Customer Registration Form -->
-      @if(activeTab === 'customer') {
-        <app-customer-registration-form [customerForm]="customerForm" (onSubmit)="onSubmit()"></app-customer-registration-form>
+
+      @if(errorMessage) {
+        <div class="alert alert-danger py-2">
+          {{ errorMessage }}
+        </div>
       }
 
-      <!-- Craftsman Registration Form -->
-      @if(activeTab === 'craftsman') {
-        <app-craftman-registration-form [craftsmanForm]="craftsmanForm" [serveAreas]="serveAreas" (onSubmit)="onSubmit()" (addServeArea)="addServeArea()" (removeServeArea)="removeServeArea($event)"></app-craftman-registration-form>
-      }
-
-      <div class="small text-muted mt-2 text-center">
-        <span class="me-1">{{ "Signup.Already have an account?" | translate }}</span>
-        <button class="btn btn-link p-0" [routerLink]= "['/login']">
-          {{ "Signup.login" | translate }}
+      <div class="tab-toggle d-flex flex-column flex-md-row gap-2 mb-4">
+        <button type="button" class="tab-pill" [class.active]="activeTab === 'customer'" (click)="setActiveTab('customer')">
+          <span class="pill-label">{{ 'Signup.Customer' | translate }}</span>
+          <small>{{ 'Signup.Signup as Customer' | translate }}</small>
+        </button>
+        <button type="button" class="tab-pill" [class.active]="activeTab === 'craftsman'" (click)="setActiveTab('craftsman')">
+          <span class="pill-label">{{ 'Signup.Technician' | translate }}</span>
+          <small>{{ 'Signup.Signup as Technician' | translate }}</small>
         </button>
       </div>
+
+      <div class="form-shell">
+        @if(activeTab === 'customer') {
+          <app-customer-registration-form
+            [customerForm]="RegistrationForm"
+            [isSubmitting]="isSubmitting"
+            (onSubmit)="onSubmit()">
+          </app-customer-registration-form>
+        } @else {
+          <app-craftman-registration-form
+            [craftsmanForm]="RegistrationForm"
+            [isSubmitting]="isSubmitting"
+            (onSubmit)="onSubmit()">
+          </app-craftman-registration-form>
+        }
+      </div>
+
+      <div class="small text-muted text-center mt-4">
+        <span class="me-1">{{ 'Signup.Already have an account?' | translate }}</span>
+        <button class="btn btn-link p-0" [routerLink]="['/login']">
+          {{ 'Signup.login' | translate }}
+        </button>
+      </div>
+    </div>
   </div>
-</div>
+</section>

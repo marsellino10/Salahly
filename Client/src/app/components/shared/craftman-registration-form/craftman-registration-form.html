@@ -1,91 +1,54 @@
-<form [formGroup]="craftsmanForm" (ngSubmit)="onSubmitForm()">
-  <div class="mb-3">
-    <label class="form-label">{{ 'Signup.Full Name' | translate }}</label>
-    <input type="text" class="form-control" formControlName="fullName" [placeholder]="'Signup.Enter your full name' | translate" />
-    @if(craftsmanForm.get('fullName')?.invalid && craftsmanForm.get('fullName')?.touched) {
-      <small class="text-danger">{{ 'Signup.Full name is required' | translate }}</small>
-    }
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">{{ 'Login.Email' | translate }}</label>
-    <input type="email" class="form-control" formControlName="email" placeholder="john@example.com" />
-    @if(craftsmanForm.get('email')?.invalid && craftsmanForm.get('email')?.touched) {
-      <small class="text-danger">{{ 'Signup.Valid email is required' | translate }}</small>
-    }
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">{{ 'Login.Password' | translate }}</label>
-    <input type="password" class="form-control" formControlName="password" />
-    @if(craftsmanForm.get('password')?.invalid && craftsmanForm.get('password')?.touched) {
-      <small class="text-danger">{{ 'Signup.Password must be at least 6 characters' | translate }}</small>
-    }
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">{{ 'Signup.Bio' | translate }}</label>
-    <textarea class="form-control" formControlName="bio" rows="3" [placeholder]="'Signup.Tell us about your experience and skills' | translate"></textarea>
-    @if(craftsmanForm.get('bio')?.invalid && craftsmanForm.get('bio')?.touched) {
-      <small class="text-danger">{{ 'Signup.Bio is required' | translate }}</small>
-    }
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">{{ 'Signup.Years of Experience' | translate }}</label>
-    <input type="number" class="form-control" formControlName="yearsOfExperience" min="0" [placeholder]="'Signup.Enter years of experience' | translate" />
-    @if(craftsmanForm.get('yearsOfExperience')?.invalid && craftsmanForm.get('yearsOfExperience')?.touched) {
-      <small class="text-danger">{{ 'Signup.Years of experience is required' | translate }}</small>
-    }
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">{{ 'Signup.Profile Image URL' | translate }} ({{ 'Signup.Optional' | translate }})</label>
-    <input type="url" class="form-control" formControlName="profileImageUrl" [placeholder]="'Signup.Enter image URL' | translate" />
-  </div>
-
-  <!-- Serve Areas -->
-  <div class="mb-3">
-    <label class="form-label">{{ 'Signup.Service Areas' | translate }}</label>
-    <div formArrayName="serveAreas">
-      @for(area of serveAreas.controls; track $index) {
-        <div [formGroupName]="$index" class="border rounded p-3 mb-2">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <strong>{{ 'Signup.Area' | translate }} {{$index + 1}}</strong>
-            @if(serveAreas.controls.length > 1) {
-              <button type="button" class="btn btn-sm btn-danger" (click)="removeServeArea.emit($index)">
-                {{ 'Signup.Remove' | translate }}
-              </button>
-            }
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-2">
-              <label class="form-label">{{ 'Signup.City' | translate }}</label>
-              <input type="text" class="form-control" formControlName="city" [placeholder]="'Signup.Enter city' | translate" />
-              @if(area.get('city')?.invalid && area.get('city')?.touched) {
-                <small class="text-danger">{{ 'Signup.City is required' | translate }}</small>
-              }
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label">{{ 'Signup.Area' | translate }}</label>
-              <input type="text" class="form-control" formControlName="area" [placeholder]="'Signup.Enter area' | translate" />
-              @if(area.get('area')?.invalid && area.get('area')?.touched) {
-                <small class="text-danger">{{ 'Signup.Area is required' | translate }}</small>
-              }
-            </div>
-          </div>
-        </div>
+<form [formGroup]="craftsmanForm" (ngSubmit)="onSubmitForm()" class="customer-form-layout">
+  <div class="form-grid">
+    <div class="field col-span-2">
+      <label class="field-label">{{ 'Signup.Full Name' | translate }}</label>
+      <div class="input-shell" [class.invalid]="craftsmanForm.get('fullName')?.invalid && craftsmanForm.get('fullName')?.touched">
+        <i class="bi bi-person"></i>
+        <input type="text" formControlName="fullName" [placeholder]="'Signup.Enter your full name' | translate" />
+      </div>
+      @if(craftsmanForm.get('fullName')?.invalid && craftsmanForm.get('fullName')?.touched) {
+        <small class="text-danger">{{ 'Signup.Full name is required' | translate }}</small>
       }
     </div>
-    <button type="button" class="btn btn-outline-secondary btn-sm w-100" (click)="addServeArea.emit()">
-      + {{ 'Signup.Add Another Service Area' | translate }}
-    </button>
+
+    <div class="field col-span-2">
+      <label class="field-label">{{ 'Login.Username' | translate }}</label>
+      <div class="input-shell" [class.invalid]="craftsmanForm.get('userName')?.invalid && craftsmanForm.get('userName')?.touched">
+        <i class="bi bi-at"></i>
+        <input type="text" formControlName="userName" placeholder="salahly_tech" />
+      </div>
+      @if(craftsmanForm.get('userName')?.invalid && craftsmanForm.get('userName')?.touched) {
+        <small class="text-danger">{{ 'Signup.Username is required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field col-span-2">
+      <label class="field-label">{{ 'Login.Email' | translate }}</label>
+      <div class="input-shell" [class.invalid]="craftsmanForm.get('email')?.invalid && craftsmanForm.get('email')?.touched">
+        <i class="bi bi-envelope"></i>
+        <input type="email" formControlName="email" placeholder="john@example.com" />
+      </div>
+      @if(craftsmanForm.get('email')?.invalid && craftsmanForm.get('email')?.touched) {
+        <small class="text-danger">{{ 'Signup.Valid email is required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field col-span-2">
+      <label class="field-label">{{ 'Login.Password' | translate }}</label>
+      <div class="input-shell" [class.invalid]="craftsmanForm.get('password')?.invalid && craftsmanForm.get('password')?.touched">
+        <i class="bi bi-lock"></i>
+        <input type="password" formControlName="password" placeholder="••••••••" />
+      </div>
+      @if(craftsmanForm.get('password')?.invalid && craftsmanForm.get('password')?.touched) {
+        <small class="text-danger">{{ 'Signup.Password must be at least 6 characters' | translate }}</small>
+      }
+    </div>
   </div>
 
-  <button class="btn signupBtn w-100" type="submit">
-    {{ "Signup.Signup as Technician" | translate }}
+  <button class="btn signupBtn w-100 d-flex align-items-center justify-content-center gap-2" type="submit" [disabled]="craftsmanForm.invalid || isSubmitting">
+    @if(isSubmitting) {
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    }
+    <span>{{ 'Signup.Signup as Technician' | translate }}</span>
   </button>
-  <div class="small text-muted mt-2 text-center">
-    <span class="me-1">{{ "Signup.Your account will be reviewed before activation" | translate }}</span>
-  </div>
 </form>

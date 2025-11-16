@@ -1,4 +1,100 @@
+.customer-form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #36394a;
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 640px) {
+  .col-span-2 {
+    grid-column: span 1;
+  }
+}
+
+.input-shell {
+  border: 1px solid #e1e4f0;
+  border-radius: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-shell textarea,
+.input-shell input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  font-size: 0.95rem;
+}
+
+.input-shell i {
+  color: #6c63ff;
+}
+
+.input-shell.invalid {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 0.15rem rgba(255, 107, 107, 0.1);
+}
+
+.textarea {
+  align-items: flex-start;
+}
+
+.service-areas {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.area-card {
+  border: 1px solid #e1e4f0;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(28, 27, 42, 0.05);
+}
+
+.area-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
 .signupBtn{
   background-color: #1c1b2a;
   color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem;
+  font-weight: 600;
+}
+
+.signupBtn:disabled {
+  opacity: 0.7;
 }

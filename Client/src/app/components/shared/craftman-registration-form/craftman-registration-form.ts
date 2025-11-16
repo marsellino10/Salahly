@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
@@ -11,10 +11,8 @@ import { CommonModule } from '@angular/common';
 })
 export class CraftmanRegistrationForm {
  @Input() craftsmanForm!: FormGroup;
- @Input() serveAreas!: FormArray;
+ @Input() isSubmitting = false;
  @Output() onSubmit = new EventEmitter<void>();
- @Output() addServeArea = new EventEmitter<void>();
- @Output() removeServeArea = new EventEmitter<number>();
 
  onSubmitForm() {
   this.onSubmit.emit();

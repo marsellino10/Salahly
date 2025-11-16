@@ -1,34 +1,64 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule, FormGroup } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormControl, Validators } from '@angular/forms';
+import { AuthService, LoginPayload, LoginResponse } from '../../../core/services/auth-service';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule,RouterLink,TranslateModule,ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, TranslateModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
-  activeTab: 'customer' | 'craftsman' | 'admin' = 'customer';
-  private readonly _FormBuilder = inject(FormBuilder);
-  loginForm: FormGroup = this._FormBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+  private readonly _formBuilder = inject(FormBuilder);
+  private readonly _authService = inject(AuthService);
+  private readonly _router = inject(Router);
+
+  loginForm: FormGroup = this._formBuilder.group({
+    userName: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  handleLogin(role: string) {
-    if (this.loginForm.invalid) return;
+  isSubmitting = false;
+  errorMessage: string | null = null;
 
-    const { email, password } = this.loginForm.value;
-    console.log('Logging in as:', role, { email, password });
+  onSubmit(): void {
+    if (this.loginForm.invalid || this.isSubmitting) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-    // TODO: Replace with actual authentication logic
-  }
-  onSubmit() {
-    this.handleLogin(this.activeTab);
+    const payload: LoginPayload = {
+      userName: this.loginForm.value.userName?.trim() ?? '',
+      password: this.loginForm.value.password ?? '',
+    };
+
+    this.isSubmitting = true;
+    this.errorMessage = null;
+
+    this._authService.login(payload).subscribe({
+      next: (result: LoginResponse) => {
+        this.isSubmitting = false;
+        this.loginForm.reset();
+        const isTechnician = result.data.userType.toLowerCase() == 'craftsman';
+        const isProfileCompleted = result.data.isProfileCompleted ?? true;
+        console.log(isTechnician,isProfileCompleted);
+        if (isTechnician && !isProfileCompleted) {
+          this._router.navigate(['/complete-profile']);
+          return;
+        }
+
+        this._router.navigate(['/home']);
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        this.errorMessage =
+          typeof error?.error === 'string'
+            ? error.error
+            : 'Unable to sign you in right now. Please try again.';
+      },
+    });
   }
 }
