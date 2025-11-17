@@ -3,7 +3,7 @@
     "English": "English",
     "Arabic": "Arabic"
   },
-  "Landing":{
+  "Landing": {
     "title": "Salahly",
     "home": "Home",
     "login": "Login",
@@ -13,26 +13,32 @@
     "Book your favorite technical and get the job done fast and professionally!": "Book your favorite technical and get the job done fast and professionally!",
     "View Technicians": "View Technicians"
   },
-  "BlankNavBar":{
+  "BlankNavBar": {
     "Salahly": "Salahly",
     "Home": "Home",
     "Browse Technicians": "Browse Technicians",
     "Login": "Login",
     "Sign Up": "Sign Up"
   },
-  "TechnicianNav":{
+  "TechnicianNav": {
     "Profile": "Profile",
     "Portfolio": "Portfolio",
     "Logout": "Logout"
   },
-  "HomeBanner":{
+  "CustomerNav": {
+    "Profile": "Profile",
+    "Requests": "Requests",
+    "Logout": "Logout",
+    "CustomerLabel": "Customer"
+  },
+  "HomeBanner": {
     "Find Trusted Service Providers": "Find Trusted Service Providers",
     "Salahly": "Salahly",
     "Connect with verified electricians, plumbers, carpenters, and more. Book services instantly and get your home issues fixed by professionals.": "Connect with verified electricians, plumbers, carpenters, and more. Book services instantly and get your home issues fixed by professionals.",
     "Browse Technicians": "Browse Technicians",
     "Sign Up Now": "Sign Up Now"
   },
-  "HomeFeatures":{
+  "HomeFeatures": {
     "Why Choose Salahly?": "Why Choose Salahly?",
     "We make it easy to find and book trusted service providers in your area": "We make it easy to find and book trusted service providers in your area",
     "Verified Professionals": "Verified Professionals",
@@ -42,7 +48,7 @@
     "Direct Communication": "Direct Communication",
     "Chat or call technicians directly to discuss your service needs": "Chat or call technicians directly to discuss your service needs"
   },
-  "HomeServicesSection":{
+  "HomeServicesSection": {
     "Browse by Service": "Browse by Service",
     "Find the right service provider for your needs": "Find the right service provider for your needs",
     "Electricians": "Electricians",
@@ -52,75 +58,75 @@
     "Trusted plumbers for home repairs": "Trusted plumbers for home repairs",
     "Skilled carpenters for furniture & repairs": "Skilled carpenters for furniture & repairs"
   },
-  "Footer":{
-    "Salahly":"Salahly",
-    "Quick Links":"Quick Links",
-    "Services":"Services",
-    "Contact Us":"Contact Us",
+  "Footer": {
+    "Salahly": "Salahly",
+    "Quick Links": "Quick Links",
+    "Services": "Services",
+    "Contact Us": "Contact Us",
     "Connecting customers with trusted service providers across Egypt.": "Connecting customers with trusted service providers across Egypt.",
     "© 2025 Salahly. All rights reserved.": "© 2025 Salahly. All rights reserved.",
-    "Cairo, Egypt":"Cairo, Egypt",
-    "Electrician":"Electrician",
-    "Plumber":"Plumber",
-    "Carpenter":"Carpenter",
-    "Painter":"Painter",
-    "HVAC Specialist":"HVAC Specialist",
-    "Locksmith":"Locksmith",
-    "Home":"Home",
-    "Browse Technicals":"Browse Technicals",
-    "Login":"Login",
-    "Sign Up":"Sign Up"
+    "Cairo, Egypt": "Cairo, Egypt",
+    "Electrician": "Electrician",
+    "Plumber": "Plumber",
+    "Carpenter": "Carpenter",
+    "Painter": "Painter",
+    "HVAC Specialist": "HVAC Specialist",
+    "Locksmith": "Locksmith",
+    "Home": "Home",
+    "Browse Technicals": "Browse Technicals",
+    "Login": "Login",
+    "Sign Up": "Sign Up"
   },
-  "Login":{
-    "Login":"Login",
-    "Username":"Username",
-    "Password":"Password",
-    "Forgot password?":"Forgot password?",
-    "Welcome back":"Welcome back",
-    "Sign in to your account":"Sign in to your account",
-    "Enter your account details below to continue.":"Enter your account details below to continue.",
-    "Don't have an account?":"Don't have an account?",
-    "signup":"signup"
+  "Login": {
+    "Login": "Login",
+    "Username": "Username",
+    "Password": "Password",
+    "Forgot password?": "Forgot password?",
+    "Welcome back": "Welcome back",
+    "Sign in to your account": "Sign in to your account",
+    "Enter your account details below to continue.": "Enter your account details below to continue.",
+    "Don't have an account?": "Don't have an account?",
+    "signup": "signup"
   },
-  "Signup":{
-    "Create Account":"Create Account",
-    "Choose your account type to get started":"Choose your account type to get started",
-    "Customer":"Customer",
-    "Technician":"Technician",
-    "Email":"Email",
-    "Password":"Password",
-    "Signup as Customer":"Signup as Customer",
-    "Signup as Technician":"Signup as Technician",
-    "Your account will be reviewed before activation":"Your account will be reviewed before activation",
-    "Already have an account?":"Already have an account?",
-    "login":"login",
-    "Full Name":"Full Name",
-    "Enter your full name":"Enter your full name",
-    "Full name is required":"Full name is required",
-    "Valid email is required":"Valid email is required",
-    "Password must be at least 6 characters":"Password must be at least 6 characters",
-    "User Type":"User Type",
-    "Choose your user type":"Choose your user type",
-    "Username":"Username",
-    "Enter your username":"Enter your username",
-    "Username is required":"Username is required"
+  "Signup": {
+    "Create Account": "Create Account",
+    "Choose your account type to get started": "Choose your account type to get started",
+    "Customer": "Customer",
+    "Technician": "Technician",
+    "Email": "Email",
+    "Password": "Password",
+    "Signup as Customer": "Signup as Customer",
+    "Signup as Technician": "Signup as Technician",
+    "Your account will be reviewed before activation": "Your account will be reviewed before activation",
+    "Already have an account?": "Already have an account?",
+    "login": "login",
+    "Full Name": "Full Name",
+    "Enter your full name": "Enter your full name",
+    "Full name is required": "Full name is required",
+    "Valid email is required": "Valid email is required",
+    "Password must be at least 6 characters": "Password must be at least 6 characters",
+    "User Type": "User Type",
+    "Choose your user type": "Choose your user type",
+    "Username": "Username",
+    "Enter your username": "Enter your username",
+    "Username is required": "Username is required"
   },
-  "BrowseTechnicians":{
-    "Browse Service Providers":"Browse Service Providers",
-    "Find the perfect professional for your needs":"Find the perfect professional for your needs",
-    "Showing":"Showing",
-    "craftsmen":"craftsmen",
-    "No craftsmen found":"No craftsmen found",
-    "Try adjusting your search criteria or browse all categories":"Try adjusting your search criteria or browse all categories"
+  "BrowseTechnicians": {
+    "Browse Service Providers": "Browse Service Providers",
+    "Find the perfect professional for your needs": "Find the perfect professional for your needs",
+    "Showing": "Showing",
+    "craftsmen": "craftsmen",
+    "No craftsmen found": "No craftsmen found",
+    "Try adjusting your search criteria or browse all categories": "Try adjusting your search criteria or browse all categories"
   },
-  "Filter":{
-    "Search by name, location, or service...":"Search by name, location, or service...",
-    "All Regions":"All Regions",
-    "Select Region":"Select Region",
-    "All Cities":"All Cities",
-    "Select City":"Select City",
-    "All Services":"All Services",
-    "Select Service":"Select Service",
-    "Search":"Search"
+  "Filter": {
+    "Search by name, location, or service...": "Search by name, location, or service...",
+    "All Regions": "All Regions",
+    "Select Region": "Select Region",
+    "All Cities": "All Cities",
+    "Select City": "Select City",
+    "All Services": "All Services",
+    "Select Service": "Select Service",
+    "Search": "Search"
   }
 }

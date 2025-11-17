@@ -1,0 +1,188 @@
+<section class="complete-profile-page">
+  <header class="page-hero glass-panel">
+    <div class="hero-copy">
+      <p class="eyebrow">Complete your onboarding</p>
+      <div class="hero-title">
+        <h1>Customer profile</h1>
+        <span class="status-pill" [class.success]="hasExistingProfile">
+          <i class="bi" [class.bi-patch-check-fill]="hasExistingProfile" [class.bi-hourglass-split]="!hasExistingProfile"></i>
+          {{ hasExistingProfile ? 'Profile ready' : 'Finish setup' }}
+        </span>
+      </div>
+      <p>Share accurate home and contact details so technicians arrive prepared.</p>
+      <ul class="hero-highlights">
+        <li><i class="bi bi-house-heart"></i> Exact address for visits</li>
+        <li><i class="bi bi-phone"></i> Verified phone for updates</li>
+        <li><i class="bi bi-calendar3"></i> Personalized scheduling</li>
+      </ul>
+    </div>
+    <div class="hero-progress">
+      <div class="progress-stats">
+        <span class="progress-value">{{ progressValue }}%</span>
+        <small>Profile strength</small>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progressValue"></div>
+      </div>
+      <p class="progress-hint">Complete every section for the smoothest booking experience.</p>
+    </div>
+  </header>
+
+  <div *ngIf="submissionMessage" class="alert" [class.success]="submissionMessage.type === 'success'">
+    <i class="bi" [class.bi-check2-circle]="submissionMessage.type === 'success'" [class.bi-exclamation-triangle]="submissionMessage.type === 'error'"></i>
+    <span>{{ submissionMessage.text }}</span>
+    <button type="button" class="icon-btn" (click)="clearSubmissionMessage()">
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+
+  <div class="profile-layout" [class.is-loading]="isLoadingProfile">
+    <aside class="side-panel">
+      <div class="card avatar-card">
+        <div class="avatar-shell" [class.has-image]="profileImagePreview || existingProfileImageUrl">
+          <img *ngIf="profileImagePreview" [src]="profileImagePreview" alt="Profile preview" />
+          <img *ngIf="!profileImagePreview && existingProfileImageUrl" [src]="existingProfileImageUrl" alt="Current profile" />
+          <div *ngIf="!profileImagePreview && !existingProfileImageUrl" class="avatar-placeholder">
+            <i class="bi bi-person"></i>
+            <span>Upload photo</span>
+          </div>
+        </div>
+        <label class="upload-btn">
+          <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+          <i class="bi bi-upload"></i>
+          <span>{{ selectedProfileImage ? 'Change photo' : 'Upload profile photo' }}</span>
+        </label>
+        <small>PNG or JPG up to 3MB.</small>
+      </div>
+
+      <div class="card steps-card">
+        <div class="card-head">
+          <p class="eyebrow mb-1">Checklist</p>
+          <h5>Progress overview</h5>
+        </div>
+        <ul class="step-list">
+          <li *ngFor="let step of progressSteps" [class.completed]="step.completed">
+            <i class="bi" [class.bi-check-circle-fill]="step.completed" [class.bi-circle]="!step.completed"></i>
+            <div>
+              <p>{{ step.label }}</p>
+              <small>{{ step.completed ? 'Looks great!' : 'Still needs attention' }}</small>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card tips-card">
+        <h6>Tips</h6>
+        <ul>
+          <li>Use a phone number you actively answer.</li>
+          <li>Describe your building/landmarks inside the address.</li>
+          <li>A friendly photo makes handoffs easier.</li>
+        </ul>
+      </div>
+    </aside>
+
+    <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <section class="card form-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow mb-1">Step 1</p>
+            <h4>Profile basics</h4>
+          </div>
+          <span class="chip">Required</span>
+        </div>
+
+        <div class="field-grid">
+          <div class="form-field" [class.invalid]="isControlInvalid('fullName')">
+            <label>Full name</label>
+            <div class="input-shell">
+              <i class="bi bi-person"></i>
+              <input type="text" formControlName="fullName" placeholder="e.g. Sara Adel" [readonly]="hasExistingProfile" />
+            </div>
+            <small *ngIf="isControlInvalid('fullName')" class="error-text">Please enter your legal name.</small>
+          </div>
+
+          <div class="form-field" [class.invalid]="isControlInvalid('dateOfBirth')">
+            <label>Date of birth</label>
+            <div class="input-shell">
+              <i class="bi bi-calendar-event"></i>
+              <input type="date" formControlName="dateOfBirth" />
+            </div>
+            <small class="hint">Optional but helps tailor reminders.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="card form-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow mb-1">Step 2</p>
+            <h4>Contact details</h4>
+          </div>
+          <span class="chip muted">Keep them current</span>
+        </div>
+
+        <div class="field-grid">
+          <div class="form-field" [class.invalid]="isControlInvalid('phoneNumber')">
+            <label>Phone number</label>
+            <div class="input-shell">
+              <i class="bi bi-telephone"></i>
+              <input type="tel" formControlName="phoneNumber" placeholder="e.g. +20 111 222 3344" />
+            </div>
+            <small *ngIf="isControlInvalid('phoneNumber')" class="error-text">Provide a valid phone number.</small>
+          </div>
+
+          <div class="form-field" [class.invalid]="isControlInvalid('address')">
+            <label>Street address</label>
+            <div class="input-shell">
+              <i class="bi bi-geo-alt"></i>
+              <input type="text" formControlName="address" placeholder="Building, street, floor" />
+            </div>
+            <small *ngIf="isControlInvalid('address')" class="error-text">Enter the address technicians should visit.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="card form-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow mb-1">Step 3</p>
+            <h4>Location</h4>
+          </div>
+          <span class="chip">City & area</span>
+        </div>
+
+        <div class="field-grid">
+          <div class="form-field" [class.invalid]="isControlInvalid('city')">
+            <label>City</label>
+            <div class="input-shell">
+              <i class="bi bi-building"></i>
+              <input type="text" formControlName="city" placeholder="e.g. Cairo" />
+            </div>
+            <small *ngIf="isControlInvalid('city')" class="error-text">City is required.</small>
+          </div>
+
+          <div class="form-field" [class.invalid]="isControlInvalid('area')">
+            <label>Area / district</label>
+            <div class="input-shell">
+              <i class="bi bi-geo"></i>
+              <input type="text" formControlName="area" placeholder="e.g. Nasr City" />
+            </div>
+            <small *ngIf="isControlInvalid('area')" class="error-text">Let us know the neighborhood for faster matching.</small>
+          </div>
+        </div>
+      </section>
+
+      <div class="form-actions">
+        <button class="btn primary" type="submit" [disabled]="isSubmitting || isLoadingProfile">
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status"></span>
+          <span>{{ hasExistingProfile ? 'Update profile' : 'Save profile' }}</span>
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="isLoadingProfile" class="loading-overlay">
+      <div class="loader"></div>
+      <p>Loading your profile...</p>
+    </div>
+  </div>
+</section>

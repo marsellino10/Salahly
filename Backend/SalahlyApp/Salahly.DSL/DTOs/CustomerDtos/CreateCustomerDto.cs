@@ -8,9 +8,8 @@ namespace Salahly.DSL.DTOs.CustomerDtos
 {
     public class CreateCustomerDto
     {
-        public string? UserId { get; set; }
+        public int UserId { get; set; }
         public string FullName { get; set; }
-        public string? ProfileImageUrl { get; set; }
         public string? Address { get; set; }
         public string? City { get; set; }
 

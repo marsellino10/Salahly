@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { technicianAuthGuard } from './core/guards/technician-auth.guard';
+import { customerAuthGuard } from './core/guards/customer-auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'index', pathMatch: 'full' },
@@ -24,6 +25,17 @@ export const routes: Routes = [
       {
         path: 'complete-profile',
         loadComponent: () => import('./pages/technician/complete-profile/complete-profile').then(c => c.CompleteProfile),
+      },
+    ],
+  },
+  {
+    path: '',
+    loadComponent: () => import('./layouts/auth-layout/auth-layout').then(c => c.AuthLayout),
+    canActivate: [customerAuthGuard],
+    children: [
+      {
+        path: 'customer-profile',
+        loadComponent: () => import('./pages/customer/customer-profile/customer-profile').then(c => c.CustomerProfile),
       },
     ],
   },

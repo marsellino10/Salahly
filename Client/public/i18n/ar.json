@@ -25,6 +25,12 @@
     "Portfolio": "معرض الأعمال",
     "Logout": "تسجيل الخروج"
   },
+  "CustomerNav":{
+    "Profile":"الملف الشخصي",
+    "Requests":"الطلبات",
+    "Logout":"تسجيل الخروج",
+    "CustomerLabel":"عميل"
+  },
   "HomeBanner":{
     "Find Trusted Service Providers": "ابحث عن مقدمي الخدمات الموثقين",
     "Salahly": "صلح لي",

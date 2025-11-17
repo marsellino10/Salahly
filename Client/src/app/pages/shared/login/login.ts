@@ -48,6 +48,9 @@ export class Login {
         if (isTechnician && !isProfileCompleted) {
           this._router.navigate(['/complete-profile']);
           return;
+        }else if(!isTechnician && !isProfileCompleted){
+          this._router.navigate(['/customer-profile']);
+          return;
         }
 
         this._router.navigate(['/home']);
