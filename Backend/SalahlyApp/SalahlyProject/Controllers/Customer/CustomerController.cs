@@ -24,7 +24,7 @@ namespace SalahlyProject.Controllers.Customer
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var customerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var customerId = int.Parse(User.FindFirst("NameIdentifier")?.Value ?? "0");
             var result = await _service.GetByIdAsync(id, customerId);
             if (result == null) return Unauthorized(new { message = "Access denied or customer not found." });
             return Ok(result);
@@ -34,7 +34,7 @@ namespace SalahlyProject.Controllers.Customer
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CustomerUpdateDto dto)
         {
-            var customerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var customerId = int.Parse(User.FindFirst("NameIdentifier")?.Value ?? "0");
             var result = await _service.UpdateAsync(id, dto, customerId);
             if (result == null) return Unauthorized(new { message = "Access denied or customer not found." });
             return Ok(result);
@@ -42,7 +42,7 @@ namespace SalahlyProject.Controllers.Customer
         [HttpPost("create")]
         public async Task<ActionResult<ApiResponse<CreateCustomerDto>>> CreateCustomer([FromForm] CreateCustomerDto dto)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("NameIdentifier");
             dto.UserId = userId;
 
             if (!ModelState.IsValid)

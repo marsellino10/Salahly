@@ -123,6 +123,10 @@ export class AuthService {
   private canUseStorage(): boolean {
     return isPlatformBrowser(this._platformId);
   }
+
+  logout(): void {
+    this.clearToken();
+  }  
 }
 
 function capitalize(value: string): string {

@@ -83,7 +83,7 @@ namespace Salahly.DSL.Services
         };
 
             foreach (var role in roles)
-                claims.Add(new Claim("Role", role));
+                claims.Add(new Claim(ClaimTypes.Role, role));
 
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,

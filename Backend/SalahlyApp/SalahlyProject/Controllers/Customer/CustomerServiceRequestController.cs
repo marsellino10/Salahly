@@ -27,7 +27,7 @@ namespace SalahlyProject.Controllers.Customer
                 Console.WriteLine("dnsajnsaj");
 
                 // extract customer id from token
-                var customerClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var customerClaim = User.FindFirst("NameIdentifier")?.Value;
                 if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
                     return Unauthorized(new { message = "Customer ID not found in token" });
 
@@ -45,7 +45,7 @@ namespace SalahlyProject.Controllers.Customer
         {
             try
             {
-                var customerClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var customerClaim = User.FindFirst("NameIdentifier")?.Value;
                 if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
                     return Unauthorized(new { message = "Customer ID not found in token" });
                 var result = await _service.GetAllByCustomerAsync(customerId);
@@ -62,7 +62,7 @@ namespace SalahlyProject.Controllers.Customer
         {
             try
             {
-                var customerClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var customerClaim = User.FindFirst("NameIdentifier")?.Value;
                 if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
                     return Unauthorized(new { message = "Customer ID not found in token" });
 
@@ -84,7 +84,7 @@ namespace SalahlyProject.Controllers.Customer
         {
             try
             {
-                var customerClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var customerClaim = User.FindFirst("NameIdentifier")?.Value;
                 if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
                     return Unauthorized(new { message = "Customer ID not found in token" });
                 var success = await _service.DeleteAsync(id, customerId);
@@ -103,7 +103,7 @@ namespace SalahlyProject.Controllers.Customer
         {
             try
             {
-                var customerClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var customerClaim = User.FindFirst("NameIdentifier")?.Value;
                 if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
                     return Unauthorized(new { message = "Customer ID not found in token" });
                 var result = await _service.UpdateAsync(id, dto, customerId);

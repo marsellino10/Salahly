@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslateSelect } from '../../shared/translate-select/translate-select';
 import { TechnicianService } from '../../../core/services/technician-service';
+import { AuthService } from '../../../core/services/auth-service';
 
 @Component({
   selector: 'app-technician-nav-bar',
@@ -24,6 +25,7 @@ export class TechnicianNavBar implements OnInit {
     private router: Router,
     private elementRef: ElementRef<HTMLElement>,
     private technicianService: TechnicianService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -58,9 +60,10 @@ export class TechnicianNavBar implements OnInit {
   }
 
   logout(): void {
-    // TODO: add logout logic
     this.closeMobileMenu();
     this.closeUserMenu();
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   @HostListener('document:click', ['$event'])
@@ -85,9 +88,9 @@ export class TechnicianNavBar implements OnInit {
 
   private loadUserProfile(): void {
     const claims = this.technicianService.getTechnicianTokenClaims();
-    const fallbackName = claims.name?.trim() || 'Technician';
+    const fallbackName = claims.fullName?.trim() || 'Technician';
     const technicianId = Number(claims.nameIdentifier);
-
+    this.user.name = fallbackName;
     if (!technicianId) {
       this.user.name = fallbackName;
       return;

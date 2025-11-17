@@ -76,7 +76,7 @@ namespace Salahly.API.Controllers
         }
         private int GetCraftsmanIdFromToken()
         {
-            var craftsmanIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var craftsmanIdClaim = User.FindFirst("NameIdentifier")?.Value;
             return int.TryParse(craftsmanIdClaim, out var id) ? id : 0;
         }
     }

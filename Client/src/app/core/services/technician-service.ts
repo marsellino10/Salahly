@@ -120,7 +120,7 @@ export class TechnicianService {
       'sub',
       'Id',
     ]);
-    const role = this.extractClaim(payload, ['role', 'Role', 'userType', 'UserType']);
+    const role = this.extractClaim(payload, ['http://schemas.microsoft.com/ws/2008/06/identity/claims/role', 'http://schemas.microsoft.com/ws/2008/06/identity/claims/Role']);
     const fullName = this.extractClaim(payload, ['fullName', 'FullName', 'unique_name']);
     return { name, nameIdentifier, role, fullName };
   }
@@ -134,6 +134,9 @@ export class TechnicianService {
 
     if (includeId) {
       formData.append('Id', `${(payload as UpdateTechnicianPayload).id}`);
+    }
+    else{
+      formData.append('UserId', '0');
     }
 
     formData.append('FullName', payload.fullName);
@@ -154,8 +157,8 @@ export class TechnicianService {
     if (payload.serviceAreas?.length) {
       const serviceAreasJson = JSON.stringify(
         payload.serviceAreas.map((area) => ({
-          areaId: area.areaId,
-          serviceRadiusKm: area.serviceRadiusKm ?? 10,
+          AreaId: area.areaId,
+          ServiceRadiusKm: area.serviceRadiusKm ?? 10,
         })),
       );
       formData.append('serviceAreasJson', serviceAreasJson);

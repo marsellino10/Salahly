@@ -77,6 +77,8 @@ namespace Salahly.DSL.Services
             };
 
             await _unitOfWork.Craftsmen.AddAsync(craftsman);
+            user.IsProfileCompleted = true;
+            await _unitOfWork.ApplicationUsers.UpdateAsync(user);
             await _unitOfWork.SaveAsync();
 
             // Add service areas
@@ -95,8 +97,9 @@ namespace Salahly.DSL.Services
 
             await _unitOfWork.SaveAsync();
 
-            return await GetByIdAsync(craftsman.Id)!
-                   ?? throw new InvalidOperationException("Failed to retrieve created craftsman");
+            // Return DTO without reloading user to avoid tracking conflicts
+            var craftmanDto = await GetByIdAsync(craftsman.Id);
+            return craftmanDto ?? throw new InvalidOperationException("Failed to retrieve created craftsman");
         }
 
         public async Task<CraftsmanDto> UpdateAsync(UpdateCraftsmanDto dto)
@@ -120,12 +123,16 @@ namespace Salahly.DSL.Services
                 .Where(a => a.CraftsmanId == existing.Id)
                 .ToList();
 
-            //update service areas Later
+            // Remove existing areas
             foreach (var ea in existingAreas)
             {
                 await _unitOfWork.CraftsmanServiceAreas.DeleteAsync(ea);
             }
 
+            // Persist deletes first to avoid tracking two instances with same key
+            await _unitOfWork.SaveAsync();
+
+            // Add new service areas
             foreach (var area in dto.ServiceAreas ?? Enumerable.Empty<AddServiceAreaDto>())
             {
                 var sa = new CraftsmanServiceArea
@@ -195,7 +202,9 @@ namespace Salahly.DSL.Services
             if (craftsman.User != null)
             {
                 craftsman.User.ProfileImageUrl = profileImageUrl;
-                await _unitOfWork.ApplicationUsers.UpdateAsync(craftsman.User);
+                //// The user is already being tracked by the context from the include,
+                //// so just update the craftsman entity which will cascade the user update
+                //await _unitOfWork.Craftsmen.UpdateAsync(craftsman);
                 await _unitOfWork.SaveAsync();
                 _logger.LogInformation("Profile image updated for craftsman ID: {CraftsmanId}", craftsmanId);
             }
@@ -204,8 +213,10 @@ namespace Salahly.DSL.Services
                 _logger.LogWarning("No associated user found for craftsman ID: {CraftsmanId}", craftsmanId);
             }
 
-            return await GetByIdAsync(craftsmanId)!
-                   ?? throw new InvalidOperationException("Failed to retrieve updated craftsman");
+            // Reload after save to avoid tracking issues
+            //await GetByIdAsync(craftsmanId)
+            var result = MapToDto(craftsman);
+            return result ?? throw new InvalidOperationException("Failed to retrieve updated craftsman");
         }
 
         /// <summary>
@@ -247,7 +258,7 @@ namespace Salahly.DSL.Services
         private async Task<Craftsman?> GetByIdWithIncludesAsync(int id)
         {
             if (id <= 0) return null;
-            var query = await _unitOfWork.Craftsmen.GetAllAsync();
+            var query = _unitOfWork.Craftsmen.GetAll();
             var craftsman = await query
                 .Include(c => c.User)
                 .Include(c => c.Portfolio)

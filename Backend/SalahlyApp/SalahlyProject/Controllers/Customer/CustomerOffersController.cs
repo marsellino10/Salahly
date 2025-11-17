@@ -20,7 +20,7 @@ namespace Salahly.API.Controllers.Customer
 
         private int GetCustomerIdFromToken()
         {
-            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var idClaim = User.FindFirst("NameIdentifier")?.Value;
             return int.TryParse(idClaim, out var id) ? id : 0;
         }
 

@@ -28,10 +28,10 @@ export const technicianAuthGuard: CanActivateFn = () => {
 function extractRoleFromToken(token: string): string | null {
   const payload = decodeJwtPayload(token);
   const roleCandidate =
-    payload?.['role'] ??
-    payload?.['Role'] ??
-    payload?.['userType'] ??
-    payload?.['UserType'] ??
+    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
+    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/Role'] ??
+    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/userType'] ??
+    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/UserType'] ??
     null;
 
   return typeof roleCandidate === 'string' ? roleCandidate : null;

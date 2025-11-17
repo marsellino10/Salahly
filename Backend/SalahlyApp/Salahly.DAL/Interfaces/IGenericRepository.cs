@@ -10,6 +10,7 @@ namespace Salahly.DAL.Interfaces
     {
         // Async methods
         Task<IQueryable<T>> GetAllAsync();
+        IQueryable<T> GetAll();
         Task<T?> GetByIdAsync(int id);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);

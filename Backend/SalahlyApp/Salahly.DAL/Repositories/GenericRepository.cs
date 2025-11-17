@@ -19,7 +19,10 @@ namespace Salahly.DAL.Repositories
             _context = context;
             _dbSet = context.Set<T>();
         }
-
+        public IQueryable<T> GetAll()
+        {
+            return _dbSet;
+        }
         public async Task<IQueryable<T>> GetAllAsync()
         {
             return _dbSet.AsNoTracking().AsQueryable();

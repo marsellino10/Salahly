@@ -132,7 +132,7 @@ namespace SalahlyProject.Controllers
                         return BadRequest(new ApiResponse<CraftsmanDto>(400, $"Invalid JSON format for serviceAreasJson: {ex.Message}"));
                     }
                 }
-                dto.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dto.UserId = int.Parse(User.FindFirstValue("NameIdentifier"));
                 if (dto.UserId <= 0) {
                     return BadRequest(new ApiResponse<CraftsmanDto>(400, "Invalid UserId in token"));
                 }

@@ -30,7 +30,7 @@ interface SubmissionMessage {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './complete-profile.html',
-  styleUrl: './complete-profile.css',
+  styleUrls: ['./complete-profile.css'], // <-- fixed
 })
 export class CompleteProfile implements OnInit {
   private readonly _fb = inject(FormBuilder);
@@ -59,7 +59,7 @@ export class CompleteProfile implements OnInit {
     serviceAreas: this._fb.array([], Validators.minLength(1)),
   });
   groupedAreas: { region: string; areas: Area[] }[] = [];
-  
+
   existingProfileImageUrl: string | null = null;
   profileImagePreview: string | null = null;
   selectedProfileImage: File | null = null;
@@ -72,9 +72,12 @@ export class CompleteProfile implements OnInit {
     },
     {
       label: 'Expertise & bio',
+      // treat 0 as valid for yearsOfExperience; check for null/undefined instead of truthiness
       validator: () =>
-        !!this.profileForm.get('hourlyRate')?.value &&
-        !!this.profileForm.get('yearsOfExperience')?.value &&
+        this.profileForm.get('hourlyRate')?.value !== null &&
+        this.profileForm.get('hourlyRate')?.value !== undefined &&
+        this.profileForm.get('yearsOfExperience')?.value !== null &&
+        this.profileForm.get('yearsOfExperience')?.value !== undefined &&
         !!this.profileForm.get('bio')?.value,
     },
     {
@@ -131,10 +134,21 @@ export class CompleteProfile implements OnInit {
         serviceRadiusKm: [radius, [Validators.required, Validators.min(5), Validators.max(80)]],
       }),
     );
+    // console.log for dev
+    // console.log(this.profileForm.value);
   }
 
   removeServiceArea(index: number): void {
-    this.serviceAreasControls.removeAt(index);
+    if (this.serviceAreasControls.length > 1) {
+      this.serviceAreasControls.removeAt(index);
+    } else {
+      // if they try to remove the last one, clear value instead to keep one control present
+      this.serviceAreasControls.removeAt(index);
+      // maintain at least one empty control
+      if (!this.serviceAreasControls.length) {
+        this.addServiceArea();
+      }
+    }
   }
 
   isAreaSelected(areaId: number, currentIndex: number): boolean {
@@ -144,7 +158,7 @@ export class CompleteProfile implements OnInit {
     });
   }
   displayAreaLabel(areaId: number | null): string {
-    if (!areaId) return 'Select service area';
+    if (areaId === null || areaId === undefined) return 'Select service area';
     const area = this.areas.find((a) => a.id === areaId);
     return area ? `${area.region} • ${area.city}` : 'Selected area';
   }
@@ -320,7 +334,7 @@ export class CompleteProfile implements OnInit {
     }>;
 
     const serviceAreasPayload: TechnicianServiceAreaPayload[] = serviceAreas
-      .filter((area) => !!area?.areaId)
+      .filter((area) => area?.areaId !== null && area?.areaId !== undefined)
       .map((area) => ({
         areaId: Number(area.areaId),
         serviceRadiusKm: area?.serviceRadiusKm ? Number(area.serviceRadiusKm) : undefined,
