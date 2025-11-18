@@ -5,11 +5,11 @@ using Salahly.DAL.Interfaces;
 
 namespace Salahly.DAL.Repositories
 {
-    public class CraftsmanOfferRepository : ICraftsmanOfferRepository
+    public class CraftsmanOfferRepository : GenericRepository<CraftsmanOffer>, ICraftsmanOfferRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public CraftsmanOfferRepository(ApplicationDbContext context)
+        public CraftsmanOfferRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
@@ -42,6 +42,38 @@ namespace Salahly.DAL.Repositories
                     .FirstOrDefaultAsync(o =>
                         o.CraftsmanOfferId == offerId &&
                         o.ServiceRequest.CustomerId == customerId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<CraftsmanOffer>> GetOffersByCraftsmanAsync(int craftsmanId)
+        {
+            try
+            {
+                return await _context.CraftsmanOffers
+                    .AsNoTracking()
+                    .Include(o => o.ServiceRequest).ThenInclude(sr => sr.Customer).ThenInclude(c => c.User)
+                    .Include(o => o.ServiceRequest).ThenInclude(sr => sr.Craft)
+                    .Where(o => o.CraftsmanId == craftsmanId)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .ToListAsync();
+            }
+            catch
+            {
+                return Enumerable.Empty<CraftsmanOffer>();
+            }
+        }
+
+        public async Task<CraftsmanOffer?> GetOfferByIdForCraftsmanAsync(int craftsmanId, int offerId)
+        {
+            try
+            {
+                return await _context.CraftsmanOffers
+                    .Include(o => o.ServiceRequest)
+                    .FirstOrDefaultAsync(o => o.CraftsmanOfferId == offerId && o.CraftsmanId == craftsmanId);
             }
             catch
             {

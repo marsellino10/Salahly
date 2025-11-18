@@ -113,5 +113,102 @@ namespace Salahly.DSL.Services
             }
         }
 
+        public async Task<ServiceResponse<OfferDto>> CreateOfferAsync(int craftsmanId, CreateOfferDto dto)
+        {
+            try
+            {
+                // Validate service request exists (and open)
+                var request = await _unitOfWork.ServiceRequests.GetByIdAsync(dto.ServiceRequestId);
+                if (request == null)
+                    return ServiceResponse<OfferDto>.FailureResponse("Service request not found.");
+
+                // Verify the craftsman’s eligibility (same craft & area)
+                var craftsman = await _unitOfWork.Craftsmen.GetByIdAsync(craftsmanId);
+                if (craftsman == null)
+                    return ServiceResponse<OfferDto>.FailureResponse("Craftsman not found.");
+
+                if (craftsman.CraftId != request.CraftId)
+                    return ServiceResponse<OfferDto>.FailureResponse("You can only offer for requests in your craft.");
+
+                // TODO: optionally verify area match
+
+                var offer = new CraftsmanOffer
+                {
+                    CraftsmanId = craftsmanId,
+                    ServiceRequestId = dto.ServiceRequestId,
+                    OfferedPrice = dto.OfferedPrice,
+                    Description = dto.Description,
+                    EstimatedDurationMinutes = dto.EstimatedDurationMinutes,
+                    AvailableFromDate = dto.AvailableFromDate,
+                    AvailableToDate = dto.AvailableToDate,
+                    Status = OfferStatus.Pending
+                };
+
+                await _unitOfWork.CraftsmanOffers.AddAsync(offer);
+                await _unitOfWork.SaveAsync();
+
+                var offerDto = offer.Adapt<OfferDto>();
+                return ServiceResponse<OfferDto>.SuccessResponse(offerDto, "Offer created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResponse<OfferDto>.FailureResponse($"Error creating offer: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResponse<IEnumerable<OfferDto>>> GetOffersByCraftsmanAsync(int craftsmanId)
+        {
+            try
+            {
+                var offers = await _unitOfWork.CraftsmanOffers.GetOffersByCraftsmanAsync(craftsmanId);
+                var dto = offers.Adapt<IEnumerable<OfferDto>>();
+                return ServiceResponse<IEnumerable<OfferDto>>.SuccessResponse(dto);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResponse<IEnumerable<OfferDto>>.FailureResponse($"Error retrieving offers: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResponse<OfferDto>> GetOfferByIdForCraftsmanAsync(int craftsmanId, int offerId)
+        {
+            try
+            {
+                var offer = await _unitOfWork.CraftsmanOffers.GetOfferByIdForCraftsmanAsync(craftsmanId, offerId);
+                if (offer == null)
+                    return ServiceResponse<OfferDto>.FailureResponse("Offer not found or inaccessible.");
+
+                var dto = offer.Adapt<OfferDto>();
+                return ServiceResponse<OfferDto>.SuccessResponse(dto);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResponse<OfferDto>.FailureResponse($"Error retrieving offer: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> WithdrawOfferAsync(int craftsmanId, int offerId)
+        {
+            try
+            {
+                var offer = await _unitOfWork.CraftsmanOffers.GetOfferByIdForCraftsmanAsync(craftsmanId, offerId);
+                if (offer == null)
+                    return ServiceResponse<bool>.FailureResponse("Offer not found or inaccessible.");
+
+                if (offer.Status == OfferStatus.Accepted)
+                    return ServiceResponse<bool>.FailureResponse("You cannot withdraw an accepted offer.");
+
+                offer.Status = OfferStatus.Withdrawn;
+                offer.UpdatedAt = DateTime.UtcNow;
+
+                await _unitOfWork.SaveAsync();
+                return ServiceResponse<bool>.SuccessResponse(true, "Offer withdrawn successfully.");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResponse<bool>.FailureResponse($"Error withdrawing offer: {ex.Message}");
+            }
+        }
+
     }
 }
