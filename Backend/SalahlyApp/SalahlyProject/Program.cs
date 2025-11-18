@@ -123,6 +123,7 @@ namespace SalahlyProject
             builder.Services.AddScoped<ICraftsManService, CraftsManService>();
             builder.Services.AddScoped<IPortfolioService, PortfolioService>();
             builder.Services.AddScoped<IOfferService, OfferService>();
+            builder.Services.AddScoped<IReviewService, ReviewService>();
 
             // File Upload Service
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
@@ -243,7 +244,7 @@ namespace SalahlyProject
             // ========================================
             // MIDDLEWARE PIPELINE
             // ========================================
-            
+
             // Development environment
             if (app.Environment.IsDevelopment())
             {

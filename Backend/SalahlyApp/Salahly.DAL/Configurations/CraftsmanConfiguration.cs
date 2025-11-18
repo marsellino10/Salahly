@@ -13,11 +13,6 @@ namespace Salahly.DAL.Configurations
             // Primary Key
             builder.HasKey(cr => cr.Id);
 
-            // Properties
-            builder.Property(cr => cr.RatingAverage)
-                .HasPrecision(3, 2) 
-                .HasDefaultValue(0);
-
             builder.Property(cr => cr.TotalCompletedBookings)
                 .HasDefaultValue(0);
 
@@ -59,18 +54,18 @@ namespace Salahly.DAL.Configurations
                 .HasForeignKey(b => b.CraftsmanId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(cr => cr.Reviews)
-                .WithOne(r => r.Craftsman)
-                .HasForeignKey(r => r.CraftsmanId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.HasMany(cr => cr.Reviews)
+            //    .WithOne(r => r.Craftsman)
+            //    .HasForeignKey(r => r.CraftsmanId)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
             builder.HasIndex(cr => cr.CraftId);
 
-            builder.HasIndex(cr => new { cr.RatingAverage, cr.IsAvailable });
+            //builder.HasIndex(cr => new { cr.User.RatingAverage, cr.IsAvailable });
 
-            builder.HasIndex(cr => new { cr.CraftId, cr.IsAvailable, cr.RatingAverage })
-                .HasDatabaseName("IX_Craftsmen_Craft_Available_Rating");
+            //builder.HasIndex(cr => new { cr.CraftId, cr.IsAvailable, cr.User.RatingAverage })
+            //    .HasDatabaseName("IX_Craftsmen_Craft_Available_Rating");
         }
     }
 }

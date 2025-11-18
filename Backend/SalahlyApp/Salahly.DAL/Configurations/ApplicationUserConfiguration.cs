@@ -31,6 +31,11 @@ namespace Salahly.DAL.Configurations
                 .IsRequired()
                 .HasDefaultValue(true);
 
+            // Properties
+            builder.Property(cr => cr.RatingAverage)
+                .HasPrecision(3, 2)
+                .HasDefaultValue(5);
+
             builder.Property(u => u.UserType)
                 .IsRequired()
                 .HasConversion<int>(); 

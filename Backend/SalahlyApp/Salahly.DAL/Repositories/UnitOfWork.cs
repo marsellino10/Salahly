@@ -26,7 +26,8 @@ namespace Salahly.DAL.Repositories
         public IGenericRepository<Notification> Notifications { get; }
         public IGenericRepository<Payment> Payments { get; }
         public IGenericRepository<PortfolioItem> PortfolioItems { get; }
-        public IGenericRepository<Review> Reviews { get; }
+        //public IGenericRepository<Review> Reviews { get; }
+        public IReviewRepository Reviews { get; }
 
         public IGenericRepository<Area> Areas { get; }
         public IServiceRequestRepository ServiceRequests { get; }
@@ -47,7 +48,7 @@ namespace Salahly.DAL.Repositories
             Notifications = new GenericRepository<Notification>(_context);
             Payments = new GenericRepository<Payment>(_context);
             PortfolioItems = new GenericRepository<PortfolioItem>(_context);
-            Reviews = new GenericRepository<Review>(_context);
+            Reviews = new ReviewRepository(_context);
 
             Areas = new GenericRepository<Area>(_context);
             ServiceRequests = new ServiceRequestRepository(_context);

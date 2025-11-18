@@ -71,11 +71,9 @@ namespace Salahly.DSL.Services
                 Bio = dto.Bio,
                 YearsOfExperience = dto.YearsOfExperience,
                 HourlyRate = dto.HourlyRate,
-                RatingAverage = 0,
                 TotalCompletedBookings = 0,
                 IsAvailable = true
             };
-
             await _unitOfWork.Craftsmen.AddAsync(craftsman);
             user.IsProfileCompleted = true;
             await _unitOfWork.ApplicationUsers.UpdateAsync(user);

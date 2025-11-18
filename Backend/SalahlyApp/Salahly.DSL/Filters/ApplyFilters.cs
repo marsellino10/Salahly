@@ -58,7 +58,7 @@ namespace Salahly.DSL.Filters
             // Apply minimum rating filter
             if (filter.MinRating.HasValue && filter.MinRating.Value > 0)
             {
-                query = query.Where(c => c.RatingAverage >= filter.MinRating.Value);
+                query = query.Where(c => c.User.RatingAverage >= filter.MinRating.Value);
             }
 
             // Apply maximum hourly rate filter
@@ -73,7 +73,7 @@ namespace Salahly.DSL.Filters
             // Apply pagination
             var skip = (filter.PageNumber - 1) * filter.PageSize;
             var items = await query
-                .OrderByDescending(c => c.RatingAverage)
+                .OrderByDescending(c => c.User.RatingAverage)
                 .ThenByDescending(c => c.TotalCompletedBookings)
                 .Skip(skip)
                 .Take(filter.PageSize)

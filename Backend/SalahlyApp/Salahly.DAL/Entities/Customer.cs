@@ -23,6 +23,6 @@ namespace Salahly.DAL.Entities
         // Relations
         public ICollection<ServiceRequest> ServiceRequests { get; set; }
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-        public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        //public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }

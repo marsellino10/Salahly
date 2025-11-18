@@ -40,7 +40,7 @@ namespace Salahly.DAL.Entities
         public ServiceRequest? ServiceRequest { get; set; }
         public CraftsmanOffer? AcceptedOffer { get; set; }
         public Payment? Payment { get; set; }
-        public Review? Review { get; set; }
+        public ICollection<Review>? Reviews { get; set; }
     }
 
     public enum BookingStatus

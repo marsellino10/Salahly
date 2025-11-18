@@ -20,7 +20,8 @@ namespace Salahly.DAL.Interfaces
         IGenericRepository<Notification> Notifications { get; }
         IGenericRepository<Payment> Payments { get; }
         IGenericRepository<PortfolioItem> PortfolioItems { get; }
-        IGenericRepository<Review> Reviews { get; }
+        //IGenericRepository<Review> Reviews { get; }
+        IReviewRepository Reviews { get; }
 
         IGenericRepository<Area> Areas { get; }
         IServiceRequestRepository ServiceRequests { get; }

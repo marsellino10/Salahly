@@ -37,10 +37,10 @@ namespace Salahly.DAL.Configurations
                 .HasForeignKey(b => b.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(c => c.Reviews)
-                .WithOne(r => r.Customer)
-                .HasForeignKey(r => r.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.HasMany(c => c.Reviews)
+            //    .WithOne(r => r.Customer)
+            //    .HasForeignKey(r => r.CustomerId)
+            //    .OnDelete(DeleteBehavior.Restrict);
         }
         }
 }

@@ -10,7 +10,6 @@ namespace Salahly.DAL.Entities
     {
         public int Id { get; set; } 
         public int CraftId { get; set; }
-        public decimal RatingAverage { get; set; }
         public int TotalCompletedBookings { get; set; }
 
         public bool IsAvailable { get; set; } = true; 
@@ -27,6 +26,6 @@ namespace Salahly.DAL.Entities
         public ICollection<CraftsmanOffer> CraftsmanOffers { get; set; }
         public ICollection<PortfolioItem> Portfolio { get; set; } = new List<PortfolioItem>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-        public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        //public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }

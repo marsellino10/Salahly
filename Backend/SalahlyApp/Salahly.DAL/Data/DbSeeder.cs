@@ -321,11 +321,9 @@ namespace Salahly.DAL.Data
                         Bio = craftsmanData.Bio,
                         YearsOfExperience = craftsmanData.YearsOfExperience,
                         HourlyRate = craftsmanData.HourlyRate,
-                        RatingAverage = 0,
                         TotalCompletedBookings = 0,
                         IsAvailable = true
                     };
-
                     await context.Craftsmen.AddAsync(craftsman);
                     await context.SaveChangesAsync();
 

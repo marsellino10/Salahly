@@ -23,6 +23,7 @@ public class ApplicationUser : IdentityUser<int>
     public UserType UserType { get; set; }
     public bool IsProfileCompleted { get; set; } = false;
 
+    public double RatingAverage { get; set; }
 
     // Navigation Properties
     public Admin? Admin { get; set; }
@@ -30,4 +31,6 @@ public class ApplicationUser : IdentityUser<int>
     public Craftsman? Craftsman { get; set; }
 
     public ICollection<Notification> Notifications { get; set; }
+    public ICollection<Review> ReviewsGiven { get; set; } = new List<Review>();
+    public ICollection<Review> ReviewsReceived { get; set; } = new List<Review>();
 }

@@ -38,7 +38,7 @@ namespace Salahly.DSL.Filters
         /// <summary>
         /// Minimum rating average (0-5)
         /// </summary>
-        public decimal? MinRating { get; set; }
+        public double? MinRating { get; set; }
 
         /// <summary>
         /// Maximum hourly rate

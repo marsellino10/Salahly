@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Salahly.DAL.Data;
 
@@ -11,9 +12,11 @@ using Salahly.DAL.Data;
 namespace Salahly.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251117111503_reviewsadded")]
+    partial class reviewsadded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -819,10 +822,16 @@ namespace Salahly.DAL.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<int?>("CraftsmanId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int")
@@ -836,7 +845,12 @@ namespace Salahly.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId");
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.HasIndex("CraftsmanId");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("ReviewerUserId");
 
@@ -1181,10 +1195,18 @@ namespace Salahly.DAL.Migrations
             modelBuilder.Entity("Salahly.DAL.Entities.Review", b =>
                 {
                     b.HasOne("Salahly.DAL.Entities.Booking", "Booking")
-                        .WithMany("Reviews")
-                        .HasForeignKey("BookingId")
+                        .WithOne("Review")
+                        .HasForeignKey("Salahly.DAL.Entities.Review", "BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Salahly.DAL.Entities.Craftsman", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("CraftsmanId");
+
+                    b.HasOne("Salahly.DAL.Entities.Customer", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("ApplicationUser", "Reviewer")
                         .WithMany("ReviewsGiven")
@@ -1248,7 +1270,7 @@ namespace Salahly.DAL.Migrations
                 {
                     b.Navigation("Payment");
 
-                    b.Navigation("Reviews");
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("Salahly.DAL.Entities.Craft", b =>
@@ -1269,6 +1291,8 @@ namespace Salahly.DAL.Migrations
                     b.Navigation("CraftsmanServiceAreas");
 
                     b.Navigation("Portfolio");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Salahly.DAL.Entities.CraftsmanOffer", b =>
@@ -1279,6 +1303,8 @@ namespace Salahly.DAL.Migrations
             modelBuilder.Entity("Salahly.DAL.Entities.Customer", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("Reviews");
 
                     b.Navigation("ServiceRequests");
                 });

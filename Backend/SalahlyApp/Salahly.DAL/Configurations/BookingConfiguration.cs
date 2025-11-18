@@ -68,10 +68,11 @@ namespace Salahly.DAL.Configurations
                 .HasForeignKey<Payment>(p => p.BookingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(b => b.Review)
+            builder.HasMany(b => b.Reviews)
                 .WithOne(r => r.Booking)
-                .HasForeignKey<Review>(r => r.BookingId)
+                .HasForeignKey(r => r.BookingId)
                 .OnDelete(DeleteBehavior.Cascade);
+
 
             // Indexes
             builder.HasIndex(b => new { b.CustomerId, b.Status })
