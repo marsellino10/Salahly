@@ -83,7 +83,10 @@ export class AuthService {
   }
 
   getUserType(): string | null {
-    return this.getDecodedPayloadField('userType') ?? this.getDecodedPayloadField('role');
+    return this.getDecodedPayloadField('http://schemas.microsoft.com/ws/2008/06/identity/claims/role') ?? 
+           this.getDecodedPayloadField('http://schemas.microsoft.com/ws/2008/06/identity/claims/userType') ??
+           this.getDecodedPayloadField('role') ?? 
+           this.getDecodedPayloadField('userType');
   }
 
   private getDecodedPayloadField(field: string): string | null {

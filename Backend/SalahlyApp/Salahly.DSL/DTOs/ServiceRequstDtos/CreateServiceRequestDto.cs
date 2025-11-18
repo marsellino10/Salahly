@@ -9,6 +9,9 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
 {
     public class CreateServiceRequestDto
     {
+        [Required]
+        public int CraftId { get; set; }
+
         [Required, MaxLength(200)]
         public string Title { get; set; }
 
@@ -18,11 +21,13 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
         [Required, MaxLength(500)]
         public string Address { get; set; }
 
-        [Required, MaxLength(100)]
-        public string City { get; set; }
+        //[Required, MaxLength(100)]
+        //public string City { get; set; }
 
-        [Required, MaxLength(100)]
-        public string Area { get; set; }
+        //[Required, MaxLength(100)]
+        //public string Area { get; set; }
+        [Required]
+        public int AreaId { get; set; }
 
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
@@ -34,6 +39,5 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
         public string? ImagesJson { get; set; }
 
         public int MaxOffers { get; set; } = 10;
-        public int CraftId { get; set; }
     }
 }

@@ -48,7 +48,7 @@ namespace Salahly.DSL.Services
         {
             try
             {
-                var request = await _unitOfWork.ServiceRequests.GetByIdAsync(id);
+                var request = await _unitOfWork.ServiceRequests.GetServiceRequestByIdWithIncludesAsync(id);
 
                 if (request == null || request.CustomerId != customerId)
                     return null;
@@ -99,8 +99,9 @@ namespace Salahly.DSL.Services
             if (!string.IsNullOrEmpty(dto.Title)) request.Title = dto.Title;
             if (!string.IsNullOrEmpty(dto.Description)) request.Description = dto.Description;
             if (!string.IsNullOrEmpty(dto.Address)) request.Address = dto.Address;
-            if (!string.IsNullOrEmpty(dto.City)) request.City = dto.City;
-            if (!string.IsNullOrEmpty(dto.Area)) request.Area = dto.Area;
+
+            var area = await _unitOfWork.Areas.GetByIdAsync(dto.AreaId);
+            if (area is not null) request.AreaId = dto.AreaId;
             if (dto.PreferredDate.HasValue) request.PreferredDate = dto.PreferredDate.Value;
             if (!string.IsNullOrEmpty(dto.PreferredTimeSlot)) request.PreferredTimeSlot = dto.PreferredTimeSlot;
             if (dto.CustomerBudget.HasValue) request.CustomerBudget = dto.CustomerBudget.Value;

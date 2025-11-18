@@ -25,7 +25,7 @@ namespace Salahly.DSL.Services
                 return null;
 
             var customer = await _unitOfWork.Customers.GetAll()
-                .Include(c=> c.User).Include(c=> c.Reviews).FirstOrDefaultAsync(c=> c.Id == id);
+                .Include(c=> c.User).FirstOrDefaultAsync(c=> c.Id == id);
             if (customer == null)
                 return null;
 
@@ -57,6 +57,10 @@ namespace Salahly.DSL.Services
             if (dto.UserId <= 0)
                 throw new ArgumentException("Invalid user ID", nameof(dto.UserId));
 
+            var user = await _unitOfWork.ApplicationUsers.GetByIdAsync(dto.UserId);
+            if (user == null)
+                throw new KeyNotFoundException($"User with ID {dto.UserId} not found.");
+
             var customer = new Customer
             {
                 Id = dto.UserId,
@@ -68,6 +72,8 @@ namespace Salahly.DSL.Services
             };
             //dto.FullName = customer.User.FullName;
             await _unitOfWork.Customers.AddAsync(customer);
+            user.IsProfileCompleted = true;
+            await _unitOfWork.ApplicationUsers.UpdateAsync(user);
             await _unitOfWork.SaveAsync();
             return customer.Adapt<CustomerResponseDto>();
         }
@@ -80,7 +86,6 @@ namespace Salahly.DSL.Services
                 .GetAll()
                 .Include(c => c.User)
                 .Include(c => c.Bookings)
-                .Include(c => c.Reviews)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 

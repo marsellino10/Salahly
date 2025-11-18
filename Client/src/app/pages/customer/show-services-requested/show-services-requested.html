@@ -1,0 +1,181 @@
+<section class="requests-page">
+  <header class="page-hero glass-panel">
+    <div class="hero-copy">
+      <p class="eyebrow">Your service pipeline</p>
+      <div class="hero-title">
+        <h1>Service requests</h1>
+        <span class="status-pill">
+          <i class="bi bi-lightning-charge-fill"></i>
+          {{ overviewStats().total }} total
+        </span>
+      </div>
+      <p>Track every repair from initial brief to completion. Filter, inspect, and stay in control.</p>
+      <div class="stat-grid">
+        <article class="stat-card">
+          <p class="label">Active</p>
+          <p class="value">{{ overviewStats().active }}</p>
+          <small>Currently in progress</small>
+        </article>
+        <article class="stat-card">
+          <p class="label">History</p>
+          <p class="value">{{ overviewStats().history }}</p>
+          <small>Wrapped engagements</small>
+        </article>
+        <article class="stat-card">
+          <p class="label">Total budget</p>
+          <p class="value">{{ formatBudget(overviewStats().totalBudget) }}</p>
+          <small>Across all requests</small>
+        </article>
+      </div>
+    </div>
+  </header>
+
+  <div *ngIf="errorMessage()" class="banner error">
+    <div>
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ errorMessage() }}</span>
+    </div>
+    <button type="button" class="icon-btn" (click)="loadRequests()">
+      <i class="bi bi-arrow-clockwise"></i>
+      Retry
+    </button>
+  </div>
+
+  <div class="panel filters-panel glass-panel">
+    <div class="tabs">
+      <button type="button" class="tab-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">
+        Active
+        <span class="tab-pill">{{ overviewStats().active }}</span>
+      </button>
+      <button type="button" class="tab-btn" [class.active]="activeTab() === 'history'" (click)="setTab('history')">
+        History
+        <span class="tab-pill">{{ overviewStats().history }}</span>
+      </button>
+    </div>
+
+    <div class="filters">
+      <label class="input-shell search">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          placeholder="Search by title, craft, or details"
+          [value]="searchTerm()"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </label>
+
+      <label class="input-shell select">
+        <span>Status</span>
+        <select [value]="statusFilter()" (change)="onStatusFilterChange($any($event.target).value)">
+          <option value="all">All statuses</option>
+          <option *ngFor="let status of statusOptions()" [value]="status">{{ status }}</option>
+        </select>
+      </label>
+
+      <label class="input-shell select">
+        <span>Area</span>
+        <select [value]="areaFilter()" (change)="onAreaFilterChange($any($event.target).value)">
+          <option value="all">All areas</option>
+          <option *ngFor="let area of uniqueAreas()" [value]="area">{{ area }}</option>
+        </select>
+      </label>
+
+      <button type="button" class="icon-btn subtle" [disabled]="!hasActiveFilters()" (click)="clearFilters()">
+        <i class="bi bi-sliders"></i>
+        Clear filters
+      </button>
+    </div>
+  </div>
+
+  <section class="requests-grid">
+    <div *ngIf="isLoading()" class="skeleton-grid">
+      <article class="request-card skeleton" *ngFor="let _ of skeletonPlaceholders">
+        <div class="card-head">
+          <div class="skeleton-line w-60"></div>
+          <div class="status-chip"></div>
+        </div>
+        <div class="skeleton-line w-90"></div>
+        <div class="skeleton-line w-75"></div>
+        <div class="skeleton-line w-50"></div>
+        <div class="skeleton-pill"></div>
+      </article>
+    </div>
+
+    <ng-container *ngIf="!isLoading()">
+      <div *ngIf="filteredRequests().length; else emptyState" class="cards-grid">
+        <article class="request-card" *ngFor="let request of filteredRequests(); trackBy: trackByRequestId">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">{{ request.craftName || 'General service' }}</p>
+              <h3>{{ request.title }}</h3>
+            </div>
+            <span
+              class="status-chip"
+              [style.background]="getStatusStyle(request.status).bg"
+              [style.color]="getStatusStyle(request.status).text"
+            >
+              {{ request.status }}
+            </span>
+          </div>
+
+          <p class="description">{{ shortDescription(request.description) }}</p>
+
+          <div class="meta">
+            <div>
+              <i class="bi bi-geo-alt"></i>
+              {{ request.city || 'City N/A' }}, {{ request.area || 'Area N/A' }}
+            </div>
+            <div>
+              <i class="bi bi-calendar3"></i>
+              {{ formatIso(request.preferredDate) }} • {{ request.preferredTimeSlot || 'Flexible slot' }}
+            </div>
+            <div>
+              <i class="bi bi-currency-dollar"></i>
+              {{ formatBudget(request.customerBudget) }}
+            </div>
+          </div>
+
+          <div class="progress-panel" *ngIf="request.maxOffers">
+            <div class="progress-meta">
+              <span>Offers</span>
+              <span>{{ request.offersCount }}/{{ request.maxOffers }}</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="getOffersProgress(request)"></div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="dates">
+              <small>Created {{ formatIso(request.createdAt) }}</small>
+              <small>Expires {{ formatIso(request.expiresAt) }}</small>
+            </div>
+            <button type="button" class="ghost-btn">
+              View details
+              <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </article>
+      </div>
+    </ng-container>
+  </section>
+
+  <ng-template #emptyState>
+    <div class="empty-panel glass-panel">
+      <div class="empty-icon">
+        <i class="bi" [class.bi-inboxes-fill]="activeTab() === 'history'" [class.bi-clipboard2-data]='activeTab() === "active"'></i>
+      </div>
+      <h3>{{ activeTab() === 'active' ? 'No active requests yet' : 'No completed requests' }}</h3>
+      <p>
+        {{
+          activeTab() === 'active'
+            ? 'Create your first service brief to start receiving technician offers.'
+            : 'Completed jobs will archive here for easy reference.'
+        }}
+      </p>
+      <button type="button" class="primary-btn" (click)="loadRequests()">
+        Refresh list
+      </button>
+    </div>
+  </ng-template>
+</section>

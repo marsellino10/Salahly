@@ -17,6 +17,7 @@ namespace Salahly.DAL.Repositories
         public async Task<IEnumerable<ServiceRequest>> GetAllByCustomerAsync(int customerId)
         {
             return await _context.ServiceRequests
+                .Include(r => r.AreaData)
                 .Where(r => r.CustomerId == customerId)
                 .AsNoTracking()
                 .ToListAsync();
@@ -60,6 +61,7 @@ namespace Salahly.DAL.Repositories
                     .AsNoTracking()
                     .Include(sr => sr.Customer).ThenInclude(c => c.User)
                     .Include(sr => sr.Craft)
+                    .Include(sr => sr.AreaData)
                     .Where(sr =>
                         sr.CraftId == craftsman.CraftId &&
                         (sr.Status == ServiceRequestStatus.Open ||
@@ -67,8 +69,8 @@ namespace Salahly.DAL.Repositories
                         sr.ExpiresAt > DateTime.UtcNow &&
                         sr.OffersCount < sr.MaxOffers &&
                         craftsmanAreasQuery.Any(area =>
-                            area.City.Trim().ToLower() == sr.City.Trim().ToLower() &&
-                            area.Region.Trim().ToLower() == sr.Area.Trim().ToLower()
+                            area.City.Trim().ToLower() == sr.AreaData.City.Trim().ToLower() &&
+                            area.Region.Trim().ToLower() == sr.AreaData.Region.Trim().ToLower()
                         )
                     )
                     .OrderByDescending(sr => sr.CreatedAt);
@@ -92,6 +94,7 @@ namespace Salahly.DAL.Repositories
                     .Include(sr => sr.Customer)
                         .ThenInclude(c => c.User)
                     .Include(sr => sr.Craft)
+                    .Include(sr => sr.AreaData)
                     .Include(sr => sr.CraftsmanOffers.Where(o => o.CraftsmanId == craftsmanId))
                     .Where(sr => sr.CraftsmanOffers.Any(o => o.CraftsmanId == craftsmanId))
                     .OrderByDescending(sr => sr.CreatedAt)
@@ -125,12 +128,13 @@ namespace Salahly.DAL.Repositories
                     .AsNoTracking()
                     .Include(sr => sr.Customer).ThenInclude(c => c.User)
                     .Include(sr => sr.Craft)
+                    .Include(sr => sr.AreaData)
                     .FirstOrDefaultAsync(sr =>
                         sr.ServiceRequestId == requestId &&
                         sr.CraftId == craftsman.CraftId &&
                         craftsmanAreasQuery.Any(area =>
-                            area.City.Trim().ToLower() == sr.City.Trim().ToLower() &&
-                            area.Region.Trim().ToLower() == sr.Area.Trim().ToLower()
+                            area.City.Trim().ToLower() == sr.AreaData.City.Trim().ToLower() &&
+                            area.Region.Trim().ToLower() == sr.AreaData.Region.Trim().ToLower()
                         )
                     );
 
@@ -139,6 +143,24 @@ namespace Salahly.DAL.Repositories
             catch
             {
                 return null;
+            }
+        }
+
+        public Task<ServiceRequest?> GetServiceRequestByIdWithIncludesAsync(int id)
+        {
+            try
+            {
+                var serviceRequest = _context.ServiceRequests
+                    .AsNoTracking()
+                    .Include(sr => sr.Customer).ThenInclude(c => c.User)
+                    .Include(sr => sr.Craft)
+                    .Include(sr => sr.AreaData)
+                    .FirstOrDefaultAsync(sr => sr.ServiceRequestId == id);
+                return serviceRequest;
+            }
+            catch (Exception)
+            {
+                return Task.FromResult<ServiceRequest?>(null);
             }
         }
     }

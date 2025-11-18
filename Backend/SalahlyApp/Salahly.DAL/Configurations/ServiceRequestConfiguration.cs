@@ -26,13 +26,8 @@ namespace Salahly.DAL.Configurations
                 .IsRequired()
                 .HasMaxLength(500);
 
-            builder.Property(sr => sr.City)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(sr => sr.Area)
-                .IsRequired()
-                .HasMaxLength(100);
+            builder.Property(sr => sr.AreaId)
+                .IsRequired();
 
             builder.Property(sr => sr.Latitude)
                 .HasPrecision(10, 7);
@@ -83,8 +78,14 @@ namespace Salahly.DAL.Configurations
                 .HasForeignKey<Booking>(b => b.ServiceRequestId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // ✅ Area relationship
+            builder.HasOne(sr => sr.AreaData)
+                .WithMany()
+                .HasForeignKey(sr => sr.AreaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Indexes
-            builder.HasIndex(sr => new { sr.City, sr.Area, sr.Status })
+            builder.HasIndex(sr => new { sr.AreaId, sr.Status })
                 .HasDatabaseName("IX_ServiceRequests_Location_Status");
 
             builder.HasIndex(sr => new { sr.CraftId, sr.Status, sr.CreatedAt })
@@ -93,7 +94,7 @@ namespace Salahly.DAL.Configurations
             builder.HasIndex(sr => sr.CustomerId);
 
             builder.HasIndex(sr => sr.ExpiresAt)
-                .HasFilter("[Status] IN (0, 1)") 
+                .HasFilter("[Status] IN (0, 1)")
                 .HasDatabaseName("IX_ServiceRequests_Expiration");
         }
     }

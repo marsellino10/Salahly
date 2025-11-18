@@ -9,53 +9,28 @@ export const technicianAuthGuard: CanActivateFn = () => {
   const platformId = inject(PLATFORM_ID);
   const isBrowser = isPlatformBrowser(platformId);
 
+  // Allow access during SSR
   if (!isBrowser) {
     return true;
   }
-  const token = authService.getToken();
-  if (!token) {
+
+  // Check if user is authenticated
+  if (!authService.isAuthenticated()) {
+    console.log('TechnicianAuthGuard: User not authenticated, redirecting to login');
     return router.parseUrl('/login');
   }
 
-  const role = extractRoleFromToken(token);
-  if (role?.toLowerCase() === 'craftsman') {
+  // Use AuthService method for consistency
+  const userType = authService.getUserType();
+  
+  // Check if user is a technician/craftsman (case-insensitive)
+  if (userType && (userType.toLowerCase() === 'craftsman' || userType.toLowerCase() === 'technician')) {
+    console.log('TechnicianAuthGuard: Access granted for technician/craftsman');
     return true;
   }
 
+  // User is authenticated but not a technician
+  console.log(`TechnicianAuthGuard: Access denied. User type: ${userType}, redirecting to home`);
   return router.parseUrl('/home');
 };
 
-function extractRoleFromToken(token: string): string | null {
-  const payload = decodeJwtPayload(token);
-  const roleCandidate =
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/Role'] ??
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/userType'] ??
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/UserType'] ??
-    null;
-
-  return typeof roleCandidate === 'string' ? roleCandidate : null;
-}
-
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  try {
-    const [, payloadSegment] = token.split('.');
-    if (!payloadSegment) {
-      return null;
-    }
-
-    let normalized = payloadSegment.replace(/-/g, '+').replace(/_/g, '/');
-    while (normalized.length % 4 !== 0) {
-      normalized += '=';
-    }
-
-    if (typeof atob !== 'function') {
-      return null;
-    }
-
-    const decodedString = atob(normalized);
-    return JSON.parse(decodedString);
-  } catch {
-    return null;
-  }
-}

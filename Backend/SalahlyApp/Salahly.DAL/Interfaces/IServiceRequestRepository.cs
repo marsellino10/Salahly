@@ -8,6 +8,8 @@ namespace Salahly.DAL.Interfaces
         Task<IEnumerable<ServiceRequest>> GetAllByCustomerAsync(int customerId);
         Task<bool> DeleteByCustomerAsync(int id, int customerId);
 
+        Task<ServiceRequest?> GetServiceRequestByIdWithIncludesAsync(int id);
+
 
         // Related to craftsman
         Task<IEnumerable<ServiceRequest>> GetActiveServiceRequestsForCraftsmanAsync(int craftsmanId);

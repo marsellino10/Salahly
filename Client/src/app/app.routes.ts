@@ -37,6 +37,10 @@ export const routes: Routes = [
         path: 'customer-profile',
         loadComponent: () => import('./pages/customer/customer-profile/customer-profile').then(c => c.CustomerProfile),
       },
+      {
+        path: 'show-services-requested',
+        loadComponent: () => import('./pages/customer/show-services-requested/show-services-requested').then(c => c.ShowServicesRequested),
+      }
     ],
   },
 ];

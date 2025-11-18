@@ -60,7 +60,7 @@ export class CustomerNavBar implements OnInit {
   }
 
   navigateToRequests(): void {
-    this.navigate('/customer-profile', { queryParams: { view: 'requests' } });
+    this.router.navigate(['/show-services-requested']);
   }
 
   logout(): void {

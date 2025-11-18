@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Salahly.DAL.Entities
 {
     public class ServiceRequest
     {
         public int ServiceRequestId { get; set; }
-        public int CustomerId { get; set; } 
+        public int CustomerId { get; set; }
         public int CraftId { get; set; }
 
         // Service Details
@@ -24,11 +22,8 @@ namespace Salahly.DAL.Entities
         [Required, MaxLength(500)]
         public string Address { get; set; }
 
-        [Required, MaxLength(100)]
-        public string City { get; set; }
-
-        [Required, MaxLength(100)]
-        public string Area { get; set; }
+        [Required]
+        public int AreaId { get; set; }
 
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
@@ -43,11 +38,10 @@ namespace Salahly.DAL.Entities
         // Images
         public string? ImagesJson { get; set; }
 
-       
-        public int MaxOffers { get; set; } = 10;  // Limit offers
+        public int MaxOffers { get; set; } = 10;
 
         // Status & Tracking
-        public ServiceRequestStatus Status { get; set; } 
+        public ServiceRequestStatus Status { get; set; }
         public int OffersCount { get; set; }
         public DateTime ExpiresAt { get; set; }
 
@@ -62,9 +56,10 @@ namespace Salahly.DAL.Entities
         public Craft Craft { get; set; }
         public ICollection<CraftsmanOffer> CraftsmanOffers { get; set; }
         public Booking? Booking { get; set; }
+
+        public Area AreaData { get; set; }
     }
 
-    
     public enum ServiceRequestStatus
     {
         Open = 0,

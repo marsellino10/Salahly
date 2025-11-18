@@ -20,6 +20,7 @@ namespace Salahly.DSL.DTOs
             CraftsmanMappingConfig.RegisterCraftsmanMappings(config);
             PortfolioItemMappingConfig.RegisterPortfolioItemMappings(config);
             CustomerMappingConfig.RegisterCustomerMappings(config);
+            ServiceRequestMapping.RegisterServiceAreaMappings(config);
         }
     }
 }

@@ -9,54 +9,28 @@ export const customerAuthGuard: CanActivateFn = () => {
   const platformId = inject(PLATFORM_ID);
   const isBrowser = isPlatformBrowser(platformId);
 
+  // Allow access during SSR
   if (!isBrowser) {
     return true;
   }
 
-  const token = authService.getToken();
-  if (!token) {
+  // Check if user is authenticated
+  if (!authService.isAuthenticated()) {
+    console.log('CustomerAuthGuard: User not authenticated, redirecting to login');
     return router.parseUrl('/login');
   }
 
-  const role = extractRoleFromToken(token);
-  if (role?.toLowerCase() === 'customer') {
+  // Use AuthService method for consistency
+  const userType = authService.getUserType();
+  
+  // Check if user is a customer (case-insensitive)
+  if (userType && userType.toLowerCase() === 'customer') {
+    console.log('CustomerAuthGuard: Access granted for customer');
     return true;
   }
 
+  // User is authenticated but not a customer
+  console.log(`CustomerAuthGuard: Access denied. User type: ${userType}, redirecting to home`);
   return router.parseUrl('/home');
 };
 
-function extractRoleFromToken(token: string): string | null {
-  const payload = decodeJwtPayload(token);
-  const roleCandidate =
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/Role'] ??
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/userType'] ??
-    payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/UserType'] ??
-    null;
-
-  return typeof roleCandidate === 'string' ? roleCandidate : null;
-}
-
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  try {
-    const [, payloadSegment] = token.split('.');
-    if (!payloadSegment) {
-      return null;
-    }
-
-    let normalized = payloadSegment.replace(/-/g, '+').replace(/_/g, '/');
-    while (normalized.length % 4 !== 0) {
-      normalized += '=';
-    }
-
-    if (typeof atob !== 'function') {
-      return null;
-    }
-
-    const decodedString = atob(normalized);
-    return JSON.parse(decodedString);
-  } catch {
-    return null;
-  }
-}
