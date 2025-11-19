@@ -10,6 +10,13 @@
         </span>
       </div>
       <p>Track every repair from initial brief to completion. Filter, inspect, and stay in control.</p>
+      <div class="hero-actions">
+        <button type="button" class="primary-btn rounded-5 me-2" routerLink="/service-request-form">
+          <i class="bi bi-plus-lg"></i>
+          New service request
+        </button>
+        <small class="muted">Kick off a new job to start receiving offers.</small>
+      </div>
       <div class="stat-grid">
         <article class="stat-card">
           <p class="label">Active</p>
@@ -150,7 +157,7 @@
               <small>Created {{ formatIso(request.createdAt) }}</small>
               <small>Expires {{ formatIso(request.expiresAt) }}</small>
             </div>
-            <button type="button" class="ghost-btn">
+            <button type="button" [routerLink]="['/service-request-details', request.serviceRequestId]" class="ghost-btn">
               View details
               <i class="bi bi-arrow-right"></i>
             </button>

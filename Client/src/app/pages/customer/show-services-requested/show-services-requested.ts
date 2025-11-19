@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ServicesRequestsService, ServiceRequestDto, ServiceRequestStatus } from '../../../core/services/services-requests.service';
+import { RouterLink } from "@angular/router";
 
 type RequestTab = 'active' | 'history';
 
@@ -10,7 +11,7 @@ const HISTORY_STATUSES: ServiceRequestStatus[] = ['Completed', 'Cancelled', 'Exp
 @Component({
   selector: 'app-show-services-requested',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './show-services-requested.html',
   styleUrl: './show-services-requested.css',
 })

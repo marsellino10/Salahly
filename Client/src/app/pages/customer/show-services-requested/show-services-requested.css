@@ -485,8 +485,8 @@
   .primary-btn {
     border: none;
     border-radius: 1rem;
-    background: linear-gradient(120deg, var(--accent), var(--accent-2));
-    color: #0d1117;
+    background: linear-gradient(120deg, #00d1ff, #8a7bff);
+    color: #fbfbfc;
     font-weight: 700;
     padding: 0.9rem 1.8rem;
     cursor: pointer;

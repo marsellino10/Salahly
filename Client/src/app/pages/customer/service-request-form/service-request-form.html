@@ -1,0 +1,223 @@
+<section class="request-form-page">
+  <header class="page-hero glass-panel">
+    <div class="hero-copy">
+      <button type="button" class="ghost-btn" (click)="navigateBack()">
+        <i class="bi bi-arrow-left"></i>
+        Back to my requests
+      </button>
+      <p class="eyebrow">Create request</p>
+      <h1>Tell us what needs fixing</h1>
+      <p class="lead">
+        Share the craft, describe the issue, add a preferred date, and we’ll notify matching craftsmen.
+        The richer the brief, the faster you’ll get accurate offers.
+      </p>
+      <div class="hero-actions">
+        <a routerLink="/show-services-requested" class="ghost-link">View existing requests</a>
+        <div class="chip">Max {{ maxImages }} photos • {{ selectedImages.length }} selected</div>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <article class="stat-card">
+        <p class="label">Step 1</p>
+        <h3>Service basics</h3>
+        <p class="muted">Pick craft + describe the issue.</p>
+      </article>
+      <article class="stat-card">
+        <p class="label">Step 2</p>
+        <h3>Schedule</h3>
+        <p class="muted">Set preferred date & area.</p>
+      </article>
+      <article class="stat-card">
+        <p class="label">Step 3</p>
+        <h3>Share visuals</h3>
+        <p class="muted">Upload inspiration or issue photos.</p>
+      </article>
+    </div>
+  </header>
+
+  <div *ngIf="submitSuccess" class="banner success glass-panel">
+    <div>
+      <p class="eyebrow">Great!</p>
+      <p>{{ submitSuccess }}</p>
+    </div>
+    <button type="button" class="ghost-btn" (click)="submitSuccess = null">Dismiss</button>
+  </div>
+
+  <div *ngIf="submitError" class="banner error glass-panel">
+    <div>
+      <p class="eyebrow">Something went wrong</p>
+      <p>{{ submitError }}</p>
+    </div>
+    <button type="button" class="ghost-btn" (click)="submitError = null">Dismiss</button>
+  </div>
+
+  <form class="request-form glass-panel" [formGroup]="requestForm" (ngSubmit)="submitRequest()" novalidate>
+    <section class="form-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Service overview</p>
+          <h2>Describe the work</h2>
+        </div>
+        <small>Fields marked with * are required</small>
+      </div>
+
+      <div class="field-grid two-col">
+        <label class="input-shell" [class.invalid]="fieldInvalid('craftId')">
+          <span>Service craft *</span>
+          <select formControlName="craftId" [disabled]="isLoadingCrafts">
+            <option value="" disabled selected>Select craft</option>
+            <option *ngFor="let craft of crafts" [value]="craft.id">{{ craft.name }}</option>
+          </select>
+          <small class="muted" *ngIf="isLoadingCrafts">Loading crafts…</small>
+          <small class="error-text" *ngIf="craftsError">{{ craftsError }}</small>
+          <small class="error-text" *ngIf="fieldInvalid('craftId')">Pick the craft you need.</small>
+        </label>
+
+        <label class="input-shell" [class.invalid]="fieldInvalid('title')">
+          <span>Request title *</span>
+          <input type="text" formControlName="title" placeholder="e.g. Kitchen sink leaking badly" maxlength="80" />
+          <div class="helper-row">
+            <small>{{ titleLength }}/80</small>
+          </div>
+          <small class="error-text" *ngIf="fieldInvalid('title')">Title must be 6-80 characters.</small>
+        </label>
+      </div>
+
+      <label class="input-shell" [class.invalid]="fieldInvalid('description')">
+        <span>Tell us the details *</span>
+        <textarea
+          rows="5"
+          formControlName="description"
+          placeholder="Describe the problem, any attempted fixes, access instructions, etc."
+          maxlength="800"
+        ></textarea>
+        <div class="helper-row">
+          <small>{{ descriptionLength }}/800 characters</small>
+        </div>
+        <small class="error-text" *ngIf="fieldInvalid('description')">
+          Please provide at least 20 characters describing the issue.
+        </small>
+      </label>
+    </section>
+
+    <section class="form-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Scheduling & location</p>
+          <h2>When and where?</h2>
+        </div>
+      </div>
+
+      <div class="field-grid three-col">
+        <label class="input-shell" [class.invalid]="fieldInvalid('areaId')">
+          <span>Service area *</span>
+          <select formControlName="areaId" [disabled]="isLoadingAreas">
+            <option value="" disabled selected>Select area</option>
+            <option *ngFor="let area of areas" [value]="area.id">
+              {{ area.city }} • {{ area.region }}
+            </option>
+          </select>
+          <small class="muted" *ngIf="isLoadingAreas">Loading areas…</small>
+          <small class="error-text" *ngIf="areasError">{{ areasError }}</small>
+          <small class="error-text" *ngIf="fieldInvalid('areaId')">Select where the technician should go.</small>
+        </label>
+
+        <label class="input-shell" [class.invalid]="fieldInvalid('preferredDate')">
+          <span>Preferred date *</span>
+          <input type="date" formControlName="preferredDate" [attr.min]="minDate" />
+          <small class="error-text" *ngIf="fieldInvalid('preferredDate')">Pick when you’d like the visit.</small>
+        </label>
+
+        <label class="input-shell">
+          <span>Preferred time window</span>
+          <select formControlName="preferredTimeSlot">
+            <option value="">Flexible slot</option>
+            <option *ngFor="let slot of availableTimeSlots" [value]="slot.value">{{ slot.label }}</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="input-shell full-width" [class.invalid]="fieldInvalid('address')">
+        <span>Exact address *</span>
+        <input type="text" formControlName="address" placeholder="Apartment, street, nearby landmarks" maxlength="160" />
+        <small class="error-text" *ngIf="fieldInvalid('address')">Address is required.</small>
+      </label>
+
+      <div class="field-grid two-col">
+        <label class="input-shell">
+          <span>Latitude (optional)</span>
+          <input type="number" step="0.0001" formControlName="latitude" placeholder="30.0444" />
+        </label>
+        <label class="input-shell">
+          <span>Longitude (optional)</span>
+          <input type="number" step="0.0001" formControlName="longitude" placeholder="31.2357" />
+        </label>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Budget & offers</p>
+          <h2>Set expectations</h2>
+        </div>
+      </div>
+
+      <div class="field-grid three-col">
+        <label class="input-shell">
+          <span>Budget (USD)</span>
+          <input type="number" min="20" step="10" formControlName="customerBudget" placeholder="e.g. 150" />
+          <small class="muted">Optional but helps craftsmen quote better.</small>
+        </label>
+
+        <label class="input-shell">
+          <span>Max offers</span>
+          <input type="number" min="1" max="10" step="1" formControlName="maxOffers" />
+          <small class="muted">How many proposals you want to review.</small>
+        </label>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Reference photos</p>
+          <h2>Give craftsmen more context</h2>
+        </div>
+        <small *ngIf="selectedImages.length">{{ selectedImages.length }}/{{ maxImages }} uploaded</small>
+      </div>
+
+      <div class="upload-card">
+        <input type="file" accept="image/*" multiple (change)="onFilesSelected($event)" [disabled]="selectedImages.length >= maxImages" />
+        <div>
+          <h3>Drop images or browse</h3>
+          <p class="muted">Accepted formats: JPG, PNG. Up to {{ maxImages }} files.</p>
+        </div>
+        <button type="button" class="ghost-btn" (click)="clearUploads()" [disabled]="!selectedImages.length">
+          Clear all
+        </button>
+      </div>
+
+      <div class="upload-grid" *ngIf="imagePreviews.length">
+        <figure class="upload-preview" *ngFor="let preview of imagePreviews; let i = index">
+          <img [src]="preview" alt="Upload preview {{ i + 1 }}" />
+          <button type="button" class="icon-btn" (click)="removeImage(i)">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </figure>
+      </div>
+    </section>
+
+    <footer class="form-footer">
+      <div>
+        <p class="muted">We’ll surface your request to verified craftsmen in your area.</p>
+        <p class="muted">Expect new offers within a few hours.</p>
+      </div>
+      <button type="submit" class="primary-btn" [disabled]="isSubmitting">
+        <ng-container *ngIf="isSubmitting; else submitLabel">Submitting…</ng-container>
+        <ng-template #submitLabel>Submit request</ng-template>
+      </button>
+    </footer>
+  </form>
+</section>

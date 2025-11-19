@@ -40,6 +40,14 @@ export const routes: Routes = [
       {
         path: 'show-services-requested',
         loadComponent: () => import('./pages/customer/show-services-requested/show-services-requested').then(c => c.ShowServicesRequested),
+      },
+      {
+        path: 'service-request-details/:id',
+        loadComponent: () => import('./pages/customer/service-request-details/service-request-details').then(c => c.ServiceRequestDetails),
+      },
+      {
+        path: 'service-request-form',
+        loadComponent: () => import('./pages/customer/service-request-form/service-request-form').then(c => c.ServiceRequestForm),
       }
     ],
   },
