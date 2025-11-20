@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Salahly.DAL.Data;
@@ -14,7 +15,9 @@ using Salahly.DSL.DTOs;
 using Salahly.DSL.Interfaces;
 using Salahly.DSL.Services;
 using SalahlyProject.Response.Error;
+using SalahlyProject.Options;
 using SalahlyProject.Services;
+using SalahlyProject.Services.Chat;
 using SalahlyProject.Services.Interfaces;
 using System.Text;
 
@@ -128,6 +131,22 @@ namespace SalahlyProject
             // File Upload Service
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
             builder.Services.AddHttpContextAccessor();
+
+            // Chatbot Services
+            builder.Services.Configure<FireworksOptions>(configuration.GetSection(FireworksOptions.SectionName));
+            builder.Services.AddSingleton<IChatContextBuilder, ChatContextBuilder>();
+            builder.Services.AddHttpClient<IChatService, FireworksChatService>((serviceProvider, client) =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptions<FireworksOptions>>().Value;
+
+                if (!string.IsNullOrWhiteSpace(options.BaseUrl))
+                {
+                    var baseUrl = options.BaseUrl.EndsWith('/') ? options.BaseUrl : options.BaseUrl + "/";
+                    client.BaseAddress = new Uri(baseUrl);
+                }
+
+                client.Timeout = TimeSpan.FromSeconds(45);
+            });
 
             // ========================================
             // 4. CORS CONFIGURATION

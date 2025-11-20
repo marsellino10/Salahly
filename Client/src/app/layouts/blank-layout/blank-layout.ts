@@ -6,10 +6,11 @@ import { TechnicianNavBar } from '../../components/technician/technician-nav-bar
 import { TechnicianService } from '../../core/services/technician-service';
 import { CustomerService } from '../../core/services/customer-service';
 import { CustomerNavBar } from '../../components/customer/customer-nav-bar/customer-nav-bar';
+import { ChatbotWidget } from '../../pages/shared/chatbot-widget/chatbot-widget';
 
 @Component({
   selector: 'app-blank-layout',
-  imports: [RouterOutlet, NavBlank, Footer, TechnicianNavBar, CustomerNavBar],
+    imports: [RouterOutlet, NavBlank, Footer, TechnicianNavBar, CustomerNavBar, ChatbotWidget],
   templateUrl: './blank-layout.html',
   styleUrl: './blank-layout.css',
 })

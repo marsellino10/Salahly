@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Salahly.DAL\Salahly.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\ChatDtos\" />
+  </ItemGroup>
+
 </Project>
