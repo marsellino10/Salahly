@@ -17,12 +17,12 @@ namespace Salahly.DAL.Interfaces
         IGenericRepository<Craftsman> Craftsmen { get; }
         IGenericRepository<CraftsmanServiceArea> CraftsmanServiceAreas { get; }
         IGenericRepository<Customer> Customers { get; }
-        IGenericRepository<Notification> Notifications { get; }
+        //IGenericRepository<Notification> Notifications { get; }
         IGenericRepository<Payment> Payments { get; }
         IGenericRepository<PortfolioItem> PortfolioItems { get; }
         //IGenericRepository<Review> Reviews { get; }
         IReviewRepository Reviews { get; }
-
+        INotificationRepository Notifications { get; }
         IGenericRepository<Area> Areas { get; }
         IServiceRequestRepository ServiceRequests { get; }
         ICraftsmanOfferRepository CraftsmanOffers { get; }

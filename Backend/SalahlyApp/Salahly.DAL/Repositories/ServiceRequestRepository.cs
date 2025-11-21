@@ -7,11 +7,11 @@ namespace Salahly.DAL.Repositories
 {
     public class ServiceRequestRepository : GenericRepository<ServiceRequest>, IServiceRequestRepository
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
 
         public ServiceRequestRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+            //_context = context;
         }
 
         public async Task<IEnumerable<ServiceRequest>> GetAllByCustomerAsync(int customerId)

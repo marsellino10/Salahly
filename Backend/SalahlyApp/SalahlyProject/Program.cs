@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -14,12 +16,13 @@ using Salahly.DAL.Services;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.Interfaces;
 using Salahly.DSL.Services;
-using SalahlyProject.Response.Error;
+using SalahlyProject.Api.Hubs;
 using SalahlyProject.Options;
+using SalahlyProject.Response;
+using SalahlyProject.Response.Error;
 using SalahlyProject.Services;
 using SalahlyProject.Services.Chat;
 using SalahlyProject.Services.Interfaces;
-using System.Text;
 
 namespace SalahlyProject
 {
@@ -109,6 +112,23 @@ namespace SalahlyProject
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            // Accept JWT in the query string ONLY for SignalR WebSockets
+                            var accessToken = context.Request.Query["access_token"];
+
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                path.StartsWithSegments("/notificationHub"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
             
             // ========================================
@@ -121,6 +141,10 @@ namespace SalahlyProject
             builder.Services.AddScoped<ICustomerService, CustomerServicecs>();
 
             // Business Services
+            builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<INotificationHubSender, NotificationHubSender>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ICraftService, CraftService>();
             builder.Services.AddScoped<IAreaService, AreaService>();
             builder.Services.AddScoped<ICraftsManService, CraftsManService>();
@@ -155,7 +179,7 @@ namespace SalahlyProject
             {
                 options.AddPolicy("AllowAngular", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200") // Angular default port
+                    policy.WithOrigins("http://localhost:4200", "http://127.0.0.1:3000") // Angular default port
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials();
@@ -294,7 +318,7 @@ namespace SalahlyProject
 
             // Map controllers
             app.MapControllers();
-
+            app.MapHub<NotificationHub>("/notificationHub");
             app.Run();
         }
     }

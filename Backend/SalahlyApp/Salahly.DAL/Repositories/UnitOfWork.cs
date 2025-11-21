@@ -23,7 +23,7 @@ namespace Salahly.DAL.Repositories
         public ICraftsmanOfferRepository CraftsmanOffers { get; }
         public IGenericRepository<CraftsmanServiceArea> CraftsmanServiceAreas { get; }
         public IGenericRepository<Customer> Customers { get; }
-        public IGenericRepository<Notification> Notifications { get; }
+        public INotificationRepository Notifications { get; }
         public IGenericRepository<Payment> Payments { get; }
         public IGenericRepository<PortfolioItem> PortfolioItems { get; }
         //public IGenericRepository<Review> Reviews { get; }
@@ -45,7 +45,7 @@ namespace Salahly.DAL.Repositories
             CraftsmanOffers = new CraftsmanOfferRepository(_context);
             CraftsmanServiceAreas = new GenericRepository<CraftsmanServiceArea>(_context);
             Customers = new GenericRepository<Customer>(_context);
-            Notifications = new GenericRepository<Notification>(_context);
+            Notifications = new NotificationRepository(_context);
             Payments = new GenericRepository<Payment>(_context);
             PortfolioItems = new GenericRepository<PortfolioItem>(_context);
             Reviews = new ReviewRepository(_context);

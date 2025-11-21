@@ -9,5 +9,7 @@ namespace Salahly.DAL.Interfaces
 {
     public interface INotificationRepository : IGenericRepository<Notification>
     {
+        Task<List<Notification>> GetForUserAsync(int userId);
+        Task<Notification?> GetByIdAsync(int notificationId);
     }
 }

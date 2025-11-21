@@ -1,23 +1,26 @@
-﻿using Mapster;
-using Salahly.DAL.Entities;
-using Salahly.DAL.Interfaces;
-using Salahly.DSL.DTOs.OffersDtos;
-using Salahly.DSL.DTOs.ServiceRequstDtos;
-using Salahly.DSL.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
+using Salahly.DAL.Entities;
+using Salahly.DAL.Interfaces;
+using Salahly.DSL.DTOs;
+using Salahly.DSL.DTOs.OffersDtos;
+using Salahly.DSL.DTOs.ServiceRequstDtos;
+using Salahly.DSL.Interfaces;
 
 namespace Salahly.DSL.Services
 {
     public class OfferService : IOfferService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
 
-        public OfferService(IUnitOfWork unitOfWork)
+        public OfferService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
 
         public async Task<ServiceResponse<IEnumerable<OfferDto>>> GetOffersForCustomerRequestAsync(int customerId, int requestId)
@@ -146,6 +149,16 @@ namespace Salahly.DSL.Services
 
                 await _unitOfWork.CraftsmanOffers.AddAsync(offer);
                 await _unitOfWork.SaveAsync();
+                await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+                {
+                    userId = request.CustomerId,
+                    type = NotificationType.NewOffer,
+                    title = "New Offer Received",//change testing to full name later
+                    message = $"testing submitted an offer.",
+                    actionUrl = $"/service-requests/{request.ServiceRequestId}",
+                    craftsmanOfferId = offer.CraftsmanOfferId,
+                    serviceRequestId = request.ServiceRequestId
+                });
 
                 var offerDto = offer.Adapt<OfferDto>();
                 return ServiceResponse<OfferDto>.SuccessResponse(offerDto, "Offer created successfully.");

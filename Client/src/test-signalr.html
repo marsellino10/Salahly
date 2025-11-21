@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>SignalR Notification Test</h2>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+    //const userId = prompt("Enter your UserId to test receiving notifications:");
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("http://localhost:5049/notificationHub", {
+        accessTokenFactory: () => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4ZmI1NmQ2OS0wNGFjLTQ4ZmYtODY0OS1kYWZhMDg0NDZmNDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJOYW1lSWRlbnRpZmllciI6IjIiLCJOYW1lIjoiYWhtZWQuY3VzdG9tZXJAc2FsYWhseS5jb20iLCJGdWxsTmFtZSI6IkFobWVkIE1vaGFtZWQiLCJJc1Byb2ZpbGVDb21wbGV0ZWQiOiJGYWxzZSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkN1c3RvbWVyIiwiZXhwIjoxNzYzNzYxODEzLCJpc3MiOiJTYWxhaGx5QVBJIiwiYXVkIjoiU2FsYWhseUNsaWVudCJ9.y9EOYdvzO3WjLhm8BV1-Yx-SIvgLEyE68VpETakWRE4"
+        })
+        .build();
+
+    connection.on("ReceiveNotification", (message) => {
+        alert("🔔 Notification Received: " + message);
+        console.log("Notification:", message);
+    });
+
+    connection.start().then(() => {
+        console.log("Connected to SignalR Hub.");
+    }).catch(err => console.error(err));
+</script>
+
+</body>
+</html>
