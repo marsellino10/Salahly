@@ -12,10 +12,12 @@ namespace Salahly.API.Controllers.Customer
     public class CustomerOffersController : ControllerBase
     {
         private readonly IOfferService _offerService;
+        private readonly ILogger<CustomerOffersController> _logger;
 
-        public CustomerOffersController(IOfferService offerService)
+        public CustomerOffersController(IOfferService offerService, ILogger<CustomerOffersController> logger)
         {
             _offerService = offerService;
+            _logger = logger;
         }
 
         private int GetCustomerIdFromToken()
@@ -35,15 +37,27 @@ namespace Salahly.API.Controllers.Customer
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
-        [HttpPatch("offers/{offerId:int}/accept")]
+        [HttpPost("accept/{offerId}")]
         public async Task<IActionResult> AcceptOffer(int offerId)
         {
-            var customerId = GetCustomerIdFromToken();
-            if (customerId == 0)
-                return Unauthorized(new { Success = false, Message = "Invalid customer credentials" });
+            try
+            {
+                // Get customer ID from JWT token
+                var customerId = GetCustomerIdFromToken();
 
-            var result = await _offerService.AcceptOfferAsync(customerId, offerId);
-            return result.Success ? Ok(result) : BadRequest(result);
+                var result = await _offerService.AcceptOfferAsync(customerId, offerId);
+
+                if (!result.Success)
+                    return BadRequest(result);
+
+                // Return payment info to frontend
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error accepting offer");
+                return StatusCode(500, new { error = "Internal server error" });
+            }
         }
 
         [HttpPatch("offers/{offerId:int}/reject")]

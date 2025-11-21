@@ -15,7 +15,9 @@ using Salahly.DAL.Repositories;
 using Salahly.DAL.Services;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.Interfaces;
+using Salahly.DSL.Interfaces.Payments;
 using Salahly.DSL.Services;
+using Salahly.DSL.Services.Payments;
 using SalahlyProject.Api.Hubs;
 using SalahlyProject.Options;
 using SalahlyProject.Response;
@@ -49,6 +51,7 @@ namespace SalahlyProject
                         maxRetryDelay: TimeSpan.FromSeconds(30),
                         errorNumbersToAdd: null);
                 });
+
                 // Enable detailed errors in development
                 if (builder.Environment.IsDevelopment())
                 {
@@ -76,9 +79,10 @@ namespace SalahlyProject
 
                 // User settings
                 options.User.RequireUniqueEmail = true;
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 
-                // Email confirmation (false for development, true for production)
+                // Email confirmation
                 options.SignIn.RequireConfirmedEmail = false;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -88,7 +92,8 @@ namespace SalahlyProject
             var jwtSettingsSection = configuration.GetSection("JwtSettings");
             builder.Services.Configure<JwtSettings>(jwtSettingsSection);
             var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
-            if (jwtSettings == null) throw new Exception("JwtSettings not found in configuration.");
+            if (jwtSettings == null)
+                throw new Exception("JwtSettings not found in configuration.");
 
             // 2.3 Authentication with JWT Bearer
             var key = Encoding.UTF8.GetBytes(jwtSettings.Secret);
@@ -97,54 +102,51 @@ namespace SalahlyProject
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(options =>
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false; // true in production
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.RequireHttpsMetadata = false; // true in production
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings.Audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
                     {
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidateAudience = true,
-                        ValidAudience = jwtSettings.Audience,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
+                        // Accept JWT in the query string ONLY for SignalR WebSockets
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/notificationHub"))
                         {
-                            // Accept JWT in the query string ONLY for SignalR WebSockets
-                            var accessToken = context.Request.Query["access_token"];
-
-                            var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) &&
-                                path.StartsWithSegments("/notificationHub"))
-                            {
-                                context.Token = accessToken;
-                            }
-
-                            return Task.CompletedTask;
+                            context.Token = accessToken;
                         }
-                    };
-                });
-            
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
             // ========================================
             // 3. DEPENDENCY INJECTION
             // ========================================
+
             // Repository Pattern
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // Auth & User Services
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IServiceRequestService, ServiceRequestService>();
             builder.Services.AddScoped<ICustomerService, CustomerServicecs>();
 
             // Business Services
-            builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
-            builder.Services.AddSignalR();
-            builder.Services.AddScoped<INotificationHubSender, NotificationHubSender>();
-            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IServiceRequestService, ServiceRequestService>();
             builder.Services.AddScoped<ICraftService, CraftService>();
             builder.Services.AddScoped<IAreaService, AreaService>();
             builder.Services.AddScoped<ICraftsManService, CraftsManService>();
@@ -152,12 +154,37 @@ namespace SalahlyProject
             builder.Services.AddScoped<IOfferService, OfferService>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
 
+            // ✅ Payment Services (NEW)
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IPaymentStrategyFactory, PaymentStrategyFactory>();
+            builder.Services.AddScoped<PaymobPaymentStrategy>();
+            builder.Services.AddScoped<PaymobWalletPaymentStrategy>();
+            builder.Services.AddScoped<CashPaymentStrategy>();
+
+            // ✅ HttpClient for Paymob API
+            builder.Services.AddHttpClient<PaymobPaymentStrategy>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+            builder.Services.AddHttpClient<PaymobWalletPaymentStrategy>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+            // SignalR & Notifications
+            builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<INotificationHubSender, NotificationHubSender>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+
             // File Upload Service
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
             builder.Services.AddHttpContextAccessor();
 
             // Chatbot Services
-            builder.Services.Configure<FireworksOptions>(configuration.GetSection(FireworksOptions.SectionName));
+            builder.Services.Configure<FireworksOptions>(
+                configuration.GetSection(FireworksOptions.SectionName));
             builder.Services.AddSingleton<IChatContextBuilder, ChatContextBuilder>();
             builder.Services.AddHttpClient<IChatService, FireworksChatService>((serviceProvider, client) =>
             {
@@ -165,7 +192,9 @@ namespace SalahlyProject
 
                 if (!string.IsNullOrWhiteSpace(options.BaseUrl))
                 {
-                    var baseUrl = options.BaseUrl.EndsWith('/') ? options.BaseUrl : options.BaseUrl + "/";
+                    var baseUrl = options.BaseUrl.EndsWith('/')
+                        ? options.BaseUrl
+                        : options.BaseUrl + "/";
                     client.BaseAddress = new Uri(baseUrl);
                 }
 
@@ -177,22 +206,35 @@ namespace SalahlyProject
             // ========================================
             builder.Services.AddCors(options =>
             {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()    
+                          .AllowAnyMethod()     
+                          .AllowAnyHeader();    
+                });
+
                 options.AddPolicy("AllowAngular", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200", "http://127.0.0.1:3000") // Angular default port
+                    policy.WithOrigins(
+                              "http://localhost:4200",
+                              "http://127.0.0.1:3000"
+                          )
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials();
                 });
             });
-            #region Swagger configration
+
+            // ========================================
+            // 5. SWAGGER CONFIGURATION
+            // ========================================
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Salahly API",
                     Version = "v1",
-                    Description = "A Web API for managing Craftsman and Customer"
+                    Description = "A Web API for managing Craftsman, Customer, Bookings, and Payments"
                 });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -206,83 +248,87 @@ namespace SalahlyProject
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                            {
+                {
+                    {
+                        new OpenApiSecurityScheme
                         {
-                            new OpenApiSecurityScheme
+                            Reference = new OpenApiReference
                             {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            Array.Empty<string>()
-                        }
-                            });
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
-            #endregion
+
             // ========================================
-            // 5. CONTROLLERS
+            // 6. CONTROLLERS
             // ========================================
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     // Handle circular references
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.ReferenceHandler =
+                        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
                     // Use camelCase for JSON
-                    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNamingPolicy =
+                        System.Text.Json.JsonNamingPolicy.CamelCase;
                 });
 
             // ========================================
-            // 6. Mapster CONFIGURATION
+            // 7. MAPSTER CONFIGURATION
             // ========================================
             MapsterConfiguration.RegisterMappings();
 
             // ========================================
-            // 7. CUSTOM VALIDATION RESPONSE
+            // 8. CUSTOM VALIDATION RESPONSE
             // ========================================
-            #region Add Custom Validation Response
             builder.Services.Configure<ApiBehaviorOptions>(opt =>
             {
                 opt.InvalidModelStateResponseFactory = (actionContext) =>
                 {
-                    var errors = actionContext.ModelState.Where(e => e.Value.Errors.Count > 0)
-                                                         .SelectMany(e => e.Value.Errors)
-                                                         .Select(e => e.ErrorMessage)
-                                                         .ToArray();
-                    var validationErrorResponse = new ValidationErrorResponse()
+                    var errors = actionContext.ModelState
+                        .Where(e => e.Value.Errors.Count > 0)
+                        .SelectMany(e => e.Value.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToArray();
+
+                    var validationErrorResponse = new ValidationErrorResponse
                     {
                         Errors = errors
                     };
+
                     return new BadRequestObjectResult(validationErrorResponse);
                 };
             });
-            #endregion
+
             // ========================================
             // BUILD APP
             // ========================================
             var app = builder.Build();
-            // ✅ SEED DATABASE
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    try
-            //    {
-            //        var context = services.GetRequiredService<ApplicationDbContext>();
-            //        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            //        var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-            //        Console.WriteLine("🌱 Starting database seeding...");
-            //        await DbSeeder.SeedAsync(context, userManager, roleManager);
-            //        Console.WriteLine("✅ Database seeding completed!");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        var logger = services.GetRequiredService<ILogger<Program>>();
-            //        logger.LogError(ex, "❌ An error occurred while seeding the database.");
-            //    }
-            //}
-
+            // ✅ SEED DATABASE (Commented out - uncomment when needed)
+            // using (var scope = app.Services.CreateScope())
+            // {
+            //     var services = scope.ServiceProvider;
+            //     try
+            //     {
+            //         var context = services.GetRequiredService<ApplicationDbContext>();
+            //         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            //         var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+            //
+            //         Console.WriteLine("🌱 Starting database seeding...");
+            //         await DbSeeder.SeedAsync(context, userManager, roleManager);
+            //         Console.WriteLine("✅ Database seeding completed!");
+            //     }
+            //     catch (Exception ex)
+            //     {
+            //         var logger = services.GetRequiredService<ILogger<Program>>();
+            //         logger.LogError(ex, "❌ An error occurred while seeding the database.");
+            //     }
+            // }
 
             // ========================================
             // MIDDLEWARE PIPELINE
@@ -304,8 +350,8 @@ namespace SalahlyProject
 
             app.UseHttpsRedirection();
 
-            // CORS - Must be before Authentication/Authorization
-            app.UseCors("AllowAngular");
+            // ✅ CORS - Must be before Authentication/Authorization
+            app.UseCors("AllowAll");  // ⬅️ يسمح لـ Paymob webhook
 
             // Static files (if needed)
             app.UseStaticFiles();
@@ -316,9 +362,10 @@ namespace SalahlyProject
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Map controllers
+            // Map controllers and hubs
             app.MapControllers();
             app.MapHub<NotificationHub>("/notificationHub");
+
             app.Run();
         }
     }

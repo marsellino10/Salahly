@@ -22,7 +22,9 @@ namespace Salahly.DAL.Entities
         public string? PaymentMethod { get; set; }
 
         public string? PaymentGateway { get; set; } 
-        public string? FailureReason { get; set; } 
+        public string? FailureReason { get; set; }
+        public string? RefundTransactionId { get; set; }
+        public DateTime? RefundedAt { get; set; }
 
         // Navigation
         public Booking Booking { get; set; }

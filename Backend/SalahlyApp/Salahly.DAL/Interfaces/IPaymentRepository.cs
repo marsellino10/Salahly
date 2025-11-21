@@ -9,5 +9,7 @@ namespace Salahly.DAL.Interfaces
 {
     public interface IPaymentRepository : IGenericRepository<Payment>
     {
+        Task<Payment?> GetByBookingIdAsync(int bookingId);
+        Task<Payment?> GetByTransactionIdAsync(string transactionId);
     }
 }
