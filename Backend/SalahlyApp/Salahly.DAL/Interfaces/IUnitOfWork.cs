@@ -17,8 +17,8 @@ namespace Salahly.DAL.Interfaces
         IGenericRepository<Craftsman> Craftsmen { get; }
         IGenericRepository<CraftsmanServiceArea> CraftsmanServiceAreas { get; }
         IGenericRepository<Customer> Customers { get; }
-        //IGenericRepository<Notification> Notifications { get; }
-        IGenericRepository<Payment> Payments { get; }
+
+        IPaymentRepository Payments { get; }
  
         IGenericRepository<PortfolioItem> PortfolioItems { get; }
         //IGenericRepository<Review> Reviews { get; }

@@ -22,7 +22,8 @@ namespace Salahly.DAL.Entities
 
         [MaxLength(1000)]
         public string? Notes { get; set; }
-
+        public decimal RefundableAmount { get; set; } 
+        public DateTime? PaymentDeadline { get; set; }
 
         public string? CancellationReason { get; set; }
         public string? CompletionNotes { get; set; }
