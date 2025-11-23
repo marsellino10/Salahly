@@ -1,30 +1,30 @@
 <section class="complete-profile-page">
   <header class="page-hero glass-panel">
     <div class="hero-copy">
-      <p class="eyebrow">You're one step away</p>
+      <p class="eyebrow">{{ 'CompleteProfile.Hero.Eyebrow' | translate }}</p>
       <div class="hero-title">
-        <h1>Complete your technician profile</h1>
+        <h1>{{ 'CompleteProfile.Hero.Title' | translate }}</h1>
         <span class="status-pill" [class.success]="hasExistingProfile">
           <i class="bi" [class.bi-patch-check-fill]="hasExistingProfile" [class.bi-hourglass-split]="!hasExistingProfile"></i>
-          {{ hasExistingProfile ? 'Profile in review' : 'Finish setup' }}
+          {{ (hasExistingProfile ? 'CompleteProfile.Hero.Status.InReview' : 'CompleteProfile.Hero.Status.FinishSetup') | translate }}
         </span>
       </div>
-      <p>Showcase your expertise, define where you serve, and let customers book you with confidence.</p>
+      <p>{{ 'CompleteProfile.Hero.Description' | translate }}</p>
       <ul class="hero-highlights">
-        <li><i class="bi bi-check-circle"></i> Verified identity & credentials</li>
-        <li><i class="bi bi-geo-alt"></i> Flexible service radius per city</li>
-        <li><i class="bi bi-broadcast"></i> Highlight your story & experience</li>
+        <li><i class="bi bi-check-circle"></i> {{ 'CompleteProfile.Hero.Highlights.Identity' | translate }}</li>
+        <li><i class="bi bi-geo-alt"></i> {{ 'CompleteProfile.Hero.Highlights.Radius' | translate }}</li>
+        <li><i class="bi bi-broadcast"></i> {{ 'CompleteProfile.Hero.Highlights.Story' | translate }}</li>
       </ul>
     </div>
     <div class="hero-progress">
       <div class="progress-stats">
         <span class="progress-value">{{ progressValue }}%</span>
-        <small>Profile strength</small>
+        <small>{{ 'CompleteProfile.Hero.ProgressStrength' | translate }}</small>
       </div>
       <div class="progress-bar">
         <div class="progress-fill" [style.width.%]="progressValue"></div>
       </div>
-      <p class="progress-hint">Complete every section for the best ranking in search results.</p>
+      <p class="progress-hint">{{ 'CompleteProfile.Hero.ProgressHint' | translate }}</p>
     </div>
   </header>
 
@@ -40,43 +40,43 @@
     <aside class="side-panel">
       <div class="card avatar-card">
         <div class="avatar-shell" [class.has-image]="profileImagePreview || existingProfileImageUrl">
-          <img *ngIf="profileImagePreview" [src]="profileImagePreview" alt="Profile preview" />
-          <img *ngIf="!profileImagePreview && existingProfileImageUrl" [src]="existingProfileImageUrl" alt="Current profile" />
+          <img *ngIf="profileImagePreview" [src]="profileImagePreview" [attr.alt]="('CompleteProfile.AvatarCard.ProfilePreviewAlt' | translate)" />
+          <img *ngIf="!profileImagePreview && existingProfileImageUrl" [src]="existingProfileImageUrl" [attr.alt]="('CompleteProfile.AvatarCard.CurrentProfileAlt' | translate)" />
           <div *ngIf="!profileImagePreview && !existingProfileImageUrl" class="avatar-placeholder">
             <i class="bi bi-person-bounding-box"></i>
-            <span>Upload photo</span>
+            <span>{{ 'CompleteProfile.AvatarCard.Placeholder' | translate }}</span>
           </div>
         </div>
         <label class="upload-btn">
           <input type="file" accept="image/*" (change)="onImageSelected($event)" />
           <i class="bi bi-upload"></i>
-          <span>{{ selectedProfileImage ? 'Change photo' : 'Upload profile photo' }}</span>
+          <span>{{ (selectedProfileImage ? 'CompleteProfile.AvatarCard.ChangePhoto' : 'CompleteProfile.AvatarCard.UploadPhotoCta') | translate }}</span>
         </label>
-        <small>High quality JPG or PNG, max 3MB.</small>
+        <small>{{ 'CompleteProfile.AvatarCard.HelperText' | translate }}</small>
       </div>
 
       <div class="card steps-card">
         <div class="card-head">
-          <p class="eyebrow mb-1">Completion checklist</p>
-          <h5>Progress overview</h5>
+          <p class="eyebrow mb-1">{{ 'CompleteProfile.Checklist.Eyebrow' | translate }}</p>
+          <h5>{{ 'CompleteProfile.Checklist.Title' | translate }}</h5>
         </div>
         <ul class="step-list">
           <li *ngFor="let step of progressSteps" [class.completed]="step.completed">
             <i class="bi" [class.bi-check-circle-fill]="step.completed" [class.bi-circle]="!step.completed"></i>
             <div>
-              <p>{{ step.label }}</p>
-              <small>{{ step.completed ? 'Looks great!' : 'Still needs your attention' }}</small>
+              <p>{{ step.labelKey | translate }}</p>
+              <small>{{ (step.completed ? 'CompleteProfile.Checklist.Done' : 'CompleteProfile.Checklist.Todo') | translate }}</small>
             </div>
           </li>
         </ul>
       </div>
 
       <div class="card tips-card">
-        <h6>Pro tips</h6>
+        <h6>{{ 'CompleteProfile.Tips.Title' | translate }}</h6>
         <ul>
-          <li>Keep hourly rate aligned with your expertise.</li>
-          <li>Use the bio to highlight certifications & specialties.</li>
-          <li>Add areas where you can arrive in under 60 minutes.</li>
+          <li>{{ 'CompleteProfile.Tips.Rate' | translate }}</li>
+          <li>{{ 'CompleteProfile.Tips.Bio' | translate }}</li>
+          <li>{{ 'CompleteProfile.Tips.Areas' | translate }}</li>
         </ul>
       </div>
     </aside>
@@ -85,32 +85,32 @@
       <section class="card form-section">
         <div class="section-head">
           <div>
-            <p class="eyebrow mb-1">Step 1</p>
-            <h4>Profile basics</h4>
+            <p class="eyebrow mb-1">{{ 'CompleteProfile.Form.StepLabel' | translate:{ step: 1 } }}</p>
+            <h4>{{ 'CompleteProfile.Form.ProfileBasicsTitle' | translate }}</h4>
           </div>
-          <span class="chip">Required</span>
+          <span class="chip">{{ 'CompleteProfile.Form.RequiredChip' | translate }}</span>
         </div>
 
         <div class="field-grid">
           <div class="form-field" [class.invalid]="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched">
-            <label>Full name</label>
+            <label>{{ 'CompleteProfile.Form.Fields.FullNameLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-person"></i>
-              <input type="text" formControlName="fullName" placeholder="e.g. Ahmed Samir" />
+              <input type="text" formControlName="fullName" [placeholder]="'CompleteProfile.Form.Fields.FullNamePlaceholder' | translate" />
             </div>
-            <small *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" class="error-text">Please enter your legal name.</small>
+            <small *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" class="error-text">{{ 'CompleteProfile.Form.Fields.FullNameError' | translate }}</small>
           </div>
 
           <div class="form-field" [class.invalid]="profileForm.get('craftId')?.invalid && profileForm.get('craftId')?.touched">
-            <label>Primary craft</label>
+            <label>{{ 'CompleteProfile.Form.Fields.CraftLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-lightning"></i>
               <select formControlName="craftId">
-                <option [ngValue]="null" disabled>Select your specialty</option>
+                <option [ngValue]="null" disabled>{{ 'CompleteProfile.Form.Fields.CraftPlaceholder' | translate }}</option>
                 <option *ngFor="let craft of crafts" [ngValue]="craft.id">{{ craft.name }}</option>
               </select>
             </div>
-            <small *ngIf="profileForm.get('craftId')?.invalid && profileForm.get('craftId')?.touched" class="error-text">Please choose your main service.</small>
+            <small *ngIf="profileForm.get('craftId')?.invalid && profileForm.get('craftId')?.touched" class="error-text">{{ 'CompleteProfile.Form.Fields.CraftError' | translate }}</small>
           </div>
         </div>
       </section>
@@ -118,39 +118,39 @@
       <section class="card form-section">
         <div class="section-head">
           <div>
-            <p class="eyebrow mb-1">Step 2</p>
-            <h4>Experience & story</h4>
+            <p class="eyebrow mb-1">{{ 'CompleteProfile.Form.StepLabel' | translate:{ step: 2 } }}</p>
+            <h4>{{ 'CompleteProfile.Form.ExperienceStoryTitle' | translate }}</h4>
           </div>
-          <span class="chip muted">Boost credibility</span>
+          <span class="chip muted">{{ 'CompleteProfile.Form.CredibilityChip' | translate }}</span>
         </div>
 
         <div class="field-grid three-cols">
           <div class="form-field" [class.invalid]="profileForm.get('hourlyRate')?.invalid && profileForm.get('hourlyRate')?.touched">
-            <label>Hourly rate (EGP)</label>
+            <label>{{ 'CompleteProfile.Form.Fields.HourlyRateLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-cash"></i>
-              <input type="number" min="20" max="5000" formControlName="hourlyRate" placeholder="350" />
+              <input type="number" min="20" max="5000" formControlName="hourlyRate" [placeholder]="'CompleteProfile.Form.Fields.HourlyRatePlaceholder' | translate" />
             </div>
-            <small class="hint">Customers can still send custom quotes.</small>
-            <small *ngIf="profileForm.get('hourlyRate')?.invalid && profileForm.get('hourlyRate')?.touched" class="error-text">Enter a realistic hourly rate.</small>
+            <small class="hint">{{ 'CompleteProfile.Form.Fields.HourlyRateHint' | translate }}</small>
+            <small *ngIf="profileForm.get('hourlyRate')?.invalid && profileForm.get('hourlyRate')?.touched" class="error-text">{{ 'CompleteProfile.Form.Fields.HourlyRateError' | translate }}</small>
           </div>
 
           <div class="form-field" [class.invalid]="profileForm.get('yearsOfExperience')?.invalid && profileForm.get('yearsOfExperience')?.touched">
-            <label>Experience (years)</label>
+            <label>{{ 'CompleteProfile.Form.Fields.YearsLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-award"></i>
-              <input type="number" min="0" max="60" formControlName="yearsOfExperience" placeholder="8" />
+              <input type="number" min="0" max="60" formControlName="yearsOfExperience" [placeholder]="'CompleteProfile.Form.Fields.YearsPlaceholder' | translate" />
             </div>
-            <small *ngIf="profileForm.get('yearsOfExperience')?.invalid && profileForm.get('yearsOfExperience')?.touched" class="error-text">Provide a value between 0 and 60.</small>
+            <small *ngIf="profileForm.get('yearsOfExperience')?.invalid && profileForm.get('yearsOfExperience')?.touched" class="error-text">{{ 'CompleteProfile.Form.Fields.YearsError' | translate }}</small>
           </div>
 
           <div class="form-field textarea-field" [class.invalid]="profileForm.get('bio')?.invalid && profileForm.get('bio')?.touched">
-            <label>Bio & story</label>
+            <label>{{ 'CompleteProfile.Form.Fields.BioLabel' | translate }}</label>
             <div class="input-shell textarea">
-              <textarea formControlName="bio" rows="4" placeholder="Share certifications, notable projects, languages, or guarantees"></textarea>
+              <textarea formControlName="bio" rows="4" [placeholder]="'CompleteProfile.Form.Fields.BioPlaceholder' | translate"></textarea>
             </div>
-            <small class="hint">Up to 600 characters.</small>
-            <small *ngIf="profileForm.get('bio')?.invalid && profileForm.get('bio')?.touched" class="error-text">Tell customers what makes you unique.</small>
+            <small class="hint">{{ 'CompleteProfile.Form.Fields.BioHint' | translate }}</small>
+            <small *ngIf="profileForm.get('bio')?.invalid && profileForm.get('bio')?.touched" class="error-text">{{ 'CompleteProfile.Form.Fields.BioError' | translate }}</small>
           </div>
         </div>
       </section>
@@ -158,17 +158,17 @@
       <section class="card form-section">
         <div class="section-head">
           <div>
-            <p class="eyebrow mb-1">Step 3</p>
-            <h4>Service coverage</h4>
+            <p class="eyebrow mb-1">{{ 'CompleteProfile.Form.StepLabel' | translate:{ step: 3 } }}</p>
+            <h4>{{ 'CompleteProfile.Form.ServiceCoverageTitle' | translate }}</h4>
           </div>
-          <span class="chip">{{ serviceAreasControls.length }}/{{ maxServiceAreas }} areas</span>
+          <span class="chip">{{ serviceAreasControls.length }}/{{ maxServiceAreas }} {{ 'CompleteProfile.ServiceAreas.AreasLabel' | translate }}</span>
         </div>
 
         <div class="service-areas" formArrayName="serviceAreas">
           <div *ngFor="let areaGroup of serviceAreasControls.controls; let i = index" class="service-area-card" [formGroupName]="i">
             <div class="area-header">
               <div>
-                <p class="title">Area {{ i + 1 }}</p>
+                <p class="title">{{ 'CompleteProfile.ServiceAreas.CardTitle' | translate:{ index: i + 1 } }}</p>
                 <small>{{ displayAreaLabel(areaGroup.value?.areaId ?? null) }}</small>
               </div>
               <button
@@ -176,7 +176,7 @@
                 class="icon-btn"
                 (click)="removeServiceArea(i)"
                 [disabled]="serviceAreasControls.length === 1"
-                aria-label="Remove area"
+                [attr.aria-label]="'CompleteProfile.ServiceAreas.RemoveAreaAria' | translate"
               >
                 <i class="bi bi-trash"></i>
               </button>
@@ -184,11 +184,11 @@
 
             <div class="field-grid">
               <div class="form-field" [class.invalid]="areaGroup.get('areaId')?.invalid && areaGroup.get('areaId')?.touched">
-                <label>Region & city</label>
+                <label>{{ 'CompleteProfile.ServiceAreas.RegionCityLabel' | translate }}</label>
                 <div class="input-shell">
                   <i class="bi bi-geo"></i>
                   <select formControlName="areaId">
-                    <option [ngValue]="null" disabled>Select an area</option>
+                    <option [ngValue]="null" disabled>{{ 'CompleteProfile.ServiceAreas.SelectAreaPlaceholder' | translate }}</option>
                     <ng-container *ngFor="let group of groupedAreas">
                       <optgroup [label]="group.region">
                         <option *ngFor="let area of group.areas" [ngValue]="area.id" [disabled]="isAreaSelected(area.id, i)">
@@ -198,27 +198,27 @@
                     </ng-container>
                   </select>
                 </div>
-                <small *ngIf="areaGroup.get('areaId')?.invalid && areaGroup.get('areaId')?.touched" class="error-text">Choose where you can serve.</small>
+                <small *ngIf="areaGroup.get('areaId')?.invalid && areaGroup.get('areaId')?.touched" class="error-text">{{ 'CompleteProfile.ServiceAreas.AreaError' | translate }}</small>
               </div>
 
               <div class="form-field" [class.invalid]="areaGroup.get('serviceRadiusKm')?.invalid && areaGroup.get('serviceRadiusKm')?.touched">
-                <label>Service radius (km)</label>
+                <label>{{ 'CompleteProfile.ServiceAreas.RadiusLabel' | translate }}</label>
                 <div class="radius-control">
                   <input type="range" min="5" max="80" formControlName="serviceRadiusKm" />
                   <div class="radius-meta">
-                    <span>{{ areaGroup.get('serviceRadiusKm')?.value || 10 }} km</span>
-                    <small>Recommended: 15-35 km</small>
+                    <span>{{ 'CompleteProfile.ServiceAreas.DistanceLabel' | translate:{ value: areaGroup.get('serviceRadiusKm')?.value || 10 } }}</span>
+                    <small>{{ 'CompleteProfile.ServiceAreas.Recommendation' | translate }}</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <small *ngIf="serviceAreasTouched" class="error-text">Add at least one service area to go live.</small>
+          <small *ngIf="serviceAreasTouched" class="error-text">{{ 'CompleteProfile.ServiceAreas.MinAreaError' | translate }}</small>
 
           <button type="button" class="btn ghost w-100" (click)="addServiceArea()" [disabled]="!canAddMoreAreas">
             <i class="bi bi-plus-circle"></i>
-            <span>{{ canAddMoreAreas ? 'Add another service area' : 'Maximum areas reached' }}</span>
+            <span>{{ (canAddMoreAreas ? 'CompleteProfile.ServiceAreas.AddButton' : 'CompleteProfile.ServiceAreas.MaxButton') | translate }}</span>
           </button>
         </div>
       </section>
@@ -226,14 +226,14 @@
       <div class="form-actions">
         <button class="btn primary" type="submit" [disabled]="isSubmitting || isLoadingProfile">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status"></span>
-          <span>{{ hasExistingProfile ? 'Update profile' : 'Publish profile' }}</span>
+          <span>{{ (hasExistingProfile ? 'CompleteProfile.Buttons.PrimaryUpdate' : 'CompleteProfile.Buttons.PrimaryPublish') | translate }}</span>
         </button>
       </div>
     </form>
 
     <div *ngIf="isLoadingProfile" class="loading-overlay">
       <div class="loader"></div>
-      <p>Loading your profile...</p>
+      <p>{{ 'CompleteProfile.Loading.Message' | translate }}</p>
     </div>
   </div>
 </section>

@@ -8,16 +8,17 @@ import {
   ServiceRequestStatus,
   ServicesRequestsService,
 } from '../../../core/services/services-requests.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type TimelineStep = {
   key: ServiceRequestStatus | 'HasOffers';
-  label: string;
+  labelKey: string;
 };
 
 @Component({
   selector: 'app-service-request-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
   templateUrl: './service-request-details.html',
   styleUrl: './service-request-details.css',
 })
@@ -26,6 +27,7 @@ export class ServiceRequestDetails implements OnInit {
   private readonly _router = inject(Router);
   private readonly _requestsService = inject(ServicesRequestsService);
   private readonly _offersService = inject(CustomerOffersService);
+  private readonly _translate = inject(TranslateService);
 
   private requestId: number | null = null;
   readonly OfferStatusEnum = OfferStatus;
@@ -42,11 +44,11 @@ export class ServiceRequestDetails implements OnInit {
   rejectReason: string = '';
 
   readonly lifecycleSteps: TimelineStep[] = [
-    { key: 'Open', label: 'Request Posted' },
-    { key: 'HasOffers', label: 'Offers Incoming' },
-    { key: 'OfferAccepted', label: 'Offer Accepted' },
-    { key: 'InProgress', label: 'In Progress' },
-    { key: 'Completed', label: 'Completed' },
+    { key: 'Open', labelKey: 'ServiceRequestDetails.Timeline.Posted' },
+    { key: 'HasOffers', labelKey: 'ServiceRequestDetails.Timeline.OffersIncoming' },
+    { key: 'OfferAccepted', labelKey: 'ServiceRequestDetails.Timeline.OfferAccepted' },
+    { key: 'InProgress', labelKey: 'ServiceRequestDetails.Timeline.InProgress' },
+    { key: 'Completed', labelKey: 'ServiceRequestDetails.Timeline.Completed' },
   ];
 
   readonly statusChipStyles: Record<string, { bg: string; text: string }> = {
@@ -68,22 +70,26 @@ export class ServiceRequestDetails implements OnInit {
     return [
       {
         icon: 'bi-geo-alt',
-        label: 'Location',
-        value: `${current.city || 'City N/A'}, ${current.area || 'Area N/A'}`,
+        labelKey: 'ServiceRequestDetails.Meta.Location',
+        value: `${current.city || this._translate.instant('ServiceRequestDetails.Meta.CityFallback')}, ${
+          current.area || this._translate.instant('ServiceRequestDetails.Meta.AreaFallback')
+        }`,
       },
       {
         icon: 'bi-calendar-event',
-        label: 'Preferred Date',
-        value: `${this.formatDate(current.preferredDate)} · ${current.preferredTimeSlot || 'Flexible slot'}`,
+        labelKey: 'ServiceRequestDetails.Meta.PreferredDate',
+        value: `${this.formatDate(current.preferredDate)} · ${
+          current.preferredTimeSlot || this._translate.instant('ServiceRequestDetails.Meta.TimeFallback')
+        }`,
       },
       {
         icon: 'bi-currency-dollar',
-        label: 'Budget',
+        labelKey: 'ServiceRequestDetails.Meta.Budget',
         value: this.formatBudget(current.customerBudget),
       },
       {
         icon: 'bi-people',
-        label: 'Offers',
+        labelKey: 'ServiceRequestDetails.Meta.Offers',
         value: current.maxOffers ? `${current.offersCount}/${current.maxOffers}` : `${current.offersCount}`,
       },
     ];
@@ -92,7 +98,7 @@ export class ServiceRequestDetails implements OnInit {
   ngOnInit(): void {
     const idParam = Number(this._route.snapshot.paramMap.get('id'));
     if (!idParam) {
-      this.requestError.set('Missing service request reference.');
+      this.requestError.set(this._translate.instant('ServiceRequestDetails.Messages.MissingRequest'));
       this.isRequestLoading.set(false);
       this.isOffersLoading.set(false);
       return;
@@ -181,7 +187,7 @@ export class ServiceRequestDetails implements OnInit {
 
     this._offersService.acceptOffer(offer.craftsmanOfferId).subscribe({
       next: (response) => {
-        this.actionBanner.set(response.message ?? 'Offer accepted successfully.');
+        this.actionBanner.set(response.message ?? this._translate.instant('ServiceRequestDetails.Messages.AcceptSuccess'));
         this.resetOfferActionState();
       },
       error: (error) => {
@@ -222,7 +228,7 @@ export class ServiceRequestDetails implements OnInit {
 
     this._offersService.rejectOffer(offerId, { rejectionReason: this.rejectReason.trim() || undefined }).subscribe({
       next: (response) => {
-        this.actionBanner.set(response.message ?? 'Offer rejected successfully.');
+        this.actionBanner.set(response.message ?? this._translate.instant('ServiceRequestDetails.Messages.RejectSuccess'));
         this.resetOfferActionState();
       },
       error: (error) => {
@@ -264,7 +270,7 @@ export class ServiceRequestDetails implements OnInit {
 
   formatBudget(value?: number | null): string {
     if (value === undefined || value === null) {
-      return '—';
+      return this._translate.instant('ServiceRequestDetails.Meta.BudgetUnknown');
     }
     return new Intl.NumberFormat(undefined, {
       style: 'currency',
@@ -276,15 +282,15 @@ export class ServiceRequestDetails implements OnInit {
   getOfferStatusLabel(status: OfferStatus): string {
     switch (status) {
       case OfferStatus.Accepted:
-        return 'Accepted';
+        return this._translate.instant('ServiceRequestDetails.Offers.Status.Accepted');
       case OfferStatus.Rejected:
-        return 'Rejected';
+        return this._translate.instant('ServiceRequestDetails.Offers.Status.Rejected');
       case OfferStatus.Withdrawn:
-        return 'Withdrawn';
+        return this._translate.instant('ServiceRequestDetails.Offers.Status.Withdrawn');
       case OfferStatus.Expired:
-        return 'Expired';
+        return this._translate.instant('ServiceRequestDetails.Offers.Status.Expired');
       default:
-        return 'Pending';
+        return this._translate.instant('ServiceRequestDetails.Offers.Status.Pending');
     }
   }
 
@@ -318,9 +324,14 @@ export class ServiceRequestDetails implements OnInit {
     this.rejectReason = '';
   }
 
+  getRequestStatusLabel(status: ServiceRequestStatus | string): string {
+    const key = this.statusLabelKeys[String(status)];
+    return key ? this._translate.instant(key) : String(status);
+  }
+
   private extractErrorMessage(error: unknown): string {
     if (!error) {
-      return 'Something went wrong. Please try again.';
+      return this._translate.instant('ServiceRequestDetails.Messages.GenericError');
     }
 
     if (typeof error === 'string') {
@@ -332,6 +343,16 @@ export class ServiceRequestDetails implements OnInit {
       return errorRecord['message'] as string;
     }
 
-    return 'Unable to complete the request right now. Please retry shortly.';
+    return this._translate.instant('ServiceRequestDetails.Messages.ActionError');
   }
+
+  private readonly statusLabelKeys: Record<string, string> = {
+    Open: 'ServiceRequestDetails.StatusLabels.Open',
+    HasOffers: 'ServiceRequestDetails.StatusLabels.HasOffers',
+    OfferAccepted: 'ServiceRequestDetails.StatusLabels.OfferAccepted',
+    InProgress: 'ServiceRequestDetails.StatusLabels.InProgress',
+    Completed: 'ServiceRequestDetails.StatusLabels.Completed',
+    Cancelled: 'ServiceRequestDetails.StatusLabels.Cancelled',
+    Expired: 'ServiceRequestDetails.StatusLabels.Expired',
+  };
 }

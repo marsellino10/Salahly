@@ -18,7 +18,8 @@
     "Home": "الصفحة الرئيسية",
     "Browse Technicians": "استكشاف الفنيين",
     "Login": "تسجيل الدخول",
-    "Sign Up": "انشاء حساب"
+    "Sign Up": "انشاء حساب",
+    "Browse Opportunities": "استكشاف فرص العمل"
   },
   "TechnicianNav":{
     "Profile": "الملف الشخصي",
@@ -128,5 +129,561 @@
     "All Services":"جميع الخدمات",
     "Select Service":"اختر خدمة",
     "Search":"بحث"
+  },
+  "CompleteProfile": {
+    "Hero": {
+      "Eyebrow": "أنت على بعد خطوة واحدة",
+      "Title": "أكمل ملفك كفني",
+      "Status": {
+        "InReview": "الملف قيد المراجعة",
+        "FinishSetup": "أكمل الإعداد"
+      },
+      "Description": "اعرض خبراتك وحدد مناطق خدمتك ودع العملاء يحجزونك بثقة.",
+      "Highlights": {
+        "Identity": "هوية وشهادات معتمدة",
+        "Radius": "نطاق خدمة مرن لكل مدينة",
+        "Story": "احك قصتك وخبراتك"
+      },
+      "ProgressStrength": "قوة الملف",
+      "ProgressHint": "أكمل كل قسم لتحصل على أفضل ترتيب في نتائج البحث."
+    },
+    "AvatarCard": {
+      "ProfilePreviewAlt": "معاينة الصورة الشخصية",
+      "CurrentProfileAlt": "الصورة الحالية",
+      "Placeholder": "ارفع صورة",
+      "ChangePhoto": "تغيير الصورة",
+      "UploadPhotoCta": "ارفع صورة الملف",
+      "HelperText": "جودة عالية JPG أو PNG، بحد أقصى 3 ميجابايت."
+    },
+    "Checklist": {
+      "Eyebrow": "قائمة الإكمال",
+      "Title": "نظرة على التقدم",
+      "Done": "ممتاز!",
+      "Todo": "يحتاج إلى اهتمامك"
+    },
+    "Tips": {
+      "Title": "نصائح احترافية",
+      "Rate": "اجعل سعرك بالساعة متوافقاً مع خبرتك.",
+      "Bio": "استخدم النبذة لتسليط الضوء على الشهادات والتخصصات.",
+      "Areas": "أضف مناطق يمكنك الوصول إليها خلال 60 دقيقة."
+    },
+    "Form": {
+      "StepLabel": "الخطوة {{step}}",
+      "ProfileBasicsTitle": "أساسيات الملف",
+      "ExperienceStoryTitle": "الخبرة والقصة",
+      "ServiceCoverageTitle": "نطاق الخدمة",
+      "RequiredChip": "مطلوب",
+      "CredibilityChip": "يعزز المصداقية",
+      "Fields": {
+        "FullNameLabel": "الاسم الكامل",
+        "FullNamePlaceholder": "مثال: أحمد سمير",
+        "FullNameError": "برجاء إدخال اسمك القانوني.",
+        "CraftLabel": "المهنة الرئيسية",
+        "CraftPlaceholder": "اختر تخصصك",
+        "CraftError": "برجاء اختيار خدمتك الرئيسية.",
+        "HourlyRateLabel": "السعر بالساعة (جنيه)",
+        "HourlyRatePlaceholder": "٣٥٠",
+        "HourlyRateHint": "يمكن للعملاء إرسال عروض مخصصة أيضاً.",
+        "HourlyRateError": "أدخل سعراً واقعياً.",
+        "YearsLabel": "سنوات الخبرة",
+        "YearsPlaceholder": "٨",
+        "YearsError": "أدخل قيمة بين 0 و 60.",
+        "BioLabel": "النبذة والقصة",
+        "BioPlaceholder": "شارك الشهادات والمشاريع البارزة واللغات والضمانات",
+        "BioHint": "حتى 600 حرف.",
+        "BioError": "أخبر العملاء بما يميزك."
+      }
+    },
+    "ServiceAreas": {
+      "AreasLabel": "مناطق",
+      "CardTitle": "منطقة {{index}}",
+      "RegionCityLabel": "المنطقة والمدينة",
+      "SelectAreaPlaceholder": "اختر منطقة",
+      "SelectServiceAreaLabel": "اختر منطقة خدمة",
+      "SelectedAreaFallback": "منطقة مختارة",
+      "RemoveAreaAria": "إزالة المنطقة",
+      "AreaError": "اختر الأماكن التي يمكنك خدمتها.",
+      "RadiusLabel": "نطاق الخدمة (كم)",
+      "DistanceLabel": "{{value}} كم",
+      "Recommendation": "موصى به: 15-35 كم",
+      "MinAreaError": "أضف منطقة خدمة واحدة على الأقل للظهور.",
+      "AddButton": "أضف منطقة خدمة أخرى",
+      "MaxButton": "تم بلوغ الحد الأقصى"
+    },
+    "Buttons": {
+      "PrimaryUpdate": "تحديث الملف",
+      "PrimaryPublish": "نشر الملف"
+    },
+    "Messages": {
+      "ImageTypeError": "برجاء رفع ملف صورة (PNG أو JPG أو JPEG).",
+      "SubmitSuccess": "ملفك ممتاز! سيتم تحويلك للوحة التحكم...",
+      "SubmitError": "تعذر حفظ الملف حالياً. حاول مرة أخرى."
+    },
+    "Loading": {
+      "Message": "جارٍ تحميل ملفك..."
+    }
+  },
+  "BrowseOpportunities": {
+    "Hero": {
+      "Eyebrow": "اكتشف الأعمال التي تناسب مهنتك",
+      "Title": "استكشف الفرص",
+      "Subtitle": "ابق على اطلاع بأحدث طلبات العملاء، وحدد المناسب منها من حيث الميزانية، وتصرف قبل انتهاء الوقت."
+    },
+    "Stats": {
+      "Total": {
+        "Label": "الإجمالي",
+        "Subtitle": "طلبات تناسب مهنتك"
+      },
+      "Open": {
+        "Label": "متاحة الآن",
+        "Subtitle": "جاهزة للعروض"
+      },
+      "Closing": {
+        "Label": "تغلق قريباً",
+        "Subtitle": "أقل من ٣ أيام"
+      },
+      "Budget": {
+        "Label": "متوسط الميزانية",
+        "Subtitle": "عبر الوظائف المطابقة"
+      }
+    },
+    "Buttons": {
+      "Refreshing": "جارٍ التحديث...",
+      "RefreshFeed": "تحديث القائمة",
+      "ResetFilters": "إعادة تعيين الفلاتر",
+      "ClearChip": "مسح",
+      "Dismiss": "إغلاق",
+      "TryAgain": "أعد المحاولة",
+      "ClearFilters": "مسح الفلاتر"
+    },
+    "Filters": {
+      "SearchPlaceholder": "ابحث بالعنوان أو الوصف أو المنطقة",
+      "Status": {
+        "Label": "الحالة",
+        "All": "كل الحالات",
+        "Open": "مفتوحة",
+        "HasOffers": "بها عروض",
+        "OfferAccepted": "تم قبول عرض",
+        "InProgress": "قيد التنفيذ"
+      },
+      "City": {
+        "Label": "المدينة / المنطقة",
+        "All": "أي مكان"
+      },
+      "Sort": {
+        "Label": "ترتيب حسب",
+        "Latest": "الأحدث أولاً",
+        "Budget": "أعلى ميزانية",
+        "ClosingSoon": "تغلق قريباً"
+      }
+    },
+    "States": {
+      "Empty": {
+        "Title": "لا توجد فرص مطابقة للفلاتر",
+        "Description": "حاول توسيع نطاق البحث أو إزالة بعض الفلاتر أو العودة لاحقاً."
+      }
+    },
+    "Cards": {
+      "Badges": {
+        "ClosingSoon": "تغلق قريباً"
+      },
+      "Meta": {
+        "BudgetLabel": "الميزانية",
+        "BudgetTbd": "لم يتم تحديد الميزانية",
+        "LocationLabel": "الموقع",
+        "PreferredDateLabel": "التاريخ المفضل",
+        "ExpiresLabel": "ينتهي",
+        "ExpiresExpired": "انتهى",
+        "ExpiresHours": "متبق {{hours}} ساعة",
+        "ExpiresDays": "متبق {{days}} يوم",
+        "LocationFallback": "منطقة غير محددة"
+      },
+      "Actions": {
+        "Save": "حفظ",
+        "AddOffer": "إضافة عرض"
+      },
+      "Submitted": {
+        "YourOffer": "عرضك",
+        "Withdrawing": "جاري السحب...",
+        "Withdraw": "سحب العرض"
+      },
+      "ProgressLabel": "العروض {{current}}/{{max}}",
+      "ProgressInfinite": "∞"
+    },
+    "Modal": {
+      "Eyebrow": "إضافة عرض",
+      "Fields": {
+        "PriceLabel": "السعر المقترح (جنيه)",
+        "PricePlaceholder": "أدخل سعرك",
+        "PriceError": "برجاء إدخال سعر صالح.",
+        "DurationLabel": "المدة (دقائق)",
+        "DurationPlaceholder": "مثال: 90",
+        "DurationError": "الحد الأدنى 15 دقيقة.",
+        "AvailableFromLabel": "متاح من",
+        "AvailableToLabel": "متاح إلى",
+        "Required": "مطلوب.",
+        "DetailsLabel": "تفاصيل العرض",
+        "DetailsPlaceholder": "اشرح طريقتك والمواد والتوافر وما إلى ذلك",
+        "DetailsError": "مطلوب 20 حرفاً على الأقل."
+      },
+      "Buttons": {
+        "Cancel": "إلغاء",
+        "Submitting": "جارٍ الإرسال...",
+        "Submit": "إرسال العرض"
+      }
+    },
+    "Messages": {
+      "OfferSubmitSuccess": "تم إرسال العرض بنجاح.",
+      "OfferWithdrawSuccess": "تم سحب العرض بنجاح.",
+      "LoadError": "تعذر تحميل الفرص. حاول مرة أخرى.",
+      "GenericError": "حدث خطأ أثناء الاتصال بالخادم."
+    },
+    "OfferStatus": {
+      "Pending": "قيد المراجعة",
+      "Accepted": "تم القبول",
+      "Rejected": "مرفوض",
+      "Withdrawn": "تم السحب",
+      "Expired": "منتهي"
+    },
+    "StatusLabels": {
+      "Open": "مفتوحة",
+      "HasOffers": "بها عروض",
+      "OfferAccepted": "تم قبول عرض",
+      "InProgress": "قيد التنفيذ",
+      "Completed": "مكتملة",
+      "Cancelled": "ملغاة",
+      "Expired": "منتهية"
+    }
+  },
+  "CustomerProfile": {
+    "Hero": {
+      "Eyebrow": "أكمل عملية الانضمام",
+      "Title": "ملف العميل",
+      "Status": {
+        "Ready": "الملف جاهز",
+        "Finish": "أكمل الإعداد"
+      },
+      "Description": "قدم بيانات المنزل والتواصل بدقة ليصل الفنيون مستعدين.",
+      "Highlights": {
+        "Address": "عنوان دقيق للزيارات",
+        "Phone": "هاتف معتمد للتحديثات",
+        "Scheduling": "جدولة مخصصة"
+      },
+      "ProgressStrength": "قوة الملف",
+      "ProgressHint": "أكمل كل قسم لتحصل على أفضل تجربة حجز."
+    },
+    "Avatar": {
+      "ProfilePreviewAlt": "معاينة الصورة",
+      "CurrentProfileAlt": "الصورة الحالية",
+      "Placeholder": "ارفع صورة",
+      "ChangePhoto": "تغيير الصورة",
+      "UploadPhotoCta": "ارفع صورة الملف",
+      "HelperText": "PNG أو JPG حتى 3 ميجابايت."
+    },
+    "Checklist": {
+      "Eyebrow": "قائمة التحقق",
+      "Title": "نظرة على التقدم",
+      "Done": "ممتاز!",
+      "Todo": "ما زال يحتاج الانتباه"
+    },
+    "Tips": {
+      "Title": "نصائح",
+      "Phone": "استخدم رقماً ترد عليه باستمرار.",
+      "Address": "اشرح المبنى والمعالم داخل العنوان.",
+      "Photo": "صورة ودية تسهّل الاستلام."
+    },
+    "Form": {
+      "StepLabel": "الخطوة {{step}}",
+      "RequiredChip": "مطلوب",
+      "ProfileBasicsTitle": "أساسيات الملف",
+      "ContactDetailsTitle": "بيانات التواصل",
+      "LocationTitle": "الموقع",
+      "ContactChip": "حافظ عليها محدثة",
+      "LocationChip": "المدينة والمنطقة",
+      "Fields": {
+        "FullNameLabel": "الاسم الكامل",
+        "FullNamePlaceholder": "مثال: سارة عادل",
+        "FullNameError": "برجاء إدخال اسمك القانوني.",
+        "DobLabel": "تاريخ الميلاد",
+        "DobHint": "اختياري ويساعد في التذكيرات.",
+        "PhoneLabel": "رقم الهاتف",
+        "PhonePlaceholder": "مثال: ‎+20 111 222 3344",
+        "PhoneError": "برجاء إدخال رقم هاتف صالح.",
+        "AddressLabel": "عنوان السكن",
+        "AddressPlaceholder": "المبنى، الشارع، الدور",
+        "AddressError": "أدخل العنوان الذي يجب أن يزوره الفنيون.",
+        "CityLabel": "المدينة",
+        "CityPlaceholder": "مثال: القاهرة",
+        "CityError": "المدينة مطلوبة.",
+        "AreaLabel": "المنطقة / الحي",
+        "AreaPlaceholder": "مثال: مدينة نصر",
+        "AreaError": "أخبرنا بالحي لسرعة المطابقة."
+      }
+    },
+    "Buttons": {
+      "Save": "حفظ الملف",
+      "Update": "تحديث الملف"
+    },
+    "Loading": {
+      "Message": "جارٍ تحميل ملفك..."
+    },
+    "Messages": {
+      "ImageTypeError": "برجاء رفع ملف صورة صالح.",
+      "SubmitSuccess": "تم تحديث ملفك. سيتم تحويلك إلى الصفحة الرئيسية...",
+      "GenericError": "حدث خطأ أثناء حفظ الملف. حاول مرة أخرى."
+    }
+  },
+  "ShowRequests": {
+    "Hero": {
+      "Eyebrow": "خط سير طلباتك",
+      "Title": "طلبات الخدمة",
+      "TotalLabel": "{{count}} إجمالي",
+      "Description": "تابع كل عملية إصلاح من البداية حتى الإكمال. صفِّ، راجع، وابق متحكماً.",
+      "NewRequestCta": "طلب خدمة جديد",
+      "NewRequestHint": "ابدأ طلباً جديداً لتستقبل عروض الفنيين.",
+      "Stats": {
+        "ActiveLabel": "نشطة",
+        "ActiveSubtitle": "قيد التنفيذ حالياً",
+        "HistoryLabel": "السجل",
+        "HistorySubtitle": "أعمال منتهية",
+        "BudgetLabel": "إجمالي الميزانية",
+        "BudgetSubtitle": "عبر جميع الطلبات"
+      }
+    },
+    "Buttons": {
+      "Retry": "إعادة المحاولة"
+    },
+    "Tabs": {
+      "Active": "نشطة",
+      "History": "منتهية"
+    },
+    "Filters": {
+      "SearchPlaceholder": "ابحث بالعنوان أو الحرفة أو التفاصيل",
+      "StatusLabel": "الحالة",
+      "StatusAll": "جميع الحالات",
+      "AreaLabel": "المنطقة",
+      "AreaAll": "جميع المناطق",
+      "ClearButton": "مسح الفلاتر"
+    },
+    "Cards": {
+      "Meta": {
+        "CraftFallback": "خدمة عامة",
+        "CityFallback": "مدينة غير متاحة",
+        "AreaFallback": "منطقة غير متاحة",
+        "TimeFallback": "موعد مرن",
+        "OffersLabel": "العروض",
+        "BudgetUnknown": "—",
+        "CreatedLabel": "تم الإنشاء",
+        "ExpiresLabel": "ينتهي"
+      },
+      "Actions": {
+        "ViewDetails": "عرض التفاصيل"
+      }
+    },
+    "Empty": {
+      "ActiveTitle": "لا توجد طلبات نشطة بعد",
+      "ActiveDescription": "أنشئ أول طلب خدمة لتبدأ باستقبال العروض.",
+      "HistoryTitle": "لا توجد طلبات مكتملة",
+      "HistoryDescription": "الطلبات المكتملة ستظهر هنا للرجوع إليها بسهولة.",
+      "Refresh": "تحديث القائمة"
+    },
+    "Messages": {
+      "LoadError": "حدث خطأ أثناء تحميل الطلبات. حاول مرة أخرى.",
+      "GenericError": "تعذر تحميل طلبات الخدمة. حاول لاحقاً."
+    },
+    "StatusLabels": {
+      "Open": "مفتوحة",
+      "HasOffers": "بها عروض",
+      "OfferAccepted": "تم قبول عرض",
+      "InProgress": "قيد التنفيذ",
+      "Completed": "مكتملة",
+      "Cancelled": "ملغاة",
+      "Expired": "منتهية"
+    }
+  },
+  "ServiceRequestDetails": {
+    "TopNav": {
+      "Back": "العودة إلى طلباتي"
+    },
+    "Banner": {
+      "Title": "تحديث"
+    },
+    "Hero": {
+      "ErrorTitle": "تعذر تحميل هذا الطلب",
+      "CraftFallback": "خدمة عامة",
+      "MediaFallback": "لا توجد صورة مرفوعة",
+      "EmptyTitle": "لا يوجد طلب محدد",
+      "EmptyDescription": "اختر طلب خدمة من قائمتك لعرض جميع التفاصيل."
+    },
+    "Timeline": {
+      "Posted": "تم نشر الطلب",
+      "OffersIncoming": "الوارد من العروض",
+      "OfferAccepted": "تم قبول العرض",
+      "InProgress": "قيد التنفيذ",
+      "Completed": "مكتمل"
+    },
+    "Meta": {
+      "Location": "الموقع",
+      "CityFallback": "مدينة غير متاحة",
+      "AreaFallback": "منطقة غير متاحة",
+      "PreferredDate": "التاريخ المفضل",
+      "TimeFallback": "موعد مرن",
+      "Budget": "الميزانية",
+      "BudgetUnknown": "—",
+      "Offers": "العروض",
+      "CreatedLabel": "تم الإنشاء",
+      "ExpiresLabel": "ينتهي"
+    },
+    "Buttons": {
+      "Retry": "أعد المحاولة",
+      "RefreshOffers": "تحديث",
+      "Processing": "جارٍ التنفيذ...",
+      "AcceptOffer": "قبول العرض",
+      "RejectOffer": "رفض",
+      "Cancel": "إلغاء",
+      "SendRejection": "إرسال الرفض"
+    },
+    "Offers": {
+      "Title": "العروض المستلمة",
+      "Count": "{{count}} عروض",
+      "Estimated": "المدة المتوقعة {{minutes}} دقيقة",
+      "Availability": "متاح من {{from}} إلى {{to}}",
+      "Sent": "تم الإرسال {{value}}",
+      "Status": {
+        "Pending": "قيد المراجعة",
+        "Accepted": "تم القبول",
+        "Rejected": "مرفوض",
+        "Withdrawn": "تم السحب",
+        "Expired": "منتهي"
+      },
+      "EmptyTitle": "لا توجد عروض بعد",
+      "EmptyDescription": "سيقوم الفنيون بإرسال عروض قريباً. سيتم إشعارك فور وصول عرض جديد."
+    },
+    "Reject": {
+      "ReasonLabel": "السبب (اختياري)",
+      "Placeholder": "شارك ملاحظة قصيرة مع الفني"
+    },
+    "StatusLabels": {
+      "Open": "مفتوحة",
+      "HasOffers": "بها عروض",
+      "OfferAccepted": "تم قبول عرض",
+      "InProgress": "قيد التنفيذ",
+      "Completed": "مكتملة",
+      "Cancelled": "ملغاة",
+      "Expired": "منتهية"
+    },
+    "Messages": {
+      "MissingRequest": "بيانات طلب الخدمة غير متوفرة.",
+      "AcceptSuccess": "تم قبول العرض بنجاح.",
+      "RejectSuccess": "تم رفض العرض بنجاح.",
+      "GenericError": "حدث خطأ. حاول مرة أخرى.",
+      "ActionError": "تعذر تنفيذ العملية حالياً. حاول مجدداً لاحقاً."
+    }
+  },
+  "ServiceRequestForm": {
+    "Hero": {
+      "Back": "العودة إلى طلباتي",
+      "Eyebrow": "إنشاء طلب",
+      "Title": "أخبرنا بما يحتاج إلى إصلاح",
+      "Lead": "اختر الحرفة، وصف المشكلة، وحدد التاريخ المفضل وسنقوم بإشعار الفنيين المناسبين. كلما كان الوصف أدق، حصلت على عروض أسرع.",
+      "ViewExisting": "عرض الطلبات الحالية",
+      "PhotoChip": "بحد أقصى {{max}} صور • {{selected}} محددة",
+      "Stats": {
+        "StepLabel": "الخطوة {{step}}",
+        "Step1Title": "أساسيات الخدمة",
+        "Step1Subtitle": "اختر الحرفة ووصف المشكلة.",
+        "Step2Title": "الجدولة",
+        "Step2Subtitle": "حدد التاريخ المفضل والمنطقة.",
+        "Step3Title": "مشاركة صور",
+        "Step3Subtitle": "حمّل صوراً للمشكلة أو الإلهام."
+      }
+    },
+    "Banners": {
+      "SuccessTitle": "رائع!",
+      "ErrorTitle": "حدث خطأ",
+      "Dismiss": "إغلاق"
+    },
+    "Sections": {
+      "Overview": {
+        "Eyebrow": "نظرة عامة على الخدمة",
+        "Title": "صف العمل المطلوب",
+        "RequiredHint": "الحقول التي تحتوي على * مطلوبة"
+      },
+      "Schedule": {
+        "Eyebrow": "الجدولة والموقع",
+        "Title": "متى وأين؟"
+      },
+      "Budget": {
+        "Eyebrow": "الميزانية والعروض",
+        "Title": "حدد توقعاتك"
+      },
+      "Photos": {
+        "Eyebrow": "صور مرجعية",
+        "Title": "امنح الفنيين مزيداً من السياق"
+      }
+    },
+    "Fields": {
+      "CraftLabel": "الحرفة المطلوبة *",
+      "CraftPlaceholder": "اختر الحرفة",
+      "TitleLabel": "عنوان الطلب *",
+      "TitlePlaceholder": "مثال: تسريب شديد في حوض المطبخ",
+      "TitleCounter": "{{used}}/{{max}}",
+      "DescriptionLabel": "أخبرنا بالتفاصيل *",
+      "DescriptionPlaceholder": "اشرح المشكلة، المحاولات السابقة، تعليمات الوصول، إلخ",
+      "DescriptionCounter": "{{used}}/{{max}} حرف",
+      "AreaLabel": "منطقة الخدمة *",
+      "AreaPlaceholder": "اختر المنطقة",
+      "DateLabel": "التاريخ المفضل *",
+      "TimeLabel": "الفترة الزمنية المفضلة",
+      "TimePlaceholder": "موعد مرن",
+      "AddressLabel": "العنوان الدقيق *",
+      "AddressPlaceholder": "الشقة، الشارع، المعالم القريبة",
+      "LatitudeLabel": "خط العرض (اختياري)",
+      "LatitudePlaceholder": "30.0444",
+      "LongitudeLabel": "خط الطول (اختياري)",
+      "LongitudePlaceholder": "31.2357",
+      "BudgetLabel": "الميزانية (جنيه)",
+      "BudgetPlaceholder": "مثال: 150",
+      "BudgetHint": "اختياري لكنه يساعد الفنيين على التسعير بدقة.",
+      "MaxOffersLabel": "أقصى عدد من العروض",
+      "MaxOffersHint": "عدد المقترحات التي ترغب بمراجعتها."
+    },
+    "Loading": {
+      "Crafts": "جارٍ تحميل الحرف...",
+      "Areas": "جارٍ تحميل المناطق..."
+    },
+    "Errors": {
+      "CraftRequired": "برجاء اختيار الحرفة المطلوبة.",
+      "TitleInvalid": "يجب أن يكون العنوان بين 6 و80 حرفاً.",
+      "DescriptionInvalid": "برجاء وصف المشكلة بما لا يقل عن 20 حرفاً.",
+      "AreaRequired": "اختر المنطقة التي سيذهب إليها الفني.",
+      "DateRequired": "حدد التاريخ الذي تفضله للزيارة.",
+      "AddressRequired": "العنوان مطلوب."
+    },
+    "TimeSlots": {
+      "Morning": "الصباح (8 صباحاً – 12 ظهراً)",
+      "Afternoon": "بعد الظهر (12 ظهراً – 4 مساءً)",
+      "Evening": "المساء (4 مساءً – 9 مساءً)"
+    },
+    "Upload": {
+      "Heading": "أسقط الصور أو تصفح",
+      "Hint": "الملفات المقبولة: JPG, PNG. حتى {{max}} ملفات.",
+      "ClearAll": "مسح الكل",
+      "CountLabel": "{{uploaded}}/{{max}} مرفوعة",
+      "PreviewAlt": "معاينة الصورة {{index}}"
+    },
+    "Footer": {
+      "Line1": "سنُظهر طلبك للفنيين الموثقين في منطقتك.",
+      "Line2": "توقع وصول عروض جديدة خلال ساعات قليلة."
+    },
+    "Buttons": {
+      "Submitting": "جارٍ الإرسال...",
+      "Submit": "إرسال الطلب"
+    },
+    "Messages": {
+      "SubmitSuccess": "تم إرسال طلب الخدمة بنجاح. سيتم تحويلك خلال لحظات.",
+      "GenericError": "حدث خطأ. حاول مرة أخرى.",
+      "ActionError": "تعذر تنفيذ العملية حالياً. حاول مجدداً لاحقاً."
+    }
   }
 }

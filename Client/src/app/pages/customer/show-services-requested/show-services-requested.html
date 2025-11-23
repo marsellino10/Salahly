@@ -1,37 +1,37 @@
 <section class="requests-page">
   <header class="page-hero glass-panel">
     <div class="hero-copy">
-      <p class="eyebrow">Your service pipeline</p>
+      <p class="eyebrow">{{ 'ShowRequests.Hero.Eyebrow' | translate }}</p>
       <div class="hero-title">
-        <h1>Service requests</h1>
+        <h1>{{ 'ShowRequests.Hero.Title' | translate }}</h1>
         <span class="status-pill">
           <i class="bi bi-lightning-charge-fill"></i>
-          {{ overviewStats().total }} total
+          {{ 'ShowRequests.Hero.TotalLabel' | translate:{ count: overviewStats().total } }}
         </span>
       </div>
-      <p>Track every repair from initial brief to completion. Filter, inspect, and stay in control.</p>
+      <p>{{ 'ShowRequests.Hero.Description' | translate }}</p>
       <div class="hero-actions">
         <button type="button" class="primary-btn rounded-5 me-2" routerLink="/service-request-form">
           <i class="bi bi-plus-lg"></i>
-          New service request
+          {{ 'ShowRequests.Hero.NewRequestCta' | translate }}
         </button>
-        <small class="muted">Kick off a new job to start receiving offers.</small>
+        <small class="muted">{{ 'ShowRequests.Hero.NewRequestHint' | translate }}</small>
       </div>
       <div class="stat-grid">
         <article class="stat-card">
-          <p class="label">Active</p>
+          <p class="label">{{ 'ShowRequests.Hero.Stats.ActiveLabel' | translate }}</p>
           <p class="value">{{ overviewStats().active }}</p>
-          <small>Currently in progress</small>
+          <small>{{ 'ShowRequests.Hero.Stats.ActiveSubtitle' | translate }}</small>
         </article>
         <article class="stat-card">
-          <p class="label">History</p>
+          <p class="label">{{ 'ShowRequests.Hero.Stats.HistoryLabel' | translate }}</p>
           <p class="value">{{ overviewStats().history }}</p>
-          <small>Wrapped engagements</small>
+          <small>{{ 'ShowRequests.Hero.Stats.HistorySubtitle' | translate }}</small>
         </article>
         <article class="stat-card">
-          <p class="label">Total budget</p>
+          <p class="label">{{ 'ShowRequests.Hero.Stats.BudgetLabel' | translate }}</p>
           <p class="value">{{ formatBudget(overviewStats().totalBudget) }}</p>
-          <small>Across all requests</small>
+          <small>{{ 'ShowRequests.Hero.Stats.BudgetSubtitle' | translate }}</small>
         </article>
       </div>
     </div>
@@ -44,18 +44,18 @@
     </div>
     <button type="button" class="icon-btn" (click)="loadRequests()">
       <i class="bi bi-arrow-clockwise"></i>
-      Retry
+      {{ 'ShowRequests.Buttons.Retry' | translate }}
     </button>
   </div>
 
   <div class="panel filters-panel glass-panel">
     <div class="tabs">
       <button type="button" class="tab-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">
-        Active
+        {{ 'ShowRequests.Tabs.Active' | translate }}
         <span class="tab-pill">{{ overviewStats().active }}</span>
       </button>
       <button type="button" class="tab-btn" [class.active]="activeTab() === 'history'" (click)="setTab('history')">
-        History
+        {{ 'ShowRequests.Tabs.History' | translate }}
         <span class="tab-pill">{{ overviewStats().history }}</span>
       </button>
     </div>
@@ -65,31 +65,31 @@
         <i class="bi bi-search"></i>
         <input
           type="search"
-          placeholder="Search by title, craft, or details"
+          [placeholder]="'ShowRequests.Filters.SearchPlaceholder' | translate"
           [value]="searchTerm()"
           (input)="onSearch($any($event.target).value)"
         />
       </label>
 
       <label class="input-shell select">
-        <span>Status</span>
+        <span>{{ 'ShowRequests.Filters.StatusLabel' | translate }}</span>
         <select [value]="statusFilter()" (change)="onStatusFilterChange($any($event.target).value)">
-          <option value="all">All statuses</option>
-          <option *ngFor="let status of statusOptions()" [value]="status">{{ status }}</option>
+          <option value="all">{{ 'ShowRequests.Filters.StatusAll' | translate }}</option>
+          <option *ngFor="let status of statusOptions()" [value]="status">{{ getStatusLabel(status) }}</option>
         </select>
       </label>
 
       <label class="input-shell select">
-        <span>Area</span>
+        <span>{{ 'ShowRequests.Filters.AreaLabel' | translate }}</span>
         <select [value]="areaFilter()" (change)="onAreaFilterChange($any($event.target).value)">
-          <option value="all">All areas</option>
+          <option value="all">{{ 'ShowRequests.Filters.AreaAll' | translate }}</option>
           <option *ngFor="let area of uniqueAreas()" [value]="area">{{ area }}</option>
         </select>
       </label>
 
       <button type="button" class="icon-btn subtle" [disabled]="!hasActiveFilters()" (click)="clearFilters()">
         <i class="bi bi-sliders"></i>
-        Clear filters
+        {{ 'ShowRequests.Filters.ClearButton' | translate }}
       </button>
     </div>
   </div>
@@ -113,7 +113,7 @@
         <article class="request-card" *ngFor="let request of filteredRequests(); trackBy: trackByRequestId">
           <div class="card-head">
             <div>
-              <p class="eyebrow">{{ request.craftName || 'General service' }}</p>
+              <p class="eyebrow">{{ request.craftName || ('ShowRequests.Cards.Meta.CraftFallback' | translate) }}</p>
               <h3>{{ request.title }}</h3>
             </div>
             <span
@@ -121,7 +121,7 @@
               [style.background]="getStatusStyle(request.status).bg"
               [style.color]="getStatusStyle(request.status).text"
             >
-              {{ request.status }}
+              {{ getStatusLabel(request.status) }}
             </span>
           </div>
 
@@ -130,11 +130,12 @@
           <div class="meta">
             <div>
               <i class="bi bi-geo-alt"></i>
-              {{ request.city || 'City N/A' }}, {{ request.area || 'Area N/A' }}
+              {{ request.city || ('ShowRequests.Cards.Meta.CityFallback' | translate) }},
+              {{ request.area || ('ShowRequests.Cards.Meta.AreaFallback' | translate) }}
             </div>
             <div>
               <i class="bi bi-calendar3"></i>
-              {{ formatIso(request.preferredDate) }} • {{ request.preferredTimeSlot || 'Flexible slot' }}
+              {{ formatIso(request.preferredDate) }} • {{ request.preferredTimeSlot || ('ShowRequests.Cards.Meta.TimeFallback' | translate) }}
             </div>
             <div>
               <i class="bi bi-currency-dollar"></i>
@@ -144,7 +145,7 @@
 
           <div class="progress-panel" *ngIf="request.maxOffers">
             <div class="progress-meta">
-              <span>Offers</span>
+              <span>{{ 'ShowRequests.Cards.Meta.OffersLabel' | translate }}</span>
               <span>{{ request.offersCount }}/{{ request.maxOffers }}</span>
             </div>
             <div class="progress-bar">
@@ -154,11 +155,11 @@
 
           <div class="card-footer">
             <div class="dates">
-              <small>Created {{ formatIso(request.createdAt) }}</small>
-              <small>Expires {{ formatIso(request.expiresAt) }}</small>
+              <small>{{ 'ShowRequests.Cards.Meta.CreatedLabel' | translate }} {{ formatIso(request.createdAt) }}</small>
+              <small>{{ 'ShowRequests.Cards.Meta.ExpiresLabel' | translate }} {{ formatIso(request.expiresAt) }}</small>
             </div>
             <button type="button" [routerLink]="['/service-request-details', request.serviceRequestId]" class="ghost-btn">
-              View details
+              {{ 'ShowRequests.Cards.Actions.ViewDetails' | translate }}
               <i class="bi bi-arrow-right"></i>
             </button>
           </div>
@@ -172,16 +173,22 @@
       <div class="empty-icon">
         <i class="bi" [class.bi-inboxes-fill]="activeTab() === 'history'" [class.bi-clipboard2-data]='activeTab() === "active"'></i>
       </div>
-      <h3>{{ activeTab() === 'active' ? 'No active requests yet' : 'No completed requests' }}</h3>
+      <h3>
+        {{
+          (activeTab() === 'active'
+            ? 'ShowRequests.Empty.ActiveTitle'
+            : 'ShowRequests.Empty.HistoryTitle') | translate
+        }}
+      </h3>
       <p>
         {{
           activeTab() === 'active'
-            ? 'Create your first service brief to start receiving technician offers.'
-            : 'Completed jobs will archive here for easy reference.'
+            ? ('ShowRequests.Empty.ActiveDescription' | translate)
+            : ('ShowRequests.Empty.HistoryDescription' | translate)
         }}
       </p>
       <button type="button" class="primary-btn" (click)="loadRequests()">
-        Refresh list
+        {{ 'ShowRequests.Empty.Refresh' | translate }}
       </button>
     </div>
   </ng-template>

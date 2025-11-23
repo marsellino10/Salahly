@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ApiResponse, CreateCustomerPayload, CustomerResponse, CustomerService, CustomerUpdatePayload } from '../../../core/services/customer-service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface SubmissionMessage {
   type: 'success' | 'error';
@@ -14,7 +15,7 @@ interface SubmissionMessage {
 @Component({
   selector: 'app-customer-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './customer-profile.html',
   styleUrl: './customer-profile.css',
 })
@@ -22,6 +23,7 @@ export class CustomerProfile implements OnInit {
   private readonly _fb = inject(FormBuilder);
   private readonly _customerService = inject(CustomerService);
   private readonly _router = inject(Router);
+  private readonly _translate = inject(TranslateService);
 
   customerId: number | null = null;
   hasExistingProfile = false;
@@ -50,17 +52,17 @@ export class CustomerProfile implements OnInit {
 
   readonly sectionDescriptors = [
     {
-      label: 'Profile basics',
+      labelKey: 'CustomerProfile.Form.ProfileBasicsTitle',
       validator: () => this.profileForm.get('fullName')?.valid || this.profileForm.get('dateOfBirth')?.valid,
     },
     {
-      label: 'Contact details',
+      labelKey: 'CustomerProfile.Form.ContactDetailsTitle',
       validator: () =>
         this.profileForm.get('phoneNumber')?.valid &&
         this.profileForm.get('address')?.valid,
     },
     {
-      label: 'Location',
+      labelKey: 'CustomerProfile.Form.LocationTitle',
       validator: () =>
         this.profileForm.get('city')?.valid && this.profileForm.get('area')?.valid,
     },
@@ -68,7 +70,7 @@ export class CustomerProfile implements OnInit {
 
   get progressSteps() {
     return this.sectionDescriptors.map((section) => ({
-      label: section.label,
+      labelKey: section.labelKey,
       completed: Boolean(section.validator()),
     }));
   }
@@ -111,7 +113,7 @@ export class CustomerProfile implements OnInit {
     if (!file.type.startsWith('image/')) {
       this.submissionMessage = {
         type: 'error',
-        text: 'Please upload a valid image file.',
+        text: this._translate.instant('CustomerProfile.Messages.ImageTypeError'),
       };
       return;
     }
@@ -252,7 +254,7 @@ export class CustomerProfile implements OnInit {
 
     this.submissionMessage = {
       type: 'success',
-      text: 'Your profile is up to date. Redirecting you to home...',
+      text: this._translate.instant('CustomerProfile.Messages.SubmitSuccess'),
     };
 
     setTimeout(() => this._router.navigate(['/home']), 1500);
@@ -296,6 +298,6 @@ export class CustomerProfile implements OnInit {
       }
     }
 
-    return 'Something went wrong while saving your profile. Please try again.';
+    return this._translate.instant('CustomerProfile.Messages.GenericError');
   }
 }

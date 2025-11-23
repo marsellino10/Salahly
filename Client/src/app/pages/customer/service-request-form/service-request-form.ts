@@ -10,11 +10,12 @@ import {
   CreateServiceRequestPayload,
   ServicesRequestsService,
 } from '../../../core/services/services-requests.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-service-request-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule],
   templateUrl: './service-request-form.html',
   styleUrl: './service-request-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,11 +26,12 @@ export class ServiceRequestForm implements OnInit {
   private readonly _craftService = inject(CraftService);
   private readonly _areaService = inject(AreaService);
   private readonly _router = inject(Router);
+  private readonly _translate = inject(TranslateService);
 
   readonly availableTimeSlots = [
-    { value: 'morning', label: 'Morning (8 am – 12 pm)' },
-    { value: 'afternoon', label: 'Afternoon (12 pm – 4 pm)' },
-    { value: 'evening', label: 'Evening (4 pm – 9 pm)' },
+    { value: 'morning', labelKey: 'ServiceRequestForm.TimeSlots.Morning' },
+    { value: 'afternoon', labelKey: 'ServiceRequestForm.TimeSlots.Afternoon' },
+    { value: 'evening', labelKey: 'ServiceRequestForm.TimeSlots.Evening' },
   ];
 
   readonly minDate = new Date().toISOString().split('T')[0];
@@ -97,7 +99,7 @@ export class ServiceRequestForm implements OnInit {
     this._requestsService.createRequest(payload, this.selectedImages).subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.submitSuccess = 'Your service request was submitted successfully. We will redirect you shortly.';
+        this.submitSuccess = this._translate.instant('ServiceRequestForm.Messages.SubmitSuccess');
         this.submitError = null;
         this.resetForm();
         setTimeout(() => this._router.navigate(['/show-services-requested']), 1500);
@@ -221,7 +223,7 @@ export class ServiceRequestForm implements OnInit {
 
   private extractErrorMessage(error: unknown): string {
     if (!error) {
-      return 'Something went wrong. Please try again.';
+      return this._translate.instant('ServiceRequestForm.Messages.GenericError');
     }
 
     if (typeof error === 'string') {
@@ -242,6 +244,6 @@ export class ServiceRequestForm implements OnInit {
       return apiError['message'] as string;
     }
 
-    return 'Unable to complete the request right now. Please retry shortly.';
+    return this._translate.instant('ServiceRequestForm.Messages.ActionError');
   }
 }

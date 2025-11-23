@@ -18,7 +18,8 @@
     "Home": "Home",
     "Browse Technicians": "Browse Technicians",
     "Login": "Login",
-    "Sign Up": "Sign Up"
+    "Sign Up": "Sign Up",
+    "Browse Opportunities": "Browse Opportunities"
   },
   "TechnicianNav": {
     "Profile": "Profile",
@@ -128,5 +129,562 @@
     "All Services": "All Services",
     "Select Service": "Select Service",
     "Search": "Search"
+  },
+  "CompleteProfile": {
+    "Hero": {
+      "Eyebrow": "You're one step away",
+      "Title": "Complete your technician profile",
+      "Status": {
+        "InReview": "Profile in review",
+        "FinishSetup": "Finish setup"
+      },
+      "Description": "Showcase your expertise, define where you serve, and let customers book you with confidence.",
+      "Highlights": {
+        "Identity": "Verified identity & credentials",
+        "Radius": "Flexible service radius per city",
+        "Story": "Highlight your story & experience"
+      },
+      "ProgressStrength": "Profile strength",
+      "ProgressHint": "Complete every section for the best ranking in search results."
+    },
+    "AvatarCard": {
+      "ProfilePreviewAlt": "Profile preview",
+      "CurrentProfileAlt": "Current profile picture",
+      "Placeholder": "Upload photo",
+      "ChangePhoto": "Change photo",
+      "UploadPhotoCta": "Upload profile photo",
+      "HelperText": "High quality JPG or PNG, max 3MB."
+    },
+    "Checklist": {
+      "Eyebrow": "Completion checklist",
+      "Title": "Progress overview",
+      "Done": "Looks great!",
+      "Todo": "Still needs your attention"
+    },
+    "Tips": {
+      "Title": "Pro tips",
+      "Rate": "Keep hourly rate aligned with your expertise.",
+      "Bio": "Use the bio to highlight certifications & specialties.",
+      "Areas": "Add areas where you can arrive in under 60 minutes."
+    },
+    "Form": {
+      "StepLabel": "Step {{step}}",
+      "ProfileBasicsTitle": "Profile basics",
+      "ExperienceStoryTitle": "Experience & story",
+      "ServiceCoverageTitle": "Service coverage",
+      "RequiredChip": "Required",
+      "CredibilityChip": "Boost credibility",
+      "Fields": {
+        "FullNameLabel": "Full name",
+        "FullNamePlaceholder": "e.g. Ahmed Samir",
+        "FullNameError": "Please enter your legal name.",
+        "CraftLabel": "Primary craft",
+        "CraftPlaceholder": "Select your specialty",
+        "CraftError": "Please choose your main service.",
+        "HourlyRateLabel": "Hourly rate (EGP)",
+        "HourlyRatePlaceholder": "350",
+        "HourlyRateHint": "Customers can still send custom quotes.",
+        "HourlyRateError": "Enter a realistic hourly rate.",
+        "YearsLabel": "Experience (years)",
+        "YearsPlaceholder": "8",
+        "YearsError": "Provide a value between 0 and 60.",
+        "BioLabel": "Bio & story",
+        "BioPlaceholder": "Share certifications, notable projects, languages, or guarantees",
+        "BioHint": "Up to 600 characters.",
+        "BioError": "Tell customers what makes you unique."
+      }
+    },
+    "ServiceAreas": {
+      "AreasLabel": "areas",
+      "CardTitle": "Area {{index}}",
+      "RegionCityLabel": "Region & city",
+      "SelectAreaPlaceholder": "Select an area",
+      "SelectServiceAreaLabel": "Select service area",
+      "SelectedAreaFallback": "Selected area",
+      "RemoveAreaAria": "Remove area",
+      "AreaError": "Choose where you can serve.",
+      "RadiusLabel": "Service radius (km)",
+      "DistanceLabel": "{{value}} km",
+      "Recommendation": "Recommended: 15-35 km",
+      "MinAreaError": "Add at least one service area to go live.",
+      "AddButton": "Add another service area",
+      "MaxButton": "Maximum areas reached"
+    },
+    "Buttons": {
+      "PrimaryUpdate": "Update profile",
+      "PrimaryPublish": "Publish profile"
+    },
+    "Messages": {
+      "ImageTypeError": "Please upload an image file (PNG, JPG, JPEG).",
+      "SubmitSuccess": "Your profile looks great! Redirecting you to the dashboard...",
+      "SubmitError": "We could not save your profile right now. Please try again."
+    },
+    "Loading": {
+      "Message": "Loading your profile..."
+    }
+  },
+  "BrowseOpportunities": {
+    "Hero": {
+      "Eyebrow": "Discover work that matches your craft",
+      "Title": "Browse opportunities",
+      "Subtitle": "Stay on top of fresh customer requests, prioritize the ones with the right budget, and act before they expire."
+    },
+    "Stats": {
+      "Total": {
+        "Label": "Total",
+        "Subtitle": "requests for your craft"
+      },
+      "Open": {
+        "Label": "Open now",
+        "Subtitle": "ready for offers"
+      },
+      "Closing": {
+        "Label": "Closing soon",
+        "Subtitle": "under 3 days"
+      },
+      "Budget": {
+        "Label": "Avg. budget",
+        "Subtitle": "across matching jobs"
+      }
+    },
+    "Buttons": {
+      "Refreshing": "Refreshing...",
+      "RefreshFeed": "Refresh feed",
+      "ResetFilters": "Reset filters",
+      "ClearChip": "Clear",
+      "Dismiss": "Dismiss",
+      "TryAgain": "Try again",
+      "ClearFilters": "Clear filters"
+    },
+    "Filters": {
+      "SearchPlaceholder": "Search by title, description, or area",
+      "Status": {
+        "Label": "Status",
+        "All": "All statuses",
+        "Open": "Open",
+        "HasOffers": "Has offers",
+        "OfferAccepted": "Offer accepted",
+        "InProgress": "In progress"
+      },
+      "City": {
+        "Label": "City / Area",
+        "All": "Anywhere"
+      },
+      "Sort": {
+        "Label": "Sort by",
+        "Latest": "Latest first",
+        "Budget": "Highest budget",
+        "ClosingSoon": "Closing soon"
+      }
+    },
+    "States": {
+      "Empty": {
+        "Title": "No opportunities match your filters",
+        "Description": "Try widening the area, removing filters, or checking back shortly."
+      }
+    },
+    "Cards": {
+      "Badges": {
+        "ClosingSoon": "Closing soon"
+      },
+      "Meta": {
+        "BudgetLabel": "Budget",
+        "BudgetTbd": "Budget TBD",
+        "LocationLabel": "Location",
+        "PreferredDateLabel": "Preferred date",
+        "ExpiresLabel": "Expires",
+        "ExpiresExpired": "Expired",
+        "ExpiresHours": "{{hours}}h left",
+        "ExpiresDays": "{{days}}d left",
+        "LocationFallback": "Unspecified area"
+      },
+      "Actions": {
+        "Save": "Save",
+        "AddOffer": "Add offer"
+      },
+      "Submitted": {
+        "YourOffer": "Your offer",
+        "Withdrawing": "Withdrawing...",
+        "Withdraw": "Withdraw"
+      },
+      "ProgressLabel": "Offers {{current}}/{{max}}",
+      "ProgressInfinite": "∞"
+    },
+    "ServiceAreas": {},
+    "Modal": {
+      "Eyebrow": "Add offer",
+      "Fields": {
+        "PriceLabel": "Offered price (EGP)",
+        "PricePlaceholder": "Enter your price",
+        "PriceError": "Please provide a valid price.",
+        "DurationLabel": "Duration (minutes)",
+        "DurationPlaceholder": "e.g. 90",
+        "DurationError": "Minimum 15 minutes.",
+        "AvailableFromLabel": "Available from",
+        "AvailableToLabel": "Available to",
+        "Required": "Required.",
+        "DetailsLabel": "Offer details",
+        "DetailsPlaceholder": "Describe your approach, materials, availability, etc.",
+        "DetailsError": "At least 20 characters required."
+      },
+      "Buttons": {
+        "Cancel": "Cancel",
+        "Submitting": "Submitting...",
+        "Submit": "Submit offer"
+      }
+    },
+    "Messages": {
+      "OfferSubmitSuccess": "Offer submitted successfully.",
+      "OfferWithdrawSuccess": "Offer withdrawn successfully.",
+      "LoadError": "Unable to load opportunities. Please try again.",
+      "GenericError": "Something went wrong while contacting the server."
+    },
+    "OfferStatus": {
+      "Pending": "Pending",
+      "Accepted": "Accepted",
+      "Rejected": "Rejected",
+      "Withdrawn": "Withdrawn",
+      "Expired": "Expired"
+    },
+    "StatusLabels": {
+      "Open": "Open",
+      "HasOffers": "Has offers",
+      "OfferAccepted": "Offer accepted",
+      "InProgress": "In progress",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled",
+      "Expired": "Expired"
+    }
+  },
+  "CustomerProfile": {
+    "Hero": {
+      "Eyebrow": "Complete your onboarding",
+      "Title": "Customer profile",
+      "Status": {
+        "Ready": "Profile ready",
+        "Finish": "Finish setup"
+      },
+      "Description": "Share accurate home and contact details so technicians arrive prepared.",
+      "Highlights": {
+        "Address": "Exact address for visits",
+        "Phone": "Verified phone for updates",
+        "Scheduling": "Personalized scheduling"
+      },
+      "ProgressStrength": "Profile strength",
+      "ProgressHint": "Complete every section for the smoothest booking experience."
+    },
+    "Avatar": {
+      "ProfilePreviewAlt": "Profile preview",
+      "CurrentProfileAlt": "Current profile photo",
+      "Placeholder": "Upload photo",
+      "ChangePhoto": "Change photo",
+      "UploadPhotoCta": "Upload profile photo",
+      "HelperText": "PNG or JPG up to 3MB."
+    },
+    "Checklist": {
+      "Eyebrow": "Checklist",
+      "Title": "Progress overview",
+      "Done": "Looks great!",
+      "Todo": "Still needs attention"
+    },
+    "Tips": {
+      "Title": "Tips",
+      "Phone": "Use a phone number you actively answer.",
+      "Address": "Describe your building and landmarks in the address.",
+      "Photo": "A friendly photo makes handoffs easier."
+    },
+    "Form": {
+      "StepLabel": "Step {{step}}",
+      "RequiredChip": "Required",
+      "ProfileBasicsTitle": "Profile basics",
+      "ContactDetailsTitle": "Contact details",
+      "LocationTitle": "Location",
+      "ContactChip": "Keep them current",
+      "LocationChip": "City & area",
+      "Fields": {
+        "FullNameLabel": "Full name",
+        "FullNamePlaceholder": "e.g. Sara Adel",
+        "FullNameError": "Please enter your legal name.",
+        "DobLabel": "Date of birth",
+        "DobHint": "Optional but helps tailor reminders.",
+        "PhoneLabel": "Phone number",
+        "PhonePlaceholder": "e.g. +20 111 222 3344",
+        "PhoneError": "Provide a valid phone number.",
+        "AddressLabel": "Street address",
+        "AddressPlaceholder": "Building, street, floor",
+        "AddressError": "Enter the address technicians should visit.",
+        "CityLabel": "City",
+        "CityPlaceholder": "e.g. Cairo",
+        "CityError": "City is required.",
+        "AreaLabel": "Area / district",
+        "AreaPlaceholder": "e.g. Nasr City",
+        "AreaError": "Let us know the neighborhood for faster matching."
+      }
+    },
+    "Buttons": {
+      "Save": "Save profile",
+      "Update": "Update profile"
+    },
+    "Loading": {
+      "Message": "Loading your profile..."
+    },
+    "Messages": {
+      "ImageTypeError": "Please upload a valid image file.",
+      "SubmitSuccess": "Your profile is up to date. Redirecting you to home...",
+      "GenericError": "Something went wrong while saving your profile. Please try again."
+    }
+  },
+  "ShowRequests": {
+    "Hero": {
+      "Eyebrow": "Your service pipeline",
+      "Title": "Service requests",
+      "TotalLabel": "{{count}} total",
+      "Description": "Track every repair from initial brief to completion. Filter, inspect, and stay in control.",
+      "NewRequestCta": "New service request",
+      "NewRequestHint": "Kick off a new job to start receiving offers.",
+      "Stats": {
+        "ActiveLabel": "Active",
+        "ActiveSubtitle": "Currently in progress",
+        "HistoryLabel": "History",
+        "HistorySubtitle": "Wrapped engagements",
+        "BudgetLabel": "Total budget",
+        "BudgetSubtitle": "Across all requests"
+      }
+    },
+    "Buttons": {
+      "Retry": "Retry"
+    },
+    "Tabs": {
+      "Active": "Active",
+      "History": "History"
+    },
+    "Filters": {
+      "SearchPlaceholder": "Search by title, craft, or details",
+      "StatusLabel": "Status",
+      "StatusAll": "All statuses",
+      "AreaLabel": "Area",
+      "AreaAll": "All areas",
+      "ClearButton": "Clear filters"
+    },
+    "Cards": {
+      "Meta": {
+        "CraftFallback": "General service",
+        "CityFallback": "City N/A",
+        "AreaFallback": "Area N/A",
+        "TimeFallback": "Flexible slot",
+        "OffersLabel": "Offers",
+        "BudgetUnknown": "—",
+        "CreatedLabel": "Created",
+        "ExpiresLabel": "Expires"
+      },
+      "Actions": {
+        "ViewDetails": "View details"
+      }
+    },
+    "Empty": {
+      "ActiveTitle": "No active requests yet",
+      "ActiveDescription": "Create your first service brief to start receiving technician offers.",
+      "HistoryTitle": "No completed requests",
+      "HistoryDescription": "Completed jobs will archive here for easy reference.",
+      "Refresh": "Refresh list"
+    },
+    "Messages": {
+      "LoadError": "Something went wrong while loading your requests. Please try again.",
+      "GenericError": "Unable to load your service requests. Please try again later."
+    },
+    "StatusLabels": {
+      "Open": "Open",
+      "HasOffers": "Has offers",
+      "OfferAccepted": "Offer accepted",
+      "InProgress": "In progress",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled",
+      "Expired": "Expired"
+    }
+  },
+  "ServiceRequestDetails": {
+    "TopNav": {
+      "Back": "Back to my requests"
+    },
+    "Banner": {
+      "Title": "Update"
+    },
+    "Hero": {
+      "ErrorTitle": "We couldn’t load this request",
+      "CraftFallback": "General service",
+      "MediaFallback": "No image uploaded",
+      "EmptyTitle": "No request selected",
+      "EmptyDescription": "Select a service request from your list to view its full details."
+    },
+    "Timeline": {
+      "Posted": "Request posted",
+      "OffersIncoming": "Offers incoming",
+      "OfferAccepted": "Offer accepted",
+      "InProgress": "In progress",
+      "Completed": "Completed"
+    },
+    "Meta": {
+      "Location": "Location",
+      "CityFallback": "City N/A",
+      "AreaFallback": "Area N/A",
+      "PreferredDate": "Preferred date",
+      "TimeFallback": "Flexible slot",
+      "Budget": "Budget",
+      "BudgetUnknown": "—",
+      "Offers": "Offers",
+      "CreatedLabel": "Created",
+      "ExpiresLabel": "Expires"
+    },
+    "Buttons": {
+      "Retry": "Try again",
+      "RefreshOffers": "Refresh",
+      "Processing": "Processing…",
+      "AcceptOffer": "Accept offer",
+      "RejectOffer": "Reject",
+      "Cancel": "Cancel",
+      "SendRejection": "Send rejection"
+    },
+    "Offers": {
+      "Title": "Offers received",
+      "Count": "{{count}} offers",
+      "Estimated": "Estimated {{minutes}} min",
+      "Availability": "Available {{from}} → {{to}}",
+      "Sent": "Sent {{value}}",
+      "Status": {
+        "Pending": "Pending",
+        "Accepted": "Accepted",
+        "Rejected": "Rejected",
+        "Withdrawn": "Withdrawn",
+        "Expired": "Expired"
+      },
+      "EmptyTitle": "No offers yet",
+      "EmptyDescription": "Craftsmen will send proposals shortly. You’ll be notified as soon as a new offer arrives."
+    },
+    "Reject": {
+      "ReasonLabel": "Reason (optional)",
+      "Placeholder": "Share a short note with the craftsman"
+    },
+    "StatusLabels": {
+      "Open": "Open",
+      "HasOffers": "Has offers",
+      "OfferAccepted": "Offer accepted",
+      "InProgress": "In progress",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled",
+      "Expired": "Expired"
+    },
+    "Messages": {
+      "MissingRequest": "Missing service request reference.",
+      "AcceptSuccess": "Offer accepted successfully.",
+      "RejectSuccess": "Offer rejected successfully.",
+      "GenericError": "Something went wrong. Please try again.",
+      "ActionError": "Unable to complete the request right now. Please retry shortly."
+    }
+  },
+  "ServiceRequestForm": {
+    "Hero": {
+      "Back": "Back to my requests",
+      "Eyebrow": "Create request",
+      "Title": "Tell us what needs fixing",
+      "Lead": "Share the craft, describe the issue, add a preferred date, and we’ll notify matching craftsmen. The richer the brief, the faster you’ll get accurate offers.",
+      "ViewExisting": "View existing requests",
+      "PhotoChip": "Max {{max}} photos • {{selected}} selected",
+      "Stats": {
+        "StepLabel": "Step {{step}}",
+        "Step1Title": "Service basics",
+        "Step1Subtitle": "Pick craft + describe the issue.",
+        "Step2Title": "Schedule",
+        "Step2Subtitle": "Set preferred date & area.",
+        "Step3Title": "Share visuals",
+        "Step3Subtitle": "Upload inspiration or issue photos."
+      }
+    },
+    "Banners": {
+      "SuccessTitle": "Great!",
+      "ErrorTitle": "Something went wrong",
+      "Dismiss": "Dismiss"
+    },
+    "Sections": {
+      "Overview": {
+        "Eyebrow": "Service overview",
+        "Title": "Describe the work",
+        "RequiredHint": "Fields marked with * are required"
+      },
+      "Schedule": {
+        "Eyebrow": "Scheduling & location",
+        "Title": "When and where?"
+      },
+      "Budget": {
+        "Eyebrow": "Budget & offers",
+        "Title": "Set expectations"
+      },
+      "Photos": {
+        "Eyebrow": "Reference photos",
+        "Title": "Give craftsmen more context"
+      }
+    },
+    "Fields": {
+      "CraftLabel": "Service craft *",
+      "CraftPlaceholder": "Select craft",
+      "TitleLabel": "Request title *",
+      "TitlePlaceholder": "e.g. Kitchen sink leaking badly",
+      "TitleCounter": "{{used}}/ {{max}}",
+      "DescriptionLabel": "Tell us the details *",
+      "DescriptionPlaceholder": "Describe the problem, any attempted fixes, access instructions, etc.",
+      "DescriptionCounter": "{{used}}/{{max}} characters",
+      "AreaLabel": "Service area *",
+      "AreaPlaceholder": "Select area",
+      "DateLabel": "Preferred date *",
+      "TimeLabel": "Preferred time window",
+      "TimePlaceholder": "Flexible slot",
+      "AddressLabel": "Exact address *",
+      "AddressPlaceholder": "Apartment, street, nearby landmarks",
+      "LatitudeLabel": "Latitude (optional)",
+      "LatitudePlaceholder": "30.0444",
+      "LongitudeLabel": "Longitude (optional)",
+      "LongitudePlaceholder": "31.2357",
+      "BudgetLabel": "Budget (EGP)",
+      "BudgetPlaceholder": "e.g. 150",
+      "BudgetHint": "Optional but helps craftsmen quote better.",
+      "MaxOffersLabel": "Max offers",
+      "MaxOffersHint": "How many proposals you want to review."
+    },
+    "Loading": {
+      "Crafts": "Loading crafts…",
+      "Areas": "Loading areas…"
+    },
+    "Errors": {
+      "CraftRequired": "Pick the craft you need.",
+      "TitleInvalid": "Title must be 6-80 characters.",
+      "DescriptionInvalid": "Please provide at least 20 characters describing the issue.",
+      "AreaRequired": "Select where the technician should go.",
+      "DateRequired": "Pick when you’d like the visit.",
+      "AddressRequired": "Address is required."
+    },
+    "TimeSlots": {
+      "Morning": "Morning (8 am – 12 pm)",
+      "Afternoon": "Afternoon (12 pm – 4 pm)",
+      "Evening": "Evening (4 pm – 9 pm)"
+    },
+    "Upload": {
+      "Heading": "Drop images or browse",
+      "Hint": "Accepted formats: JPG, PNG. Up to {{max}} files.",
+      "ClearAll": "Clear all",
+      "CountLabel": "{{uploaded}}/{{max}} uploaded",
+      "PreviewAlt": "Upload preview {{index}}"
+    },
+    "Footer": {
+      "Line1": "We’ll surface your request to verified craftsmen in your area.",
+      "Line2": "Expect new offers within a few hours."
+    },
+    "Buttons": {
+      "Submitting": "Submitting…",
+      "Submit": "Submit request"
+    },
+    "Messages": {
+      "SubmitSuccess": "Your service request was submitted successfully. We will redirect you shortly.",
+      "GenericError": "Something went wrong. Please try again.",
+      "ActionError": "Unable to complete the request right now. Please retry shortly."
+    }
   }
 }

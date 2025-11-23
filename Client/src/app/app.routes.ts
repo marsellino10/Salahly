@@ -26,6 +26,10 @@ export const routes: Routes = [
         path: 'complete-profile',
         loadComponent: () => import('./pages/technician/complete-profile/complete-profile').then(c => c.CompleteProfile),
       },
+      {
+        path: 'browse-opportunities',
+        loadComponent: () => import('./pages/technician/browse-opportunities/browse-opportunities').then(c => c.BrowseOpportunities),
+      },
     ],
   },
   {

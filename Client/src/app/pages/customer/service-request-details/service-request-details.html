@@ -2,7 +2,7 @@
   <div class="top-nav">
     <button type="button" class="ghost-btn" (click)="navigateBack()">
       <i class="bi bi-arrow-left"></i>
-      Back to my requests
+      {{ 'ServiceRequestDetails.TopNav.Back' | translate }}
     </button>
 
     <span
@@ -11,13 +11,13 @@
       [style.background]="getStatusStyle(data.status).bg"
       [style.color]="getStatusStyle(data.status).text"
     >
-      {{ data.status }}
+      {{ getRequestStatusLabel(data.status) }}
     </span>
   </div>
 
   <div class="banner success" *ngIf="actionBanner() as banner">
     <div>
-      <p class="eyebrow">Update</p>
+      <p class="eyebrow">{{ 'ServiceRequestDetails.Banner.Title' | translate }}</p>
       <p class="banner-message">{{ banner }}</p>
     </div>
     <button type="button" class="ghost-btn icon" (click)="dismissBanner()">
@@ -41,11 +41,11 @@
       <ng-container *ngIf="requestError() as err; else heroContent">
         <div class="error-state">
           <div>
-            <h3>We couldn’t load this request</h3>
+            <h3>{{ 'ServiceRequestDetails.Hero.ErrorTitle' | translate }}</h3>
             <p>{{ err }}</p>
           </div>
           <button type="button" class="primary-btn" (click)="loadRequest()">
-            Try again
+            {{ 'ServiceRequestDetails.Buttons.Retry' | translate }}
           </button>
         </div>
       </ng-container>
@@ -55,7 +55,7 @@
       <ng-container *ngIf="request() as requestData; else heroEmpty">
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">{{ requestData.craftName || 'General service' }}</p>
+            <p class="eyebrow">{{ requestData.craftName || ('ServiceRequestDetails.Hero.CraftFallback' | translate) }}</p>
             <div class="title-row">
               <h1>{{ requestData.title }}</h1>
               <span
@@ -63,7 +63,7 @@
                 [style.background]="getStatusStyle(requestData.status).bg"
                 [style.color]="getStatusStyle(requestData.status).text"
               >
-                {{ requestData.status }}
+                {{ getRequestStatusLabel(requestData.status) }}
               </span>
             </div>
             <p class="lead">{{ requestData.description }}</p>
@@ -72,7 +72,7 @@
               <article class="meta-card" *ngFor="let item of requestMeta()">
                 <i class="bi" [ngClass]="item.icon"></i>
                 <div>
-                  <p class="label">{{ item.label }}</p>
+                  <p class="label">{{ item.labelKey | translate }}</p>
                   <p class="value">{{ item.value }}</p>
                 </div>
               </article>
@@ -81,11 +81,11 @@
             <div class="timestamp-row">
               <span>
                 <i class="bi bi-clock-history"></i>
-                Created {{ formatDateTime(requestData.createdAt) }}
+                {{ 'ServiceRequestDetails.Meta.CreatedLabel' | translate }} {{ formatDateTime(requestData.createdAt) }}
               </span>
               <span>
                 <i class="bi bi-hourglass-split"></i>
-                Expires {{ formatDateTime(requestData.expiresAt) }}
+                {{ 'ServiceRequestDetails.Meta.ExpiresLabel' | translate }} {{ formatDateTime(requestData.expiresAt) }}
               </span>
             </div>
           </div>
@@ -97,7 +97,7 @@
               } @else {
                 <div class="media-fallback">
                   <i class="bi bi-image"></i>
-                  <p>No image uploaded</p>
+                  <p>{{ 'ServiceRequestDetails.Hero.MediaFallback' | translate }}</p>
                 </div>
               }
             </div>
@@ -111,8 +111,8 @@
         <div class="empty-icon">
           <i class="bi bi-journal-text"></i>
         </div>
-        <h3>No request selected</h3>
-        <p>Select a service request from your list to view its full details.</p>
+        <h3>{{ 'ServiceRequestDetails.Hero.EmptyTitle' | translate }}</h3>
+        <p>{{ 'ServiceRequestDetails.Hero.EmptyDescription' | translate }}</p>
       </div>
     </ng-template>
   </section>
@@ -120,14 +120,14 @@
   <section class="offers-panel glass-panel">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Offers received</p>
+        <p class="eyebrow">{{ 'ServiceRequestDetails.Offers.Title' | translate }}</p>
         <h2>
-          {{ offers().length }} offer{{ offers().length === 1 ? '' : 's' }}
+          {{ 'ServiceRequestDetails.Offers.Count' | translate:{ count: offers().length } }}
         </h2>
       </div>
       <button type="button" class="ghost-btn" (click)="loadOffers()" [disabled]="isOffersLoading()">
         <i class="bi bi-arrow-clockwise"></i>
-        Refresh
+        {{ 'ServiceRequestDetails.Buttons.RefreshOffers' | translate }}
       </button>
     </div>
 
@@ -150,7 +150,9 @@
               <div>
                 <p class="eyebrow">{{ offer.craftsmanName }}</p>
                 <h3>{{ formatBudget(offer.offeredPrice) }}</h3>
-                <p class="muted">Estimated {{ offer.estimatedDurationMinutes }} min</p>
+                <p class="muted">
+                  {{ 'ServiceRequestDetails.Offers.Estimated' | translate:{ minutes: offer.estimatedDurationMinutes } }}
+                </p>
               </div>
               <span class="offer-status" [class]="getOfferStatusClass(offer.status)">
                 {{ getOfferStatusLabel(offer.status) }}
@@ -162,11 +164,11 @@
             <ul class="offer-meta">
               <li>
                 <i class="bi bi-calendar2-week"></i>
-                Available {{ formatDate(offer.availableFromDate) }} → {{ formatDate(offer.availableToDate) }}
+                {{ 'ServiceRequestDetails.Offers.Availability' | translate:{ from: formatDate(offer.availableFromDate), to: formatDate(offer.availableToDate) } }}
               </li>
               <li>
                 <i class="bi bi-clock"></i>
-                Sent {{ formatDateTime(offer.createdAt) }}
+                {{ 'ServiceRequestDetails.Offers.Sent' | translate:{ value: formatDateTime(offer.createdAt) } }}
               </li>
               <li *ngIf="offer.rejectionReason">
                 <i class="bi bi-exclamation-circle"></i>
@@ -182,28 +184,28 @@
                 [disabled]="offerActionLoadingId() === offer.craftsmanOfferId"
               >
                 <ng-container *ngIf="offerActionLoadingId() === offer.craftsmanOfferId; else acceptLabel">
-                  Processing…
+                  {{ 'ServiceRequestDetails.Buttons.Processing' | translate }}
                 </ng-container>
-                <ng-template #acceptLabel>Accept offer</ng-template>
+                <ng-template #acceptLabel>{{ 'ServiceRequestDetails.Buttons.AcceptOffer' | translate }}</ng-template>
               </button>
 
               <button type="button" class="ghost-btn" (click)="toggleRejectForm(offer)">
                 <i class="bi bi-slash-circle"></i>
-                Reject
+                {{ 'ServiceRequestDetails.Buttons.RejectOffer' | translate }}
               </button>
             </div>
 
             <div class="reject-panel" *ngIf="activeRejectOfferId() === offer.craftsmanOfferId">
               <label>
-                <span>Reason (optional)</span>
+                <span>{{ 'ServiceRequestDetails.Reject.ReasonLabel' | translate }}</span>
                 <textarea
                   rows="3"
                   [(ngModel)]="rejectReason"
-                  placeholder="Share a short note with the craftsman"
+                  [placeholder]="'ServiceRequestDetails.Reject.Placeholder' | translate"
                 ></textarea>
               </label>
               <div class="reject-actions">
-                <button type="button" class="ghost-btn" (click)="toggleRejectForm(offer)">Cancel</button>
+                <button type="button" class="ghost-btn" (click)="toggleRejectForm(offer)">{{ 'ServiceRequestDetails.Buttons.Cancel' | translate }}</button>
                 <button
                   type="button"
                   class="danger-btn"
@@ -211,9 +213,9 @@
                   [disabled]="offerActionLoadingId() === offer.craftsmanOfferId"
                 >
                   <ng-container *ngIf="offerActionLoadingId() === offer.craftsmanOfferId; else rejectLabel">
-                    Sending…
+                    {{ 'ServiceRequestDetails.Buttons.Processing' | translate }}
                   </ng-container>
-                  <ng-template #rejectLabel>Send rejection</ng-template>
+                  <ng-template #rejectLabel>{{ 'ServiceRequestDetails.Buttons.SendRejection' | translate }}</ng-template>
                 </button>
               </div>
             </div>
@@ -227,8 +229,8 @@
         <div class="empty-icon">
           <i class="bi bi-envelope-open"></i>
         </div>
-        <h3>No offers yet</h3>
-        <p>Craftsmen will send proposals shortly. You’ll be notified as soon as a new offer arrives.</p>
+        <h3>{{ 'ServiceRequestDetails.Offers.EmptyTitle' | translate }}</h3>
+        <p>{{ 'ServiceRequestDetails.Offers.EmptyDescription' | translate }}</p>
       </div>
     </ng-template>
   </section>

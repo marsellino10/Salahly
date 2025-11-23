@@ -3,100 +3,99 @@
     <div class="hero-copy">
       <button type="button" class="ghost-btn" (click)="navigateBack()">
         <i class="bi bi-arrow-left"></i>
-        Back to my requests
+        {{ 'ServiceRequestForm.Hero.Back' | translate }}
       </button>
-      <p class="eyebrow">Create request</p>
-      <h1>Tell us what needs fixing</h1>
-      <p class="lead">
-        Share the craft, describe the issue, add a preferred date, and we’ll notify matching craftsmen.
-        The richer the brief, the faster you’ll get accurate offers.
-      </p>
+      <p class="eyebrow">{{ 'ServiceRequestForm.Hero.Eyebrow' | translate }}</p>
+      <h1>{{ 'ServiceRequestForm.Hero.Title' | translate }}</h1>
+      <p class="lead">{{ 'ServiceRequestForm.Hero.Lead' | translate }}</p>
       <div class="hero-actions">
-        <a routerLink="/show-services-requested" class="ghost-link">View existing requests</a>
-        <div class="chip">Max {{ maxImages }} photos • {{ selectedImages.length }} selected</div>
+        <a routerLink="/show-services-requested" class="ghost-link">{{ 'ServiceRequestForm.Hero.ViewExisting' | translate }}</a>
+        <div class="chip">
+          {{ 'ServiceRequestForm.Hero.PhotoChip' | translate:{ max: maxImages, selected: selectedImages.length } }}
+        </div>
       </div>
     </div>
 
     <div class="hero-stats">
       <article class="stat-card">
-        <p class="label">Step 1</p>
-        <h3>Service basics</h3>
-        <p class="muted">Pick craft + describe the issue.</p>
+        <p class="label">{{ 'ServiceRequestForm.Hero.Stats.StepLabel' | translate:{ step: 1 } }}</p>
+        <h3>{{ 'ServiceRequestForm.Hero.Stats.Step1Title' | translate }}</h3>
+        <p class="muted">{{ 'ServiceRequestForm.Hero.Stats.Step1Subtitle' | translate }}</p>
       </article>
       <article class="stat-card">
-        <p class="label">Step 2</p>
-        <h3>Schedule</h3>
-        <p class="muted">Set preferred date & area.</p>
+        <p class="label">{{ 'ServiceRequestForm.Hero.Stats.StepLabel' | translate:{ step: 2 } }}</p>
+        <h3>{{ 'ServiceRequestForm.Hero.Stats.Step2Title' | translate }}</h3>
+        <p class="muted">{{ 'ServiceRequestForm.Hero.Stats.Step2Subtitle' | translate }}</p>
       </article>
       <article class="stat-card">
-        <p class="label">Step 3</p>
-        <h3>Share visuals</h3>
-        <p class="muted">Upload inspiration or issue photos.</p>
+        <p class="label">{{ 'ServiceRequestForm.Hero.Stats.StepLabel' | translate:{ step: 3 } }}</p>
+        <h3>{{ 'ServiceRequestForm.Hero.Stats.Step3Title' | translate }}</h3>
+        <p class="muted">{{ 'ServiceRequestForm.Hero.Stats.Step3Subtitle' | translate }}</p>
       </article>
     </div>
   </header>
 
   <div *ngIf="submitSuccess" class="banner success glass-panel">
     <div>
-      <p class="eyebrow">Great!</p>
+      <p class="eyebrow">{{ 'ServiceRequestForm.Banners.SuccessTitle' | translate }}</p>
       <p>{{ submitSuccess }}</p>
     </div>
-    <button type="button" class="ghost-btn" (click)="submitSuccess = null">Dismiss</button>
+    <button type="button" class="ghost-btn" (click)="submitSuccess = null">{{ 'ServiceRequestForm.Banners.Dismiss' | translate }}</button>
   </div>
 
   <div *ngIf="submitError" class="banner error glass-panel">
     <div>
-      <p class="eyebrow">Something went wrong</p>
+      <p class="eyebrow">{{ 'ServiceRequestForm.Banners.ErrorTitle' | translate }}</p>
       <p>{{ submitError }}</p>
     </div>
-    <button type="button" class="ghost-btn" (click)="submitError = null">Dismiss</button>
+    <button type="button" class="ghost-btn" (click)="submitError = null">{{ 'ServiceRequestForm.Banners.Dismiss' | translate }}</button>
   </div>
 
   <form class="request-form glass-panel" [formGroup]="requestForm" (ngSubmit)="submitRequest()" novalidate>
     <section class="form-section">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Service overview</p>
-          <h2>Describe the work</h2>
+          <p class="eyebrow">{{ 'ServiceRequestForm.Sections.Overview.Eyebrow' | translate }}</p>
+          <h2>{{ 'ServiceRequestForm.Sections.Overview.Title' | translate }}</h2>
         </div>
-        <small>Fields marked with * are required</small>
+        <small>{{ 'ServiceRequestForm.Sections.Overview.RequiredHint' | translate }}</small>
       </div>
 
       <div class="field-grid two-col">
         <label class="input-shell" [class.invalid]="fieldInvalid('craftId')">
-          <span>Service craft *</span>
+          <span>{{ 'ServiceRequestForm.Fields.CraftLabel' | translate }}</span>
           <select formControlName="craftId" [disabled]="isLoadingCrafts">
-            <option value="" disabled selected>Select craft</option>
+            <option value="" disabled selected>{{ 'ServiceRequestForm.Fields.CraftPlaceholder' | translate }}</option>
             <option *ngFor="let craft of crafts" [value]="craft.id">{{ craft.name }}</option>
           </select>
-          <small class="muted" *ngIf="isLoadingCrafts">Loading crafts…</small>
+          <small class="muted" *ngIf="isLoadingCrafts">{{ 'ServiceRequestForm.Loading.Crafts' | translate }}</small>
           <small class="error-text" *ngIf="craftsError">{{ craftsError }}</small>
-          <small class="error-text" *ngIf="fieldInvalid('craftId')">Pick the craft you need.</small>
+          <small class="error-text" *ngIf="fieldInvalid('craftId')">{{ 'ServiceRequestForm.Errors.CraftRequired' | translate }}</small>
         </label>
 
         <label class="input-shell" [class.invalid]="fieldInvalid('title')">
-          <span>Request title *</span>
-          <input type="text" formControlName="title" placeholder="e.g. Kitchen sink leaking badly" maxlength="80" />
+          <span>{{ 'ServiceRequestForm.Fields.TitleLabel' | translate }}</span>
+          <input type="text" formControlName="title" [placeholder]="'ServiceRequestForm.Fields.TitlePlaceholder' | translate" maxlength="80" />
           <div class="helper-row">
-            <small>{{ titleLength }}/80</small>
+            <small>{{ 'ServiceRequestForm.Fields.TitleCounter' | translate:{ used: titleLength, max: 80 } }}</small>
           </div>
-          <small class="error-text" *ngIf="fieldInvalid('title')">Title must be 6-80 characters.</small>
+          <small class="error-text" *ngIf="fieldInvalid('title')">{{ 'ServiceRequestForm.Errors.TitleInvalid' | translate }}</small>
         </label>
       </div>
 
       <label class="input-shell" [class.invalid]="fieldInvalid('description')">
-        <span>Tell us the details *</span>
+        <span>{{ 'ServiceRequestForm.Fields.DescriptionLabel' | translate }}</span>
         <textarea
           rows="5"
           formControlName="description"
-          placeholder="Describe the problem, any attempted fixes, access instructions, etc."
+          [placeholder]="'ServiceRequestForm.Fields.DescriptionPlaceholder' | translate"
           maxlength="800"
         ></textarea>
         <div class="helper-row">
-          <small>{{ descriptionLength }}/800 characters</small>
+          <small>{{ 'ServiceRequestForm.Fields.DescriptionCounter' | translate:{ used: descriptionLength, max: 800 } }}</small>
         </div>
         <small class="error-text" *ngIf="fieldInvalid('description')">
-          Please provide at least 20 characters describing the issue.
+          {{ 'ServiceRequestForm.Errors.DescriptionInvalid' | translate }}
         </small>
       </label>
     </section>
@@ -104,54 +103,54 @@
     <section class="form-section">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Scheduling & location</p>
-          <h2>When and where?</h2>
+          <p class="eyebrow">{{ 'ServiceRequestForm.Sections.Schedule.Eyebrow' | translate }}</p>
+          <h2>{{ 'ServiceRequestForm.Sections.Schedule.Title' | translate }}</h2>
         </div>
       </div>
 
       <div class="field-grid three-col">
         <label class="input-shell" [class.invalid]="fieldInvalid('areaId')">
-          <span>Service area *</span>
+          <span>{{ 'ServiceRequestForm.Fields.AreaLabel' | translate }}</span>
           <select formControlName="areaId" [disabled]="isLoadingAreas">
-            <option value="" disabled selected>Select area</option>
+            <option value="" disabled selected>{{ 'ServiceRequestForm.Fields.AreaPlaceholder' | translate }}</option>
             <option *ngFor="let area of areas" [value]="area.id">
               {{ area.city }} • {{ area.region }}
             </option>
           </select>
-          <small class="muted" *ngIf="isLoadingAreas">Loading areas…</small>
+          <small class="muted" *ngIf="isLoadingAreas">{{ 'ServiceRequestForm.Loading.Areas' | translate }}</small>
           <small class="error-text" *ngIf="areasError">{{ areasError }}</small>
-          <small class="error-text" *ngIf="fieldInvalid('areaId')">Select where the technician should go.</small>
+          <small class="error-text" *ngIf="fieldInvalid('areaId')">{{ 'ServiceRequestForm.Errors.AreaRequired' | translate }}</small>
         </label>
 
         <label class="input-shell" [class.invalid]="fieldInvalid('preferredDate')">
-          <span>Preferred date *</span>
+          <span>{{ 'ServiceRequestForm.Fields.DateLabel' | translate }}</span>
           <input type="date" formControlName="preferredDate" [attr.min]="minDate" />
-          <small class="error-text" *ngIf="fieldInvalid('preferredDate')">Pick when you’d like the visit.</small>
+          <small class="error-text" *ngIf="fieldInvalid('preferredDate')">{{ 'ServiceRequestForm.Errors.DateRequired' | translate }}</small>
         </label>
 
         <label class="input-shell">
-          <span>Preferred time window</span>
+          <span>{{ 'ServiceRequestForm.Fields.TimeLabel' | translate }}</span>
           <select formControlName="preferredTimeSlot">
-            <option value="">Flexible slot</option>
-            <option *ngFor="let slot of availableTimeSlots" [value]="slot.value">{{ slot.label }}</option>
+            <option value="">{{ 'ServiceRequestForm.Fields.TimePlaceholder' | translate }}</option>
+            <option *ngFor="let slot of availableTimeSlots" [value]="slot.value">{{ slot.labelKey | translate }}</option>
           </select>
         </label>
       </div>
 
       <label class="input-shell full-width" [class.invalid]="fieldInvalid('address')">
-        <span>Exact address *</span>
-        <input type="text" formControlName="address" placeholder="Apartment, street, nearby landmarks" maxlength="160" />
-        <small class="error-text" *ngIf="fieldInvalid('address')">Address is required.</small>
+        <span>{{ 'ServiceRequestForm.Fields.AddressLabel' | translate }}</span>
+        <input type="text" formControlName="address" [placeholder]="'ServiceRequestForm.Fields.AddressPlaceholder' | translate" maxlength="160" />
+        <small class="error-text" *ngIf="fieldInvalid('address')">{{ 'ServiceRequestForm.Errors.AddressRequired' | translate }}</small>
       </label>
 
       <div class="field-grid two-col">
         <label class="input-shell">
-          <span>Latitude (optional)</span>
-          <input type="number" step="0.0001" formControlName="latitude" placeholder="30.0444" />
+          <span>{{ 'ServiceRequestForm.Fields.LatitudeLabel' | translate }}</span>
+          <input type="number" step="0.0001" formControlName="latitude" [placeholder]="'ServiceRequestForm.Fields.LatitudePlaceholder' | translate" />
         </label>
         <label class="input-shell">
-          <span>Longitude (optional)</span>
-          <input type="number" step="0.0001" formControlName="longitude" placeholder="31.2357" />
+          <span>{{ 'ServiceRequestForm.Fields.LongitudeLabel' | translate }}</span>
+          <input type="number" step="0.0001" formControlName="longitude" [placeholder]="'ServiceRequestForm.Fields.LongitudePlaceholder' | translate" />
         </label>
       </div>
     </section>
@@ -159,22 +158,22 @@
     <section class="form-section">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Budget & offers</p>
-          <h2>Set expectations</h2>
+          <p class="eyebrow">{{ 'ServiceRequestForm.Sections.Budget.Eyebrow' | translate }}</p>
+          <h2>{{ 'ServiceRequestForm.Sections.Budget.Title' | translate }}</h2>
         </div>
       </div>
 
       <div class="field-grid three-col">
         <label class="input-shell">
-          <span>Budget (USD)</span>
-          <input type="number" min="20" step="10" formControlName="customerBudget" placeholder="e.g. 150" />
-          <small class="muted">Optional but helps craftsmen quote better.</small>
+          <span>{{ 'ServiceRequestForm.Fields.BudgetLabel' | translate }}</span>
+          <input type="number" min="20" step="10" formControlName="customerBudget" [placeholder]="'ServiceRequestForm.Fields.BudgetPlaceholder' | translate" />
+          <small class="muted">{{ 'ServiceRequestForm.Fields.BudgetHint' | translate }}</small>
         </label>
 
         <label class="input-shell">
-          <span>Max offers</span>
+          <span>{{ 'ServiceRequestForm.Fields.MaxOffersLabel' | translate }}</span>
           <input type="number" min="1" max="10" step="1" formControlName="maxOffers" />
-          <small class="muted">How many proposals you want to review.</small>
+          <small class="muted">{{ 'ServiceRequestForm.Fields.MaxOffersHint' | translate }}</small>
         </label>
       </div>
     </section>
@@ -182,26 +181,26 @@
     <section class="form-section">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Reference photos</p>
-          <h2>Give craftsmen more context</h2>
+          <p class="eyebrow">{{ 'ServiceRequestForm.Sections.Photos.Eyebrow' | translate }}</p>
+          <h2>{{ 'ServiceRequestForm.Sections.Photos.Title' | translate }}</h2>
         </div>
-        <small *ngIf="selectedImages.length">{{ selectedImages.length }}/{{ maxImages }} uploaded</small>
+        <small *ngIf="selectedImages.length">{{ 'ServiceRequestForm.Upload.CountLabel' | translate:{ uploaded: selectedImages.length, max: maxImages } }}</small>
       </div>
 
       <div class="upload-card">
         <input type="file" accept="image/*" multiple (change)="onFilesSelected($event)" [disabled]="selectedImages.length >= maxImages" />
         <div>
-          <h3>Drop images or browse</h3>
-          <p class="muted">Accepted formats: JPG, PNG. Up to {{ maxImages }} files.</p>
+          <h3>{{ 'ServiceRequestForm.Upload.Heading' | translate }}</h3>
+          <p class="muted">{{ 'ServiceRequestForm.Upload.Hint' | translate:{ max: maxImages } }}</p>
         </div>
         <button type="button" class="ghost-btn" (click)="clearUploads()" [disabled]="!selectedImages.length">
-          Clear all
+          {{ 'ServiceRequestForm.Upload.ClearAll' | translate }}
         </button>
       </div>
 
       <div class="upload-grid" *ngIf="imagePreviews.length">
         <figure class="upload-preview" *ngFor="let preview of imagePreviews; let i = index">
-          <img [src]="preview" alt="Upload preview {{ i + 1 }}" />
+          <img [src]="preview" [attr.alt]="('ServiceRequestForm.Upload.PreviewAlt' | translate:{ index: i + 1 })" />
           <button type="button" class="icon-btn" (click)="removeImage(i)">
             <i class="bi bi-x-lg"></i>
           </button>
@@ -211,12 +210,12 @@
 
     <footer class="form-footer">
       <div>
-        <p class="muted">We’ll surface your request to verified craftsmen in your area.</p>
-        <p class="muted">Expect new offers within a few hours.</p>
+        <p class="muted">{{ 'ServiceRequestForm.Footer.Line1' | translate }}</p>
+        <p class="muted">{{ 'ServiceRequestForm.Footer.Line2' | translate }}</p>
       </div>
       <button type="submit" class="primary-btn" [disabled]="isSubmitting">
-        <ng-container *ngIf="isSubmitting; else submitLabel">Submitting…</ng-container>
-        <ng-template #submitLabel>Submit request</ng-template>
+        <ng-container *ngIf="isSubmitting; else submitLabel">{{ 'ServiceRequestForm.Buttons.Submitting' | translate }}</ng-container>
+        <ng-template #submitLabel>{{ 'ServiceRequestForm.Buttons.Submit' | translate }}</ng-template>
       </button>
     </footer>
   </form>

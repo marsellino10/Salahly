@@ -1,30 +1,30 @@
 <section class="complete-profile-page">
   <header class="page-hero glass-panel">
     <div class="hero-copy">
-      <p class="eyebrow">Complete your onboarding</p>
+      <p class="eyebrow">{{ 'CustomerProfile.Hero.Eyebrow' | translate }}</p>
       <div class="hero-title">
-        <h1>Customer profile</h1>
+        <h1>{{ 'CustomerProfile.Hero.Title' | translate }}</h1>
         <span class="status-pill" [class.success]="hasExistingProfile">
           <i class="bi" [class.bi-patch-check-fill]="hasExistingProfile" [class.bi-hourglass-split]="!hasExistingProfile"></i>
-          {{ hasExistingProfile ? 'Profile ready' : 'Finish setup' }}
+          {{ (hasExistingProfile ? 'CustomerProfile.Hero.Status.Ready' : 'CustomerProfile.Hero.Status.Finish') | translate }}
         </span>
       </div>
-      <p>Share accurate home and contact details so technicians arrive prepared.</p>
+      <p>{{ 'CustomerProfile.Hero.Description' | translate }}</p>
       <ul class="hero-highlights">
-        <li><i class="bi bi-house-heart"></i> Exact address for visits</li>
-        <li><i class="bi bi-phone"></i> Verified phone for updates</li>
-        <li><i class="bi bi-calendar3"></i> Personalized scheduling</li>
+        <li><i class="bi bi-house-heart"></i> {{ 'CustomerProfile.Hero.Highlights.Address' | translate }}</li>
+        <li><i class="bi bi-phone"></i> {{ 'CustomerProfile.Hero.Highlights.Phone' | translate }}</li>
+        <li><i class="bi bi-calendar3"></i> {{ 'CustomerProfile.Hero.Highlights.Scheduling' | translate }}</li>
       </ul>
     </div>
     <div class="hero-progress">
       <div class="progress-stats">
         <span class="progress-value">{{ progressValue }}%</span>
-        <small>Profile strength</small>
+        <small>{{ 'CustomerProfile.Hero.ProgressStrength' | translate }}</small>
       </div>
       <div class="progress-bar">
         <div class="progress-fill" [style.width.%]="progressValue"></div>
       </div>
-      <p class="progress-hint">Complete every section for the smoothest booking experience.</p>
+      <p class="progress-hint">{{ 'CustomerProfile.Hero.ProgressHint' | translate }}</p>
     </div>
   </header>
 
@@ -40,43 +40,43 @@
     <aside class="side-panel">
       <div class="card avatar-card">
         <div class="avatar-shell" [class.has-image]="profileImagePreview || existingProfileImageUrl">
-          <img *ngIf="profileImagePreview" [src]="profileImagePreview" alt="Profile preview" />
-          <img *ngIf="!profileImagePreview && existingProfileImageUrl" [src]="existingProfileImageUrl" alt="Current profile" />
+          <img *ngIf="profileImagePreview" [src]="profileImagePreview" [attr.alt]="('CustomerProfile.Avatar.ProfilePreviewAlt' | translate)" />
+          <img *ngIf="!profileImagePreview && existingProfileImageUrl" [src]="existingProfileImageUrl" [attr.alt]="('CustomerProfile.Avatar.CurrentProfileAlt' | translate)" />
           <div *ngIf="!profileImagePreview && !existingProfileImageUrl" class="avatar-placeholder">
             <i class="bi bi-person"></i>
-            <span>Upload photo</span>
+            <span>{{ 'CustomerProfile.Avatar.Placeholder' | translate }}</span>
           </div>
         </div>
         <label class="upload-btn">
           <input type="file" accept="image/*" (change)="onImageSelected($event)" />
           <i class="bi bi-upload"></i>
-          <span>{{ selectedProfileImage ? 'Change photo' : 'Upload profile photo' }}</span>
+          <span>{{ (selectedProfileImage ? 'CustomerProfile.Avatar.ChangePhoto' : 'CustomerProfile.Avatar.UploadPhotoCta') | translate }}</span>
         </label>
-        <small>PNG or JPG up to 3MB.</small>
+        <small>{{ 'CustomerProfile.Avatar.HelperText' | translate }}</small>
       </div>
 
       <div class="card steps-card">
         <div class="card-head">
-          <p class="eyebrow mb-1">Checklist</p>
-          <h5>Progress overview</h5>
+          <p class="eyebrow mb-1">{{ 'CustomerProfile.Checklist.Eyebrow' | translate }}</p>
+          <h5>{{ 'CustomerProfile.Checklist.Title' | translate }}</h5>
         </div>
         <ul class="step-list">
           <li *ngFor="let step of progressSteps" [class.completed]="step.completed">
             <i class="bi" [class.bi-check-circle-fill]="step.completed" [class.bi-circle]="!step.completed"></i>
             <div>
-              <p>{{ step.label }}</p>
-              <small>{{ step.completed ? 'Looks great!' : 'Still needs attention' }}</small>
+              <p>{{ step.labelKey | translate }}</p>
+              <small>{{ (step.completed ? 'CustomerProfile.Checklist.Done' : 'CustomerProfile.Checklist.Todo') | translate }}</small>
             </div>
           </li>
         </ul>
       </div>
 
       <div class="card tips-card">
-        <h6>Tips</h6>
+        <h6>{{ 'CustomerProfile.Tips.Title' | translate }}</h6>
         <ul>
-          <li>Use a phone number you actively answer.</li>
-          <li>Describe your building/landmarks inside the address.</li>
-          <li>A friendly photo makes handoffs easier.</li>
+          <li>{{ 'CustomerProfile.Tips.Phone' | translate }}</li>
+          <li>{{ 'CustomerProfile.Tips.Address' | translate }}</li>
+          <li>{{ 'CustomerProfile.Tips.Photo' | translate }}</li>
         </ul>
       </div>
     </aside>
@@ -85,29 +85,29 @@
       <section class="card form-section">
         <div class="section-head">
           <div>
-            <p class="eyebrow mb-1">Step 1</p>
-            <h4>Profile basics</h4>
+            <p class="eyebrow mb-1">{{ 'CustomerProfile.Form.StepLabel' | translate:{ step: 1 } }}</p>
+            <h4>{{ 'CustomerProfile.Form.ProfileBasicsTitle' | translate }}</h4>
           </div>
-          <span class="chip">Required</span>
+          <span class="chip">{{ 'CustomerProfile.Form.RequiredChip' | translate }}</span>
         </div>
 
         <div class="field-grid">
           <div class="form-field" [class.invalid]="isControlInvalid('fullName')">
-            <label>Full name</label>
+            <label>{{ 'CustomerProfile.Form.Fields.FullNameLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-person"></i>
-              <input type="text" formControlName="fullName" placeholder="e.g. Sara Adel" [readonly]="hasExistingProfile" />
+              <input type="text" formControlName="fullName" [placeholder]="'CustomerProfile.Form.Fields.FullNamePlaceholder' | translate" [readonly]="hasExistingProfile" />
             </div>
-            <small *ngIf="isControlInvalid('fullName')" class="error-text">Please enter your legal name.</small>
+            <small *ngIf="isControlInvalid('fullName')" class="error-text">{{ 'CustomerProfile.Form.Fields.FullNameError' | translate }}</small>
           </div>
 
           <div class="form-field" [class.invalid]="isControlInvalid('dateOfBirth')">
-            <label>Date of birth</label>
+            <label>{{ 'CustomerProfile.Form.Fields.DobLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-calendar-event"></i>
               <input type="date" formControlName="dateOfBirth" />
             </div>
-            <small class="hint">Optional but helps tailor reminders.</small>
+            <small class="hint">{{ 'CustomerProfile.Form.Fields.DobHint' | translate }}</small>
           </div>
         </div>
       </section>
@@ -115,29 +115,29 @@
       <section class="card form-section">
         <div class="section-head">
           <div>
-            <p class="eyebrow mb-1">Step 2</p>
-            <h4>Contact details</h4>
+            <p class="eyebrow mb-1">{{ 'CustomerProfile.Form.StepLabel' | translate:{ step: 2 } }}</p>
+            <h4>{{ 'CustomerProfile.Form.ContactDetailsTitle' | translate }}</h4>
           </div>
-          <span class="chip muted">Keep them current</span>
+          <span class="chip muted">{{ 'CustomerProfile.Form.ContactChip' | translate }}</span>
         </div>
 
         <div class="field-grid">
           <div class="form-field" [class.invalid]="isControlInvalid('phoneNumber')">
-            <label>Phone number</label>
+            <label>{{ 'CustomerProfile.Form.Fields.PhoneLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-telephone"></i>
-              <input type="tel" formControlName="phoneNumber" placeholder="e.g. +20 111 222 3344" />
+              <input type="tel" formControlName="phoneNumber" [placeholder]="'CustomerProfile.Form.Fields.PhonePlaceholder' | translate" />
             </div>
-            <small *ngIf="isControlInvalid('phoneNumber')" class="error-text">Provide a valid phone number.</small>
+            <small *ngIf="isControlInvalid('phoneNumber')" class="error-text">{{ 'CustomerProfile.Form.Fields.PhoneError' | translate }}</small>
           </div>
 
           <div class="form-field" [class.invalid]="isControlInvalid('address')">
-            <label>Street address</label>
+            <label>{{ 'CustomerProfile.Form.Fields.AddressLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-geo-alt"></i>
-              <input type="text" formControlName="address" placeholder="Building, street, floor" />
+              <input type="text" formControlName="address" [placeholder]="'CustomerProfile.Form.Fields.AddressPlaceholder' | translate" />
             </div>
-            <small *ngIf="isControlInvalid('address')" class="error-text">Enter the address technicians should visit.</small>
+            <small *ngIf="isControlInvalid('address')" class="error-text">{{ 'CustomerProfile.Form.Fields.AddressError' | translate }}</small>
           </div>
         </div>
       </section>
@@ -145,29 +145,29 @@
       <section class="card form-section">
         <div class="section-head">
           <div>
-            <p class="eyebrow mb-1">Step 3</p>
-            <h4>Location</h4>
+            <p class="eyebrow mb-1">{{ 'CustomerProfile.Form.StepLabel' | translate:{ step: 3 } }}</p>
+            <h4>{{ 'CustomerProfile.Form.LocationTitle' | translate }}</h4>
           </div>
-          <span class="chip">City & area</span>
+          <span class="chip">{{ 'CustomerProfile.Form.LocationChip' | translate }}</span>
         </div>
 
         <div class="field-grid">
           <div class="form-field" [class.invalid]="isControlInvalid('city')">
-            <label>City</label>
+            <label>{{ 'CustomerProfile.Form.Fields.CityLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-building"></i>
-              <input type="text" formControlName="city" placeholder="e.g. Cairo" />
+              <input type="text" formControlName="city" [placeholder]="'CustomerProfile.Form.Fields.CityPlaceholder' | translate" />
             </div>
-            <small *ngIf="isControlInvalid('city')" class="error-text">City is required.</small>
+            <small *ngIf="isControlInvalid('city')" class="error-text">{{ 'CustomerProfile.Form.Fields.CityError' | translate }}</small>
           </div>
 
           <div class="form-field" [class.invalid]="isControlInvalid('area')">
-            <label>Area / district</label>
+            <label>{{ 'CustomerProfile.Form.Fields.AreaLabel' | translate }}</label>
             <div class="input-shell">
               <i class="bi bi-geo"></i>
-              <input type="text" formControlName="area" placeholder="e.g. Nasr City" />
+              <input type="text" formControlName="area" [placeholder]="'CustomerProfile.Form.Fields.AreaPlaceholder' | translate" />
             </div>
-            <small *ngIf="isControlInvalid('area')" class="error-text">Let us know the neighborhood for faster matching.</small>
+            <small *ngIf="isControlInvalid('area')" class="error-text">{{ 'CustomerProfile.Form.Fields.AreaError' | translate }}</small>
           </div>
         </div>
       </section>
@@ -175,14 +175,14 @@
       <div class="form-actions">
         <button class="btn primary" type="submit" [disabled]="isSubmitting || isLoadingProfile">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status"></span>
-          <span>{{ hasExistingProfile ? 'Update profile' : 'Save profile' }}</span>
+          <span>{{ (hasExistingProfile ? 'CustomerProfile.Buttons.Update' : 'CustomerProfile.Buttons.Save') | translate }}</span>
         </button>
       </div>
     </form>
 
     <div *ngIf="isLoadingProfile" class="loading-overlay">
       <div class="loader"></div>
-      <p>Loading your profile...</p>
+      <p>{{ 'CustomerProfile.Loading.Message' | translate }}</p>
     </div>
   </div>
 </section>

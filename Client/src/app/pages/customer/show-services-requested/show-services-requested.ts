@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ServicesRequestsService, ServiceRequestDto, ServiceRequestStatus } from '../../../core/services/services-requests.service';
-import { RouterLink } from "@angular/router";
+import { RouterLink } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type RequestTab = 'active' | 'history';
 
@@ -11,12 +12,13 @@ const HISTORY_STATUSES: ServiceRequestStatus[] = ['Completed', 'Cancelled', 'Exp
 @Component({
   selector: 'app-show-services-requested',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslateModule],
   templateUrl: './show-services-requested.html',
   styleUrl: './show-services-requested.css',
 })
 export class ShowServicesRequested implements OnInit {
   private readonly _requestsService = inject(ServicesRequestsService);
+  private readonly _translate = inject(TranslateService);
 
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
@@ -159,7 +161,7 @@ export class ShowServicesRequested implements OnInit {
 
   formatBudget(value?: number | null): string {
     if (value === undefined || value === null) {
-      return '—';
+      return this._translate.instant('ShowRequests.Cards.Meta.BudgetUnknown');
     }
     return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(value);
   }
@@ -175,9 +177,14 @@ export class ShowServicesRequested implements OnInit {
     return request.images && request.images.length ? request.images[0] : null;
   }
 
+  getStatusLabel(status: ServiceRequestStatus | string): string {
+    const key = this.statusLabelKeys[String(status)];
+    return key ? this._translate.instant(key) : String(status);
+  }
+
   private extractErrorMessage(error: unknown): string {
     if (!error) {
-      return 'Something went wrong while loading your requests. Please try again.';
+      return this._translate.instant('ShowRequests.Messages.LoadError');
     }
 
     if (typeof error === 'string') {
@@ -189,6 +196,16 @@ export class ShowServicesRequested implements OnInit {
       return errorRecord['message'] as string;
     }
 
-    return 'Unable to load your service requests. Please try again later.';
+    return this._translate.instant('ShowRequests.Messages.GenericError');
   }
+
+  private readonly statusLabelKeys: Record<string, string> = {
+    Open: 'ShowRequests.StatusLabels.Open',
+    HasOffers: 'ShowRequests.StatusLabels.HasOffers',
+    OfferAccepted: 'ShowRequests.StatusLabels.OfferAccepted',
+    InProgress: 'ShowRequests.StatusLabels.InProgress',
+    Completed: 'ShowRequests.StatusLabels.Completed',
+    Cancelled: 'ShowRequests.StatusLabels.Cancelled',
+    Expired: 'ShowRequests.StatusLabels.Expired',
+  };
 }

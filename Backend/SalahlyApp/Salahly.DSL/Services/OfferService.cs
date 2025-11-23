@@ -230,6 +230,7 @@ namespace Salahly.DSL.Services
                 };
 
                 await _unitOfWork.CraftsmanOffers.AddAsync(offer);
+                request.OffersCount += 1;
                 await _unitOfWork.SaveAsync();
 
                 // Send notification to customer

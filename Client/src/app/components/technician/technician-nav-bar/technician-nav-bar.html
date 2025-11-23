@@ -14,9 +14,9 @@
           <span>{{ 'BlankNavBar.Home' | translate }}</span>
         </a>
 
-        <a routerLink="/browse" routerLinkActive="active" class="d-flex align-items-center gap-2 text-secondary nav-link">
+        <a routerLink="/browse-opportunities" routerLinkActive="active" class="d-flex align-items-center gap-2 text-secondary nav-link">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <span>{{ 'BlankNavBar.Browse Technicians' | translate }}</span>
+          <span>{{ 'BlankNavBar.Browse Opportunities' | translate }}</span>
         </a>
 
         <app-translate-select [color]="'black'"></app-translate-select>
@@ -32,7 +32,7 @@
 
           @if(userMenuOpen){
             <div class="user-dropdown shadow-sm">
-              <button class="dropdown-item" (click)="navigate('/profile')">
+              <button class="dropdown-item" (click)="navigate('/complete-profile')">
                 <i class="fa-regular fa-user"></i>
                 <span>{{ 'TechnicianNav.Profile' | translate }}</span>
               </button>

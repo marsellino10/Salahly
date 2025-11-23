@@ -9,6 +9,7 @@ namespace Salahly.DSL.DTOs.OffersDtos
 {
     public class OfferDto
     {
+        public int ServiceRequestId { get; set; }
         public int CraftsmanOfferId { get; set; }
         public decimal OfferedPrice { get; set; }
         public string Description { get; set; } = string.Empty;

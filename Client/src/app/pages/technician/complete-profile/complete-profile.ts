@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Area } from '../../../core/models/Area';
 import { Craft } from '../../../core/models/Craft';
 import { Craftsman } from '../../../core/models/Craftman';
@@ -28,9 +29,9 @@ interface SubmissionMessage {
 @Component({
   selector: 'app-complete-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './complete-profile.html',
-  styleUrls: ['./complete-profile.css'], // <-- fixed
+  styleUrls: ['./complete-profile.css'],
 })
 export class CompleteProfile implements OnInit {
   private readonly _fb = inject(FormBuilder);
@@ -38,6 +39,7 @@ export class CompleteProfile implements OnInit {
   private readonly _craftService = inject(CraftService);
   private readonly _areaService = inject(AreaService);
   private readonly _router = inject(Router);
+  private readonly _translate = inject(TranslateService);
 
   crafts: Craft[] = [];
   areas: Area[] = [];
@@ -66,12 +68,12 @@ export class CompleteProfile implements OnInit {
 
   readonly sectionDescriptors = [
     {
-      label: 'Profile basics',
+      labelKey: 'CompleteProfile.Form.ProfileBasicsTitle',
       validator: () =>
         this.profileForm.get('fullName')?.valid && this.profileForm.get('craftId')?.valid,
     },
     {
-      label: 'Expertise & bio',
+      labelKey: 'CompleteProfile.Form.ExperienceStoryTitle',
       // treat 0 as valid for yearsOfExperience; check for null/undefined instead of truthiness
       validator: () =>
         this.profileForm.get('hourlyRate')?.value !== null &&
@@ -81,14 +83,14 @@ export class CompleteProfile implements OnInit {
         !!this.profileForm.get('bio')?.value,
     },
     {
-      label: 'Service coverage',
+      labelKey: 'CompleteProfile.Form.ServiceCoverageTitle',
       validator: () => this.serviceAreasControls.length > 0 && this.serviceAreasControls.valid,
     },
   ];
 
   get progressSteps() {
     return this.sectionDescriptors.map((section) => ({
-      label: section.label,
+      labelKey: section.labelKey,
       completed: Boolean(section.validator()),
     }));
   }
@@ -158,9 +160,14 @@ export class CompleteProfile implements OnInit {
     });
   }
   displayAreaLabel(areaId: number | null): string {
-    if (areaId === null || areaId === undefined) return 'Select service area';
+    if (areaId === null || areaId === undefined) {
+      return this._translate.instant('CompleteProfile.ServiceAreas.SelectServiceAreaLabel');
+    }
     const area = this.areas.find((a) => a.id === areaId);
-    return area ? `${area.region} • ${area.city}` : 'Selected area';
+    if (area) {
+      return `${area.region} • ${area.city}`;
+    }
+    return this._translate.instant('CompleteProfile.ServiceAreas.SelectedAreaFallback');
   }
 
   onImageSelected(event: Event): void {
@@ -172,7 +179,7 @@ export class CompleteProfile implements OnInit {
     if (!file.type.startsWith('image/')) {
       this.submissionMessage = {
         type: 'error',
-        text: 'Please upload an image file (PNG, JPG, JPEG).',
+        text: this._translate.instant('CompleteProfile.Messages.ImageTypeError'),
       };
       return;
     }
@@ -223,7 +230,7 @@ export class CompleteProfile implements OnInit {
         this.hasExistingProfile = true;
         this.submissionMessage = {
           type: 'success',
-          text: 'Your profile looks great! Redirecting you to the dashboard...',
+          text: this._translate.instant('CompleteProfile.Messages.SubmitSuccess'),
         };
         this.existingProfileImageUrl = response?.data?.profileImageUrl ?? this.existingProfileImageUrl;
         if (!this.technicianId && response?.data?.id) {
@@ -238,7 +245,7 @@ export class CompleteProfile implements OnInit {
           text:
             typeof error?.error === 'string'
               ? error.error
-              : 'We could not save your profile right now. Please try again.',
+              : this._translate.instant('CompleteProfile.Messages.SubmitError'),
         };
       },
     });

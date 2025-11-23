@@ -1,0 +1,326 @@
+<section class="browse-page">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">{{ 'BrowseOpportunities.Hero.Eyebrow' | translate }}</p>
+      <h1>{{ 'BrowseOpportunities.Hero.Title' | translate }}</h1>
+      <p class="subtitle">
+        {{ 'BrowseOpportunities.Hero.Subtitle' | translate }}
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-card">
+        <span class="label">{{ 'BrowseOpportunities.Stats.Total.Label' | translate }}</span>
+        <strong>{{ stats().total }}</strong>
+        <small>{{ 'BrowseOpportunities.Stats.Total.Subtitle' | translate }}</small>
+      </div>
+      <div class="stat-card">
+        <span class="label">{{ 'BrowseOpportunities.Stats.Open.Label' | translate }}</span>
+        <strong>{{ stats().open }}</strong>
+        <small>{{ 'BrowseOpportunities.Stats.Open.Subtitle' | translate }}</small>
+      </div>
+      <div class="stat-card">
+        <span class="label">{{ 'BrowseOpportunities.Stats.Closing.Label' | translate }}</span>
+        <strong>{{ stats().closingSoon }}</strong>
+        <small>{{ 'BrowseOpportunities.Stats.Closing.Subtitle' | translate }}</small>
+      </div>
+      <div class="stat-card">
+        <span class="label">{{ 'BrowseOpportunities.Stats.Budget.Label' | translate }}</span>
+        <strong>{{ stats().avgBudget | currency:'USD':'symbol':'1.0-0' }}</strong>
+        <small>{{ 'BrowseOpportunities.Stats.Budget.Subtitle' | translate }}</small>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" type="button" (click)="refresh()" [disabled]="isLoading()">
+        <i class="fa-solid fa-rotate"></i>
+        <span>{{ (isLoading() ? 'BrowseOpportunities.Buttons.Refreshing' : 'BrowseOpportunities.Buttons.RefreshFeed') | translate }}</span>
+      </button>
+      <button class="btn btn-ghost" type="button" (click)="clearFilters()" [disabled]="!hasActiveFilters()">
+        <i class="fa-solid fa-sliders"></i>
+        <span>{{ 'BrowseOpportunities.Buttons.ResetFilters' | translate }}</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="filters-card">
+    <div class="search-group">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input
+        type="search"
+        [placeholder]="'BrowseOpportunities.Filters.SearchPlaceholder' | translate"
+        [value]="searchTerm()"
+        (input)="onSearch($any($event.target).value)"
+      />
+      @if(hasActiveFilters()){
+        <button class="chip" type="button" (click)="clearFilters()">{{ 'BrowseOpportunities.Buttons.ClearChip' | translate }}</button>
+      }
+    </div>
+
+    <div class="filters-row">
+      <label>
+        <span>{{ 'BrowseOpportunities.Filters.Status.Label' | translate }}</span>
+        <select [value]="statusFilter()" (change)="onStatusChange($any($event.target).value)">
+          <option value="all">{{ 'BrowseOpportunities.Filters.Status.All' | translate }}</option>
+          @for(status of statusOptions; track status.value){
+            <option [value]="status.value">{{ status.labelKey | translate }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'BrowseOpportunities.Filters.City.Label' | translate }}</span>
+        <select [value]="cityFilter()" (change)="onCityChange($any($event.target).value)">
+          <option value="all">{{ 'BrowseOpportunities.Filters.City.All' | translate }}</option>
+          @for(city of cities(); track city){
+            <option [value]="city">{{ city }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'BrowseOpportunities.Filters.Sort.Label' | translate }}</span>
+        <select [value]="sortOption()" (change)="onSortChange($any($event.target).value)">
+          @for(sort of sortOptions; track sort.value){
+            <option [value]="sort.value">{{ sort.labelKey | translate }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section class="content">
+    @if(actionBanner()){
+      <div class="action-banner" [class.success]="actionBanner()?.type === 'success'" [class.error]="actionBanner()?.type === 'error'">
+        <div>
+          <strong>{{ actionBanner()?.text }}</strong>
+        </div>
+        <button type="button" class="btn btn-ghost" (click)="dismissActionBanner()">
+          <i class="fa-regular fa-circle-xmark"></i>
+          {{ 'BrowseOpportunities.Buttons.Dismiss' | translate }}
+        </button>
+      </div>
+    }
+
+    @if(errorMessage()){
+      <div class="state state-error">
+        <p>{{ errorMessage() }}</p>
+        <button class="btn btn-primary" type="button" (click)="refresh()">{{ 'BrowseOpportunities.Buttons.TryAgain' | translate }}</button>
+      </div>
+    }
+
+    @if(isLoading()){
+      <div class="cards-grid">
+        @for(_ of skeletonPlaceholders; track $index){
+          <article class="opportunity-card skeleton"></article>
+        }
+      </div>
+    }@else if(!filteredOpportunities().length && hasLoadedOnce()){
+      <div class="state state-empty">
+        <i class="fa-regular fa-compass"></i>
+        <h3>{{ 'BrowseOpportunities.States.Empty.Title' | translate }}</h3>
+        <p>{{ 'BrowseOpportunities.States.Empty.Description' | translate }}</p>
+        <button class="btn btn-primary" type="button" (click)="clearFilters()">{{ 'BrowseOpportunities.Buttons.ClearFilters' | translate }}</button>
+      </div>
+    }@else{
+      <div class="cards-grid">
+        @for(opportunity of filteredOpportunities(); track trackByRequestId($index, opportunity)){
+          <article class="opportunity-card">
+            <div class="card-media">
+              @if(getCoverImage(opportunity)){
+                <img [src]="getCoverImage(opportunity)" [alt]="opportunity.title" loading="lazy" />
+              }@else{
+                <div class="image-fallback">
+                  <i class="fa-regular fa-camera"></i>
+                </div>
+              }
+
+              @if(isClosingSoon(opportunity)){
+                <span class="badge badge-alert">{{ 'BrowseOpportunities.Cards.Badges.ClosingSoon' | translate }}</span>
+              }
+
+              <span
+                class="status-chip"
+                [style.background-color]="getStatusStyle(opportunity.status).bg"
+                [style.color]="getStatusStyle(opportunity.status).text"
+              >
+                {{ getStatusLabel(opportunity.status) }}
+              </span>
+            </div>
+
+            <div class="card-body">
+              <div class="card-header">
+                <h3>{{ opportunity.title }}</h3>
+                <p>{{ opportunity.description | slice:0:140 }}{{ opportunity.description.length > 140 ? '…' : '' }}</p>
+              </div>
+
+              <div class="card-meta">
+                <div>
+                  <span class="meta-label">{{ 'BrowseOpportunities.Cards.Meta.BudgetLabel' | translate }}</span>
+                  <strong>{{ formatBudget(opportunity.customerBudget) }}</strong>
+                </div>
+                <div>
+                  <span class="meta-label">{{ 'BrowseOpportunities.Cards.Meta.LocationLabel' | translate }}</span>
+                  <strong>{{ getLocationLabel(opportunity) }}</strong>
+                </div>
+                <div>
+                  <span class="meta-label">{{ 'BrowseOpportunities.Cards.Meta.PreferredDateLabel' | translate }}</span>
+                  <strong>{{ formatDate(opportunity.preferredDate) }}</strong>
+                </div>
+                <div>
+                  <span class="meta-label">{{ 'BrowseOpportunities.Cards.Meta.ExpiresLabel' | translate }}</span>
+                  <strong>{{ timeUntilExpiry(opportunity) }}</strong>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <div class="progress-wrapper">
+                  <div class="progress-label">
+                    {{ getOffersProgressLabel(opportunity) }}
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress" [style.width.%]="getProgress(opportunity)"></div>
+                  </div>
+                </div>
+
+                @if(!hasSubmittedOffer(opportunity)){
+                  <div class="card-actions">
+                    <button class="btn btn-ghost" type="button">
+                      <i class="fa-regular fa-heart"></i>
+                      {{ 'BrowseOpportunities.Cards.Actions.Save' | translate }}
+                    </button>
+                    <button class="btn btn-primary" type="button" (click)="openOfferModal(opportunity)">
+                      <i class="fa-solid fa-circle-plus"></i>
+                      {{ 'BrowseOpportunities.Cards.Actions.AddOffer' | translate }}
+                    </button>
+                  </div>
+                }@else{
+                  <div class="card-actions submitted" *ngIf="getMyOffer(opportunity.serviceRequestId) as myOffer">
+                    <div class="submitted-offer">
+                      <div class="submitted-details">
+                        <div class="submitted-row">
+                          <span class="label">{{ 'BrowseOpportunities.Cards.Submitted.YourOffer' | translate }}</span>
+                          <strong>{{ formatBudget(myOffer.offeredPrice) }}</strong>
+                        </div>
+                        <div class="submitted-row">
+                          <span>{{ formatDateTime(myOffer.createdAt) }}</span>
+                          <span class="offer-status" [class]="getOfferStatusClass(myOffer.status)">
+                            {{ getOfferStatusLabel(myOffer.status) }}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        class="btn btn-ghost withdraw"
+                        type="button"
+                        (click)="withdrawOffer(myOffer)"
+                        [disabled]="!canWithdrawOffer(myOffer) || isWithdrawing(myOffer)"
+                      >
+                        <ng-container *ngIf="isWithdrawing(myOffer); else withdrawText">
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          {{ 'BrowseOpportunities.Cards.Submitted.Withdrawing' | translate }}
+                        </ng-container>
+                        <ng-template #withdrawText>
+                          <i class="fa-solid fa-rotate-left"></i>
+                          {{ 'BrowseOpportunities.Cards.Submitted.Withdraw' | translate }}
+                        </ng-template>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  @if(offerModalOpen()){
+    <div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="direction: ltr;">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">{{ 'BrowseOpportunities.Modal.Eyebrow' | translate }}</p>
+              <h2 class="modal-title">{{ selectedRequest()?.title }}</h2>
+              <small class="text-white">{{ getLocationLabel(selectedRequest()!) }} • {{ formatBudget(selectedRequest()?.customerBudget) }}</small>
+            </div>
+            <button type="button" class="btn-close" aria-label="Close" (click)="closeOfferModal()"></button>
+          </div>
+
+          <form class="modal-body offer-form" [formGroup]="offerForm" (ngSubmit)="submitOffer()">
+            <div class="form-grid">
+              <label>
+                <span>{{ 'BrowseOpportunities.Modal.Fields.PriceLabel' | translate }}</span>
+                <input type="number" formControlName="offeredPrice" min="1" [placeholder]="'BrowseOpportunities.Modal.Fields.PricePlaceholder' | translate" />
+                @if(offerForm.get('offeredPrice')?.invalid && offerForm.get('offeredPrice')?.touched){
+                  <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.PriceError' | translate }}</small>
+                }
+              </label>
+
+              <label>
+                <span>{{ 'BrowseOpportunities.Modal.Fields.DurationLabel' | translate }}</span>
+                <input type="number" formControlName="estimatedDurationMinutes" min="15" [placeholder]="'BrowseOpportunities.Modal.Fields.DurationPlaceholder' | translate" />
+                @if(offerForm.get('estimatedDurationMinutes')?.invalid && offerForm.get('estimatedDurationMinutes')?.touched){
+                  <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.DurationError' | translate }}</small>
+                }
+              </label>
+
+              <label>
+                <span>{{ 'BrowseOpportunities.Modal.Fields.AvailableFromLabel' | translate }}</span>
+                <input type="datetime-local" formControlName="availableFromDate" />
+                @if(offerForm.get('availableFromDate')?.invalid && offerForm.get('availableFromDate')?.touched){
+                  <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.Required' | translate }}</small>
+                }
+              </label>
+
+              <label>
+                <span>{{ 'BrowseOpportunities.Modal.Fields.AvailableToLabel' | translate }}</span>
+                <input type="datetime-local" formControlName="availableToDate" />
+                @if(offerForm.get('availableToDate')?.invalid && offerForm.get('availableToDate')?.touched){
+                  <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.Required' | translate }}</small>
+                }
+              </label>
+            </div>
+
+            <label class="description-field">
+              <span>{{ 'BrowseOpportunities.Modal.Fields.DetailsLabel' | translate }}</span>
+              <textarea
+                formControlName="description"
+                rows="4"
+                [placeholder]="'BrowseOpportunities.Modal.Fields.DetailsPlaceholder' | translate"
+              ></textarea>
+              @if(offerForm.get('description')?.invalid && offerForm.get('description')?.touched){
+                <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.DetailsError' | translate }}</small>
+              }
+            </label>
+
+            @if(offerSubmitMessage()){
+              <div class="alert" [class.alert-success]="!offerSubmitting()" [class.alert-danger]="offerSubmitting()">
+                {{ offerSubmitMessage() }}
+              </div>
+            }
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost" (click)="closeOfferModal()" [disabled]="offerSubmitting()">
+                {{ 'BrowseOpportunities.Modal.Buttons.Cancel' | translate }}
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="offerSubmitting() || offerForm.invalid">
+                <ng-container *ngIf="offerSubmitting(); else submitText">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  {{ 'BrowseOpportunities.Modal.Buttons.Submitting' | translate }}
+                </ng-container>
+                <ng-template #submitText>
+                  <i class="fa-solid fa-paper-plane"></i>
+                  {{ 'BrowseOpportunities.Modal.Buttons.Submit' | translate }}
+                </ng-template>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop fade show"></div>
+  }
+</section>
