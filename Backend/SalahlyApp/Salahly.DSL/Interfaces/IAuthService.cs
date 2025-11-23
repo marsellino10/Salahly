@@ -14,6 +14,7 @@ namespace Salahly.DSL.Interfaces
     {
         Task<bool> RegisterAsync(RegisterDto dto, string role);
         Task<Tuple<ApplicationUser?, string?>> LoginAsync(LoginDto dto);
+        Task<Tuple<ApplicationUser?, string?>> RefreshAccessTokenAsync(string refreshToken);
     }
 
 }

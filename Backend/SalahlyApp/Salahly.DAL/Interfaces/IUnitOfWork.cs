@@ -15,18 +15,17 @@ namespace Salahly.DAL.Interfaces
         IGenericRepository<Booking> Bookings { get; }
         IGenericRepository<Craft> Crafts { get; }
         IGenericRepository<Craftsman> Craftsmen { get; }
+        ICraftsmanOfferRepository CraftsmanOffers { get; }
         IGenericRepository<CraftsmanServiceArea> CraftsmanServiceAreas { get; }
         IGenericRepository<Customer> Customers { get; }
-
-        IPaymentRepository Payments { get; }
- 
-        IGenericRepository<PortfolioItem> PortfolioItems { get; }
-        //IGenericRepository<Review> Reviews { get; }
-        IReviewRepository Reviews { get; }
         INotificationRepository Notifications { get; }
+        IPaymentRepository Payments { get; }
+        IGenericRepository<PortfolioItem> PortfolioItems { get; }
+        IReviewRepository Reviews { get; }
+
         IGenericRepository<Area> Areas { get; }
         IServiceRequestRepository ServiceRequests { get; }
-        ICraftsmanOfferRepository CraftsmanOffers { get; }
+        IRefreshTokenRepository RefreshTokens { get; }
         Task<int> SaveAsync(CancellationToken cancellationToken = default);
     }
 

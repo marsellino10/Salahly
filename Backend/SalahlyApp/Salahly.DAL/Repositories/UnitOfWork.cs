@@ -31,6 +31,7 @@ namespace Salahly.DAL.Repositories
 
         public IGenericRepository<Area> Areas { get; }
         public IServiceRequestRepository ServiceRequests { get; }
+        public IRefreshTokenRepository RefreshTokens { get; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -52,6 +53,7 @@ namespace Salahly.DAL.Repositories
 
             Areas = new GenericRepository<Area>(_context);
             ServiceRequests = new ServiceRequestRepository(_context);
+            RefreshTokens = new RefreshTokenRepository(_context);
         }
 
         public Task<int> SaveAsync(CancellationToken cancellationToken = default) => _context.SaveChangesAsync(cancellationToken);

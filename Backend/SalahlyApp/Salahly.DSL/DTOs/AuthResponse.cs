@@ -13,4 +13,8 @@ namespace Salahly.DSL.DTOs
         public string UserName { get; set; } = null!;
         public int UserId { get; set; }
     }
+    public record RefreshTokenRecord
+    {
+        public string refreshToken { get; set; }
+    }
 }

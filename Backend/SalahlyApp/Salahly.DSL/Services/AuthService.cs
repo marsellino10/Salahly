@@ -10,6 +10,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.Interfaces;
+using Salahly.DAL.Interfaces;
+using Salahly.DAL.Entities;
 
 namespace Salahly.DSL.Services
 {
@@ -18,15 +20,18 @@ namespace Salahly.DSL.Services
         private readonly UserManager<ApplicationUser> _userManager;
         //private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtSettings _jwtSettings;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             //SignInManager<ApplicationUser> signInManager,
-            IOptions<JwtSettings> jwtSettings)
+            IOptions<JwtSettings> jwtSettings,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             //_signInManager = signInManager;
             _jwtSettings = jwtSettings.Value;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> RegisterAsync(RegisterDto dto, string role)
@@ -65,7 +70,15 @@ namespace Salahly.DSL.Services
             var roles = await _userManager.GetRolesAsync(user);
             var token = GenerateJwtToken(user, roles);
 
-            return new Tuple<ApplicationUser?,string?>(user,token);
+            // create refresh token and persist
+            var refreshToken = CreateRefreshToken(user.Id);
+            await _unitOfWork.RefreshTokens.AddAsync(refreshToken);
+            await _unitOfWork.SaveAsync();
+
+            // return token and refresh token in a tuple via a serialized string (format: access|refresh)
+            var combined = token + "|" + refreshToken.Token;
+
+            return new Tuple<ApplicationUser?,string?>(user,combined);
         }
 
         private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
@@ -95,6 +108,47 @@ namespace Salahly.DSL.Services
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private RefreshToken CreateRefreshToken(int userId)
+        {
+            var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + Guid.NewGuid().ToString("N");
+            return new RefreshToken
+            {
+                Token = token,
+                UserId = userId,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddDays(30),
+                Revoked = false
+            };
+        }
+
+        public async Task<Tuple<ApplicationUser?, string?>> RefreshAccessTokenAsync(string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+                return null;
+
+            var stored = await _unitOfWork.RefreshTokens.GetByTokenAsync(refreshToken);
+            if (stored == null || stored.Revoked || stored.ExpiresAt <= DateTime.UtcNow)
+                return null;
+
+            var user = stored.User;
+            if (user == null) user = await _userManager.FindByIdAsync(stored.UserId.ToString());
+            if (user == null) return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var newAccess = GenerateJwtToken(user, roles);
+
+            // Optionally rotate refresh token
+            stored.Revoked = true;
+            await _unitOfWork.RefreshTokens.RevokeAsync(stored);
+
+            var newRefresh = CreateRefreshToken(user.Id);
+            await _unitOfWork.RefreshTokens.AddAsync(newRefresh);
+            await _unitOfWork.SaveAsync();
+
+            var combined = newAccess + "|" + newRefresh.Token;
+            return new Tuple<ApplicationUser?, string?>(user, combined);
         }
     }
 }

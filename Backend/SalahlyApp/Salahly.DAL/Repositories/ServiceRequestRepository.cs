@@ -18,6 +18,7 @@ namespace Salahly.DAL.Repositories
         {
             return await _context.ServiceRequests
                 .Include(r => r.AreaData)
+                .Include(r => r.CraftsmanOffers)
                 .Where(r => r.CustomerId == customerId)
                 .AsNoTracking()
                 .ToListAsync();

@@ -42,7 +42,30 @@ namespace SalahlyProject.Controllers
             var UserTuple = await _authService.LoginAsync(dto);
             if (UserTuple is null || UserTuple.Item1 == null)
                 return Unauthorized(new ApiResponse<string>(401, "Invalid credentials.", null));
-            return Ok(new ApiResponse<object>(200, "Login successfully.", new { IsProfileCompleted =  UserTuple.Item1.IsProfileCompleted,UserType = UserTuple.Item1.UserType.ToString(),Token = UserTuple.Item2 }));
+
+            // split combined token string
+            var parts = (UserTuple.Item2 ?? "").Split('|');
+            var access = parts.Length > 0 ? parts[0] : null;
+            var refresh = parts.Length > 1 ? parts[1] : null;
+
+            return Ok(new ApiResponse<object>(200, "Login successfully.", new { IsProfileCompleted =  UserTuple.Item1.IsProfileCompleted,UserType = UserTuple.Item1.UserType.ToString(), Token = access, RefreshToken = refresh }));
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRecord token)
+        {
+            if (string.IsNullOrWhiteSpace(token.refreshToken))
+                return BadRequest(new ApiResponse<string>(400, "Refresh token is required", null));
+
+            var tuple = await _authService.RefreshAccessTokenAsync(token.refreshToken);
+            if (tuple is null || tuple.Item1 == null)
+                return Unauthorized(new ApiResponse<string>(401, "Invalid or expired refresh token", null));
+
+            var parts = (tuple.Item2 ?? "").Split('|');
+            var access = parts.Length > 0 ? parts[0] : null;
+            var refresh = parts.Length > 1 ? parts[1] : null;
+
+            return Ok(new ApiResponse<object>(200, "Token refreshed", new { Token = access, RefreshToken = refresh }));
         }
     }
 
