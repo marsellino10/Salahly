@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -15,8 +14,10 @@ using Salahly.DAL.Repositories;
 using Salahly.DAL.Services;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.Interfaces;
+using Salahly.DSL.Interfaces.Orchestrator;
 using Salahly.DSL.Interfaces.Payments;
 using Salahly.DSL.Services;
+using Salahly.DSL.Services.Orchestrator;
 using Salahly.DSL.Services.Payments;
 using SalahlyProject.Api.Hubs;
 using SalahlyProject.Options;
@@ -25,6 +26,7 @@ using SalahlyProject.Response.Error;
 using SalahlyProject.Services;
 using SalahlyProject.Services.Chat;
 using SalahlyProject.Services.Interfaces;
+using System.Text;
 
 namespace SalahlyProject
 {
@@ -154,13 +156,14 @@ namespace SalahlyProject
             builder.Services.AddScoped<IOfferService, OfferService>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
 
-            // ✅ Payment Services (NEW)
+            // ✅ Payment Services
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IPaymentStrategyFactory, PaymentStrategyFactory>();
             builder.Services.AddScoped<PaymobPaymentStrategy>();
             builder.Services.AddScoped<PaymobWalletPaymentStrategy>();
             builder.Services.AddScoped<CashPaymentStrategy>();
+            builder.Services.AddScoped<IOfferAcceptanceOrchestrator, OfferAcceptanceOrchestrator>();
 
             // ✅ HttpClient for Paymob API
             builder.Services.AddHttpClient<PaymobPaymentStrategy>(client =>

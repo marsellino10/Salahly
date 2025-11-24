@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
-using Salahly.DAL.Repositories;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
 using System.Text.Json;
@@ -185,6 +184,12 @@ namespace Salahly.DSL.Services
                 );
             }
         }
+        
+        public async Task ChangeStatusAsync(int id, ServiceRequestStatus status)
+        {
+             await _unitOfWork.ServiceRequests.ChangeStatusAsync(id, status);
+        }
+
 
         private ServiceRequestDto MapToDto(ServiceRequest sr)
         {

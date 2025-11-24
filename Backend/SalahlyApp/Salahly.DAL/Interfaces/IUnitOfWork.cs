@@ -1,4 +1,5 @@
-﻿using Salahly.DAL.Entities;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using Salahly.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,11 @@ namespace Salahly.DAL.Interfaces
         IServiceRequestRepository ServiceRequests { get; }
         IRefreshTokenRepository RefreshTokens { get; }
         Task<int> SaveAsync(CancellationToken cancellationToken = default);
+
+        Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken = default);
+        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+        Task CommitTransactionAsync(CancellationToken cancellationToken = default);
+        Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
     }
 
 }

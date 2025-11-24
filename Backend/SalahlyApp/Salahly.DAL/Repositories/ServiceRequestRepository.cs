@@ -57,7 +57,6 @@ namespace Salahly.DAL.Repositories
                 if (!hasAreas)
                     return new List<ServiceRequest>();
 
-                // Final query also stays IQueryable until ToListAsync()
                 var query = _context.ServiceRequests
                     .AsNoTracking()
                     .Include(sr => sr.Customer).ThenInclude(c => c.User)
@@ -66,7 +65,7 @@ namespace Salahly.DAL.Repositories
                     .Where(sr =>
                         sr.CraftId == craftsman.CraftId &&
                         (sr.Status == ServiceRequestStatus.Open ||
-                         sr.Status == ServiceRequestStatus.HasOffers) &&
+                         sr.Status == ServiceRequestStatus.Open) &&
                         sr.ExpiresAt > DateTime.UtcNow &&
                         sr.OffersCount < sr.MaxOffers &&
                         craftsmanAreasQuery.Any(area =>
@@ -163,6 +162,14 @@ namespace Salahly.DAL.Repositories
             {
                 return Task.FromResult<ServiceRequest?>(null);
             }
+        }
+
+        public async Task ChangeStatusAsync(int requestId, ServiceRequestStatus newStatus)
+        {
+            await _context.ServiceRequests
+                .Where(r => r.ServiceRequestId == requestId)
+                .ExecuteUpdateAsync(r => r.SetProperty(sr => sr.Status, newStatus));
+            await _context.SaveChangesAsync();
         }
     }
 }

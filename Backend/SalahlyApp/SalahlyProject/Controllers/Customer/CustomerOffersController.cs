@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Salahly.DSL.DTOs.OffersDtos;
 using Salahly.DSL.Interfaces;
+using Salahly.DSL.Interfaces.Orchestrator;
 using System.Security.Claims;
 
 namespace Salahly.API.Controllers.Customer
@@ -12,11 +13,13 @@ namespace Salahly.API.Controllers.Customer
     public class CustomerOffersController : ControllerBase
     {
         private readonly IOfferService _offerService;
+        private readonly IOfferAcceptanceOrchestrator _offerAcceptanceOrchestrator;
         private readonly ILogger<CustomerOffersController> _logger;
 
-        public CustomerOffersController(IOfferService offerService, ILogger<CustomerOffersController> logger)
+        public CustomerOffersController(IOfferService offerService, IOfferAcceptanceOrchestrator offerAcceptanceOrchestrator, ILogger<CustomerOffersController> logger)
         {
             _offerService = offerService;
+            _offerAcceptanceOrchestrator = offerAcceptanceOrchestrator;
             _logger = logger;
         }
 
@@ -45,7 +48,7 @@ namespace Salahly.API.Controllers.Customer
                 // Get customer ID from JWT token
                 var customerId = GetCustomerIdFromToken();
 
-                var result = await _offerService.AcceptOfferAsync(customerId, offerId);
+                var result = await _offerAcceptanceOrchestrator.ExecuteAsync(customerId, offerId);
 
                 if (!result.Success)
                     return BadRequest(result);
