@@ -46,6 +46,11 @@ namespace Salahly.DSL.Services
             decimal amount,
             DateTime bookingDate)
         {
+            var existingBooking = await _unitOfWork.Bookings.GetByOfferIdAsync(acceptedOfferId);
+            if (existingBooking != null) { 
+                return existingBooking;
+            }
+
             var booking = new Booking
             {
                 CustomerId = customerId,

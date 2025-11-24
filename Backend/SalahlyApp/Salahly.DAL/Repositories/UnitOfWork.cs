@@ -18,7 +18,7 @@ namespace Salahly.DAL.Repositories
         private IDbContextTransaction? _currentTransaction;
         public IGenericRepository<Admin> Admins { get; }
         public IGenericRepository<ApplicationUser> ApplicationUsers { get; }
-        public IGenericRepository<Booking> Bookings { get; }
+        public IBookingRepository Bookings { get; }
         public IGenericRepository<Craft> Crafts { get; }
         public IGenericRepository<Craftsman> Craftsmen { get; }
         public ICraftsmanOfferRepository CraftsmanOffers { get; }
@@ -41,7 +41,7 @@ namespace Salahly.DAL.Repositories
 
             Admins = new GenericRepository<Admin>(_context);
             ApplicationUsers = new GenericRepository<ApplicationUser>(_context);
-            Bookings = new GenericRepository<Booking>(_context);
+            Bookings = new BookingRepository(_context);
             Crafts = new GenericRepository<Craft>(_context);
             Craftsmen = new GenericRepository<Craftsman>(_context);
             CraftsmanOffers = new CraftsmanOfferRepository(_context);

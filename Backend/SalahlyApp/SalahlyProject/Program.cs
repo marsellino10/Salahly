@@ -163,7 +163,8 @@ namespace SalahlyProject
             builder.Services.AddScoped<PaymobPaymentStrategy>();
             builder.Services.AddScoped<PaymobWalletPaymentStrategy>();
             builder.Services.AddScoped<CashPaymentStrategy>();
-            builder.Services.AddScoped<IOfferAcceptanceOrchestrator, OfferAcceptanceOrchestrator>();
+            builder.Services.AddScoped<IAcceptOrchestrator, OfferAcceptanceOrchestrator>();
+            builder.Services.AddScoped<IFailedOrchestrator, PaymentFailureOrchestrator>();
 
             // ✅ HttpClient for Paymob API
             builder.Services.AddHttpClient<PaymobPaymentStrategy>(client =>

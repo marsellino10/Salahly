@@ -12,7 +12,7 @@ namespace Salahly.DSL.Interfaces.Orchestrator
     /// Orchestrator for handling the complete offer acceptance workflow
     /// Manages transaction and ensures data consistency
     /// </summary>
-    public interface IOfferAcceptanceOrchestrator
+    public interface IAcceptOrchestrator
     {
         /// <summary>
         /// Execute complete workflow: Accept offer + Create booking + Initiate payment

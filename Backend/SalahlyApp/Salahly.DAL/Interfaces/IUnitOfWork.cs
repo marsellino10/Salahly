@@ -13,7 +13,7 @@ namespace Salahly.DAL.Interfaces
     {
         IGenericRepository<Admin> Admins { get; }
         IGenericRepository<ApplicationUser> ApplicationUsers { get; }
-        IGenericRepository<Booking> Bookings { get; }
+        IBookingRepository Bookings { get; }
         IGenericRepository<Craft> Crafts { get; }
         IGenericRepository<Craftsman> Craftsmen { get; }
         ICraftsmanOfferRepository CraftsmanOffers { get; }

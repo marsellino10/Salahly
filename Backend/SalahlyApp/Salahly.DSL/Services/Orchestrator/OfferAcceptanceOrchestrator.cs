@@ -20,7 +20,7 @@ namespace Salahly.DSL.Services.Orchestrator
     /// Orchestrator for managing the complete offer acceptance workflow
     /// Handles transaction, rollback, and ensures ACID properties
     /// </summary>
-    public class OfferAcceptanceOrchestrator : IOfferAcceptanceOrchestrator
+    public class OfferAcceptanceOrchestrator : IAcceptOrchestrator
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOfferService _offerService;

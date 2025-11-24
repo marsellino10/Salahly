@@ -5,7 +5,9 @@ using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs.PaymentDtos;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
+using Salahly.DSL.Interfaces.Orchestrator;
 using Salahly.DSL.Interfaces.Payments;
+using Salahly.DSL.Services.Orchestrator;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,6 +21,7 @@ namespace Salahly.DSL.Services
         private readonly ILogger<PaymentService> _logger;
         private readonly IConfiguration _configuration;
         private readonly IServiceRequestService _serviceRequestService;
+        private readonly IFailedOrchestrator _paymentFailureOrchestrator;
 
         public PaymentService(
             IUnitOfWork unitOfWork,
@@ -26,7 +29,8 @@ namespace Salahly.DSL.Services
             IBookingService bookingService,
             ILogger<PaymentService> logger,
             IConfiguration configuration,
-            IServiceRequestService serviceRequestService)
+            IServiceRequestService serviceRequestService,
+            IFailedOrchestrator FailedOrchestrator)
         {
             _unitOfWork = unitOfWork;
             _paymentStrategyFactory = paymentStrategyFactory;
@@ -34,6 +38,7 @@ namespace Salahly.DSL.Services
             _logger = logger;
             _configuration = configuration;
             _serviceRequestService = serviceRequestService;
+            _paymentFailureOrchestrator = FailedOrchestrator;
         }
 
         // ✅ =========================================================
@@ -83,11 +88,11 @@ namespace Salahly.DSL.Services
             {
                 payment.TransactionId = result.TransactionId;
                 await _unitOfWork.SaveAsync(cancellationToken);
-                _logger.LogInformation($"✅ Payment initialized: {result.TransactionId}");
+                _logger.LogInformation($"Payment initialized: {result.TransactionId}");
             }
             else
             {
-                _logger.LogError($"❌ Payment initialization failed: {result.ErrorMessage}");
+                _logger.LogError($"Payment initialization failed: {result.ErrorMessage}");
             }
 
             return result;
@@ -103,7 +108,7 @@ namespace Salahly.DSL.Services
             {
                 await _unitOfWork.Payments.DeleteAsync(payment);
                 await _unitOfWork.SaveAsync();
-                _logger.LogInformation($"🔄 Payment {paymentId} deleted (compensation)");
+                _logger.LogInformation($"Payment {paymentId} deleted (compensation)");
             }
         }
 
@@ -195,12 +200,21 @@ namespace Salahly.DSL.Services
                 else
                 {
                     // Payment failed
-                    payment.Status = PaymentStatus.Failed;
-                    payment.FailureReason = webhookData.ErrorOccurred ? "Gateway error" : "Payment declined";
+                    string failureReason = webhookData.ErrorOccurred ? "Gateway error" : "Payment declined";
 
-                    await _unitOfWork.SaveAsync(cancellationToken);
+                    var failureResult = await _paymentFailureOrchestrator.ExecuteAsync(
+                        payment.BookingId,
+                        payment.Id,
+                        failureReason,
+                        cancellationToken);
 
-                    _logger.LogWarning($"Payment {payment.Id} failed: {payment.FailureReason}");
+                    if (!failureResult.Success)
+                    {
+                        _logger.LogError($"Payment failure cleanup failed: {failureResult.ErrorMessage}");
+                        return ServiceResponse<bool>.FailureResponse(failureResult.ErrorMessage);
+                    }
+
+                    _logger.LogInformation($"Payment failure processed for Booking {payment.BookingId}");
                     return ServiceResponse<bool>.SuccessResponse(true, "Payment failure recorded");
                 }
             }

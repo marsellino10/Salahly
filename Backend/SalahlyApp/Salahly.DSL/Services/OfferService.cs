@@ -380,7 +380,7 @@ namespace Salahly.DSL.Services
 
             _logger.LogInformation($"Offer {offer.CraftsmanOfferId} status set to Accepted");
 
-            // ⚠️ No SaveAsync here - orchestrator manages the transaction
+            //No SaveAsync here - orchestrator manages the transaction
         }
 
         /// <summary>
@@ -409,7 +409,7 @@ namespace Salahly.DSL.Services
             _logger.LogInformation(
                 $"Set {otherOffers.Count} offers to Rejected for service request {serviceRequestId}");
 
-            // ⚠️ No SaveAsync here - orchestrator manages the transaction
+            // No SaveAsync here - orchestrator manages the transaction
         }
 
         /// <summary>
@@ -418,7 +418,7 @@ namespace Salahly.DSL.Services
         /// </summary>
         public async Task RevertOfferReservationAsync(int offerId)
         {
-            var offer = await _unitOfWork.CraftsmanOffers.GetByIdAsync(offerId);
+            var offer = await _unitOfWork.CraftsmanOffers.GetByIdWithServiceRequestAsync(offerId);
 
             if (offer != null && offer.Status == OfferStatus.Accepted)
             {
@@ -437,7 +437,7 @@ namespace Salahly.DSL.Services
                     relatedOffer.RejectionReason = null;
                 }
 
-                await _unitOfWork.SaveAsync();
+                //await _unitOfWork.SaveAsync();
 
                 _logger.LogWarning(
                     $"🔄 Reverted offer {offerId} to Pending (compensation). " +

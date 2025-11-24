@@ -2,6 +2,7 @@
 using Salahly.DAL.Data;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
+using System;
 
 namespace Salahly.DAL.Repositories
 {
@@ -79,6 +80,13 @@ namespace Salahly.DAL.Repositories
             {
                 return null;
             }
+        }
+
+        public async Task<CraftsmanOffer?> GetByIdWithServiceRequestAsync(int id)
+        {
+            return await _context.CraftsmanOffers
+                .Include(o => o.ServiceRequest)
+                .FirstOrDefaultAsync(o => o.CraftsmanOfferId == id);
         }
     }
 }

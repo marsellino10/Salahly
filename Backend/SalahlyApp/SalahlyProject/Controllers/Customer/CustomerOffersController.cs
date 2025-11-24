@@ -13,10 +13,10 @@ namespace Salahly.API.Controllers.Customer
     public class CustomerOffersController : ControllerBase
     {
         private readonly IOfferService _offerService;
-        private readonly IOfferAcceptanceOrchestrator _offerAcceptanceOrchestrator;
+        private readonly IAcceptOrchestrator _offerAcceptanceOrchestrator;
         private readonly ILogger<CustomerOffersController> _logger;
 
-        public CustomerOffersController(IOfferService offerService, IOfferAcceptanceOrchestrator offerAcceptanceOrchestrator, ILogger<CustomerOffersController> logger)
+        public CustomerOffersController(IOfferService offerService, IAcceptOrchestrator offerAcceptanceOrchestrator, ILogger<CustomerOffersController> logger)
         {
             _offerService = offerService;
             _offerAcceptanceOrchestrator = offerAcceptanceOrchestrator;
