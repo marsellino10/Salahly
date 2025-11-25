@@ -47,8 +47,8 @@ export class CustomerOffersService {
   }
 
   acceptOffer(offerId: number): Observable<ServiceResponse<boolean>> {
-    const url = `${this.baseUrl}/offers/${offerId}/accept`;
-    return this._httpClient.patch<ServiceResponse<boolean>>(url, {});
+    const url = `${this.baseUrl}/accept/${offerId}`;
+    return this._httpClient.post<ServiceResponse<boolean>>(url, {});
   }
 
   rejectOffer(

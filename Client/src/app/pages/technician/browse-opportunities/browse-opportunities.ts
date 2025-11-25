@@ -10,13 +10,14 @@ import {
 import { CraftsmanServiceRequestService, ServiceResponse } from '../../../core/services/craftsman-service-request.service';
 import { ServiceRequestDto, ServiceRequestStatus } from '../../../core/services/services-requests.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 
 type OpportunitySort = 'latest' | 'budget' | 'closingSoon';
 
 @Component({
   selector: 'app-browse-opportunities',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, CarouselModule],
   templateUrl: './browse-opportunities.html',
   styleUrl: './browse-opportunities.css',
 })
@@ -281,6 +282,10 @@ export class BrowseOpportunities implements OnInit {
     return request.serviceRequestId;
   }
 
+  trackImage(_: number, image: string): string {
+    return image;
+  }
+
   formatDate(value: string): string {
     return new Date(value).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
   }
@@ -299,8 +304,8 @@ export class BrowseOpportunities implements OnInit {
     return Math.min(100, Math.round((request.offersCount / request.maxOffers) * 100));
   }
 
-  getCoverImage(request: ServiceRequestDto): string | null {
-    return request.images && request.images.length ? request.images[0] : null;
+  getRequestImages(request: ServiceRequestDto): string[] {
+    return (request.images ?? []).filter((image): image is string => Boolean(image && image.trim()));
   }
 
   getLocationLabel(request: ServiceRequestDto): string {
@@ -377,6 +382,19 @@ export class BrowseOpportunities implements OnInit {
     Completed: { bg: 'var(--chip-green)', text: 'var(--chip-green-text)' },
     Cancelled: { bg: 'var(--chip-red)', text: 'var(--chip-red-text)' },
     Expired: { bg: 'var(--chip-gray)', text: 'var(--chip-gray-text)' },
+  };
+
+  readonly cardCarouselOptions: OwlOptions = {
+    items: 1,
+    loop: true,
+    dots: true,
+    nav: true,
+    navText: ['‹', '›'],
+    autoplay: true,
+    autoplayHoverPause: true,
+    responsive: {
+      0: { items: 1 },
+    },
   };
 
   private sortItems(a: ServiceRequestDto, b: ServiceRequestDto, sort: OpportunitySort): number {

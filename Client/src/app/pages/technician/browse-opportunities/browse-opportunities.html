@@ -127,8 +127,14 @@
         @for(opportunity of filteredOpportunities(); track trackByRequestId($index, opportunity)){
           <article class="opportunity-card">
             <div class="card-media">
-              @if(getCoverImage(opportunity)){
-                <img [src]="getCoverImage(opportunity)" [alt]="opportunity.title" loading="lazy" />
+              @if(getRequestImages(opportunity).length){
+                <owl-carousel-o [options]="cardCarouselOptions">
+                  @for(image of getRequestImages(opportunity); track trackImage($index, image)){
+                    <ng-template carouselSlide>
+                      <img [src]="image" [alt]="opportunity.title" loading="lazy" />
+                    </ng-template>
+                  }
+                </owl-carousel-o>
               }@else{
                 <div class="image-fallback">
                   <i class="fa-regular fa-camera"></i>

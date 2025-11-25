@@ -41,7 +41,55 @@
 .login-form {
   background: #fff;
 }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
 
+.field-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #36394a;
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 640px) {
+  .col-span-2 {
+    grid-column: span 1;
+  }
+}
+
+.input-shell {
+  border: 1px solid #e1e4f0;
+  border-radius: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-shell textarea,
+.input-shell input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  font-size: 0.95rem;
+}
+
+.input-shell i {
+  color: #6c63ff;
+}
+.input-shell.invalid {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 0.15rem rgba(255, 107, 107, 0.1);
+}
 .icon-circle {
   width: 3.25rem;
   height: 3.25rem;

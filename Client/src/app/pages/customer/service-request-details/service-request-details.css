@@ -33,9 +33,12 @@
   .details-page {
     min-height: 100vh;
     padding: clamp(1.5rem, 2vw, 2.5rem);
+    /*
+    radial-gradient(circle at 80% 0, rgba(37, 99, 235, 0.25), transparent 55%),
+      var(--page-bg); 
+     */
     background: radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.25), transparent 50%),
-      radial-gradient(circle at 80% 0, rgba(37, 99, 235, 0.25), transparent 55%),
-      var(--page-bg);
+      radial-gradient(circle at 80% 0, rgba(37, 99, 235, 0.25), transparent 55%), var(--page-bg);
     color: #0f172a;
     display: flex;
     flex-direction: column;
@@ -193,24 +196,70 @@
     border: 1px solid var(--border-color);
     min-height: 240px;
     max-height: 400px;
-    background-size: cover;
-    background-position: center;
     position: relative;
     overflow: hidden;
     background-color: #f8fafc;
   }
 
-  .media-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.6));
+  .media-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
-  .media-card.empty {
-    display: grid;
-    place-items: center;
-    background: rgba(15, 23, 42, 0.04);
+  .media-card owl-carousel-o,
+  .media-card .owl-carousel,
+  .media-card .owl-stage-outer,
+  .media-card .owl-stage,
+  .media-card .owl-item {
+    height: 100%;
+  }
+
+  .media-card .owl-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .media-card .owl-nav button {
+    background: rgba(15, 23, 42, 0.65) !important;
+    color: #fff !important;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    line-height: 1;
+    border: none;
+    pointer-events: all;
+  }
+
+  .media-card .owl-dots {
+    position: absolute;
+    bottom: 0.65rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.35rem;
+    z-index: 2;
+  }
+
+  .media-card .owl-dot span {
+    width: 8px;
+    height: 8px;
+    display: block;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.3);
+  }
+
+  .media-card .owl-dot.active span {
+    background: var(--accent);
   }
 
   .media-fallback {
@@ -509,7 +558,12 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, transparent 25%, rgba(255, 255, 255, 0.15) 45%, transparent 65%);
+    background: linear-gradient(
+      120deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.15) 45%,
+      transparent 65%
+    );
     animation: shimmer 1.6s infinite;
   }
 

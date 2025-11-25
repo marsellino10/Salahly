@@ -9,6 +9,7 @@ import {
   ServicesRequestsService,
 } from '../../../core/services/services-requests.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 
 type TimelineStep = {
   key: ServiceRequestStatus | 'HasOffers';
@@ -18,7 +19,7 @@ type TimelineStep = {
 @Component({
   selector: 'app-service-request-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, CarouselModule],
   templateUrl: './service-request-details.html',
   styleUrl: './service-request-details.css',
 })
@@ -33,6 +34,10 @@ export class ServiceRequestDetails implements OnInit {
   readonly OfferStatusEnum = OfferStatus;
 
   readonly request = signal<ServiceRequestDto | null>(null);
+  readonly requestImages = computed(() => {
+    const images = this.request()?.images ?? [];
+    return images.filter((image): image is string => Boolean(image && image.trim()));
+  });
   readonly offers = signal<OfferDto[]>([]);
   readonly isRequestLoading = signal(true);
   readonly isOffersLoading = signal(true);
@@ -186,7 +191,8 @@ export class ServiceRequestDetails implements OnInit {
     this.actionBanner.set(null);
 
     this._offersService.acceptOffer(offer.craftsmanOfferId).subscribe({
-      next: (response) => {
+      next: (response: any) => {
+        window.open(response.data.paymentLink, '_blank');
         this.actionBanner.set(response.message ?? this._translate.instant('ServiceRequestDetails.Messages.AcceptSuccess'));
         this.resetOfferActionState();
       },
@@ -309,14 +315,17 @@ export class ServiceRequestDetails implements OnInit {
     }
   }
 
-  getCoverImage(): string | null {
-    const current = this.request();
-    console.log(current);
-    if (!current?.images?.length) {
-      return null;
-    }
-    return current.images[0] ?? null;
-  }
+  readonly heroCarouselOptions: OwlOptions = {
+    items: 1,
+    loop: true,
+    dots: false,
+    nav: false,
+    autoplay: true,
+    autoplayHoverPause: true,
+    responsive: {
+      0: { items: 1 },
+    },
+  };
 
   private resetOfferActionState(): void {
     this.offerActionLoadingId.set(null);
@@ -355,4 +364,8 @@ export class ServiceRequestDetails implements OnInit {
     Cancelled: 'ServiceRequestDetails.StatusLabels.Cancelled',
     Expired: 'ServiceRequestDetails.StatusLabels.Expired',
   };
+
+  trackImage(_: number, image: string): string {
+    return image;
+  }
 }

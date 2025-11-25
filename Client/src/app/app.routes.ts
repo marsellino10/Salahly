@@ -30,6 +30,10 @@ export const routes: Routes = [
         path: 'browse-opportunities',
         loadComponent: () => import('./pages/technician/browse-opportunities/browse-opportunities').then(c => c.BrowseOpportunities),
       },
+      {
+        path: 'history',
+        loadComponent: () => import('./pages/technician/history/history').then(c => c.History),
+      },
     ],
   },
   {
