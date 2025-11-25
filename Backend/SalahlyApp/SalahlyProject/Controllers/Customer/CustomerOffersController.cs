@@ -51,7 +51,12 @@ namespace Salahly.API.Controllers.Customer
                 var result = await _offerAcceptanceOrchestrator.ExecuteAsync(customerId, offerId);
 
                 if (!result.Success)
-                    return BadRequest(result);
+                    return BadRequest(new
+                    {
+                        success = false,
+                        error = result.ErrorMessage,
+                        step = result.FailedStep
+                    });
 
                 // Return payment info to frontend
                 return Ok(result);

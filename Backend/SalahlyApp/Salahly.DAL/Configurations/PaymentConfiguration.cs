@@ -44,11 +44,7 @@ namespace Salahly.DAL.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Indexes
-            builder.HasIndex(p => p.BookingId)
-                .IsUnique();
-
-            builder.HasIndex(p => p.BookingId)
-                .IsUnique();
+            builder.HasIndex(p => p.BookingId);
 
             builder.HasIndex(p => p.TransactionId)
                 .IsUnique()

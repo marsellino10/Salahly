@@ -14,5 +14,7 @@ namespace Salahly.DAL.Interfaces
 
         // General methods
         Task<CraftsmanOffer> GetByIdWithServiceRequestAsync(int id);
+
+        Task<IQueryable<CraftsmanOffer>> GetOffersByServiceRequestIdAsync(int serviceRequestId);
     }
 }

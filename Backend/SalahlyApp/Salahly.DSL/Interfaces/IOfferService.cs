@@ -73,7 +73,7 @@ namespace Salahly.DSL.Interfaces
         /// <summary>
         /// Reserve offer (update status to Accepted)
         /// </summary>
-        Task ReserveOfferAsync(OfferDto offer);
+        Task ReserveOfferAsync(int offerId);
 
         /// <summary>
         /// Reject other offers for the same service request

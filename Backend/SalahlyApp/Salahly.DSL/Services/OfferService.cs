@@ -374,11 +374,12 @@ namespace Salahly.DSL.Services
         /// Reserve offer (update status to Accepted) - used by orchestrator
         /// Does NOT save to database - orchestrator handles transaction
         /// </summary>
-        public async Task ReserveOfferAsync(OfferDto offer)
+        public async Task ReserveOfferAsync(int offerId)
         {
+            var offer = await _unitOfWork.CraftsmanOffers.GetByIdWithServiceRequestAsync(offerId);
             offer.Status = OfferStatus.Accepted;
 
-            _logger.LogInformation($"Offer {offer.CraftsmanOfferId} status set to Accepted");
+            _logger.LogInformation($"Offer ya a7aaa {offer.CraftsmanOfferId} status set to Accepted");
 
             //No SaveAsync here - orchestrator manages the transaction
         }
@@ -393,7 +394,7 @@ namespace Salahly.DSL.Services
             int customerId)
         {
             var allOffers = await _unitOfWork.CraftsmanOffers
-                .GetOffersForCustomerRequestAsync(serviceRequestId, customerId);
+                .GetOffersByServiceRequestIdAsync(serviceRequestId);
 
             var otherOffers = allOffers
                 .Where(o => o.CraftsmanOfferId != acceptedOfferId)

@@ -9,6 +9,7 @@ namespace Salahly.DSL.DTOs.PaymentDtos
     public class PaymentInitializationRequest
     {
         public int BookingId { get; set; }
+        public int PaymentId { get; set; }
         public int CustomerId { get; set; }
         public decimal Amount { get; set; }
         public string CustomerEmail { get; set; }

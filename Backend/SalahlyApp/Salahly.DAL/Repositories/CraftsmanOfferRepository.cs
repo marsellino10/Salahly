@@ -88,5 +88,11 @@ namespace Salahly.DAL.Repositories
                 .Include(o => o.ServiceRequest)
                 .FirstOrDefaultAsync(o => o.CraftsmanOfferId == id);
         }
+
+        public async Task<IQueryable<CraftsmanOffer>> GetOffersByServiceRequestIdAsync(int serviceRequestId)
+        {
+            return _context.CraftsmanOffers
+                .Where(o => o.ServiceRequestId == serviceRequestId);
+        }
     }
 }
