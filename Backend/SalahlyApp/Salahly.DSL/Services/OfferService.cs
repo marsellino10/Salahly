@@ -152,6 +152,17 @@ namespace Salahly.DSL.Services
 
                 await _unitOfWork.SaveAsync();
 
+                await _notificationService.NotifyAsync(new CreateNotificationDto
+                {
+                    UserIds = new[] { offer.CraftsmanId },
+                    Type = NotificationType.OfferRejected,
+                    Title = "Your Offer has been Rejected",
+                    Message = $" Your Offer for {request.Title} request has been rejected by Customer due to {dto.RejectionReason}",
+                    ActionUrl = $"/service-requests/{request.ServiceRequestId}",
+                    CraftsmanOfferId = offer.CraftsmanOfferId,
+                    ServiceRequestId = request.ServiceRequestId
+                });
+
                 _logger.LogInformation($"Customer {customerId} rejected offer {offerId}");
 
                 return ServiceResponse<bool>.SuccessResponse(true, "Offer rejected successfully.");
@@ -222,15 +233,15 @@ namespace Salahly.DSL.Services
                     $"for request {dto.ServiceRequestId}");
 
                 // Send notification to customer
-                await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+                await _notificationService.NotifyAsync(new CreateNotificationDto
                 {
-                    userId = request.CustomerId,
-                    type = NotificationType.NewOffer,
-                    title = "New Offer Received",
-                    message = $"{craftsman.User?.FullName ?? "A craftsman"} submitted an offer for your request.",
-                    actionUrl = $"/service-requests/{request.ServiceRequestId}",
-                    craftsmanOfferId = offer.CraftsmanOfferId,
-                    serviceRequestId = request.ServiceRequestId
+                    UserIds = new[] { request.CustomerId },
+                    Type = NotificationType.NewOffer,
+                    Title = "New Offer Received",
+                    Message = $"{craftsman.User?.FullName ?? "A craftsman"} submitted an offer for your request.",
+                    ActionUrl = $"/service-requests/{request.ServiceRequestId}",
+                    CraftsmanOfferId = offer.CraftsmanOfferId,
+                    ServiceRequestId = request.ServiceRequestId
                 });
 
                 var offerDto = offer.Adapt<OfferDto>();

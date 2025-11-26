@@ -1,15 +1,18 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using System.Security.Cryptography;
+using System.Text;
+using Azure.Core;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
+using Salahly.DSL.DTOs;
 using Salahly.DSL.DTOs.PaymentDtos;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
 using Salahly.DSL.Interfaces.Orchestrator;
 using Salahly.DSL.Interfaces.Payments;
 using Salahly.DSL.Services.Orchestrator;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Salahly.DSL.Services
 {
@@ -22,6 +25,7 @@ namespace Salahly.DSL.Services
         private readonly IConfiguration _configuration;
         private readonly IServiceRequestService _serviceRequestService;
         private readonly IFailedOrchestrator _paymentFailureOrchestrator;
+        private readonly INotificationService _notificationService;
 
         public PaymentService(
             IUnitOfWork unitOfWork,
@@ -30,7 +34,8 @@ namespace Salahly.DSL.Services
             ILogger<PaymentService> logger,
             IConfiguration configuration,
             IServiceRequestService serviceRequestService,
-            IFailedOrchestrator FailedOrchestrator)
+            IFailedOrchestrator FailedOrchestrator,
+            INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _paymentStrategyFactory = paymentStrategyFactory;
@@ -39,6 +44,7 @@ namespace Salahly.DSL.Services
             _configuration = configuration;
             _serviceRequestService = serviceRequestService;
             _paymentFailureOrchestrator = FailedOrchestrator;
+            _notificationService = notificationService;
         }
 
         // ✅ =========================================================
@@ -193,6 +199,8 @@ namespace Salahly.DSL.Services
                     var SR = await _unitOfWork.Bookings.GetByIdAsync(payment.BookingId);
                     var SRId = SR.ServiceRequestId ?? 0;
                     await _serviceRequestService.ChangeStatusAsync(SRId, ServiceRequestStatus.OfferAccepted);
+                    //notify
+                    await _notificationService.NotifyPaymentSuccessAsync(payment.BookingId);
 
                     _logger.LogInformation($"Payment {payment.Id} completed, Booking {payment.BookingId} confirmed");
                     return ServiceResponse<bool>.SuccessResponse(true, "Payment completed and booking confirmed");
@@ -213,7 +221,14 @@ namespace Salahly.DSL.Services
                         _logger.LogError($"Payment failure cleanup failed: {failureResult.ErrorMessage}");
                         return ServiceResponse<bool>.FailureResponse(failureResult.ErrorMessage);
                     }
-
+                    await _notificationService.NotifyAsync(new CreateNotificationDto
+                    {
+                        UserIds = new[] { payment.Booking.CustomerId },
+                        Type = NotificationType.PaymentFailed,
+                        Title = "Payment failed",
+                        Message = $"Your payment for {payment.Booking.ServiceRequest.Title} failed please use another method or try again.",
+                        ActionUrl = $"/service-requests/{payment.Booking.ServiceRequestId}"
+                    });
                     _logger.LogInformation($"Payment failure processed for Booking {payment.BookingId}");
                     return ServiceResponse<bool>.SuccessResponse(true, "Payment failure recorded");
                 }

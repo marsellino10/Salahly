@@ -16,7 +16,8 @@ namespace Salahly.DAL.Entities
         public decimal? HourlyRate { get; set; }  
         public string? Bio { get; set; }  
         public int YearsOfExperience { get; set; }
-        public DateTime? VerifiedAt { get; set; }      // When admin verified
+        public bool IsVerified { get; set; } = false;
+        public VerificationStatus VerificationStatus { get; set; } = VerificationStatus.Pending;
 
         public ApplicationUser User { get; set; }
         public Craft Craft { get; set; }
@@ -27,5 +28,11 @@ namespace Salahly.DAL.Entities
         public ICollection<PortfolioItem> Portfolio { get; set; } = new List<PortfolioItem>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         //public ICollection<Review> Reviews { get; set; } = new List<Review>();
+    }
+    public enum VerificationStatus
+    {
+        Pending=0,
+        Rejected=1,
+        Verified=2
     }
 }

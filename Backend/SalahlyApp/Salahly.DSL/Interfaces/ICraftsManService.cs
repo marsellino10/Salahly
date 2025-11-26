@@ -21,5 +21,6 @@ namespace Salahly.DSL.Interfaces
         /// <param name="filter">Filter parameters including search, craft, area, and pagination</param>
         /// <returns>Paginated list of craftsmen matching the filters</returns>
         Task<PaginatedResponse<CraftsmanDto>> GetAllWithFiltersAsync(CraftsmanFilterDto filter);
+        Task<List<int>> CraftsmenInAreaWithCraftAsync(int areaId, int craftId);
     }
 }

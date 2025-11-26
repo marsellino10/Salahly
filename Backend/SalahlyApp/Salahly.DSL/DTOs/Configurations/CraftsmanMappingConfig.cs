@@ -18,7 +18,7 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.HourlyRate, src => src.HourlyRate)
                 .Map(dest => dest.Bio, src => src.Bio)
                 .Map(dest => dest.YearsOfExperience, src => src.YearsOfExperience)
-                .Map(dest => dest.VerifiedAt, src => src.VerifiedAt)
+                .Map(dest => dest.VerificationStatus, src => src.VerificationStatus)
                 .Map(dest => dest.Portfolio, src => src.Portfolio)
                 // Map CraftsmanServiceAreas to simplified ServiceAreaDto
                 .Map(dest => dest.ServiceAreas, src => src.CraftsmanServiceAreas.Select(csa => csa.Adapt<ServiceAreaDto>()))

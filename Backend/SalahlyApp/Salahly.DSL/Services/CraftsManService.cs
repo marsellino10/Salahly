@@ -244,6 +244,17 @@ namespace Salahly.DSL.Services
                 paginatedCraftsmen.PageNumber,
                 paginatedCraftsmen.PageSize);
         }
+        public async Task<List<int>> CraftsmenInAreaWithCraftAsync(int areaId,int craftId) {
+            if (areaId <= 0)
+                throw new ArgumentException("Invalid area ID", nameof(areaId));
+            if (craftId <= 0)
+                throw new ArgumentException("Invalid craft ID", nameof(craftId));
+            return await _unitOfWork.Craftsmen.GetAll()
+                    .Where(c => c.IsVerified &&
+                                c.CraftsmanServiceAreas.Any(cas => cas.AreaId == areaId))
+                    .Select(c => c.User.Id).ToListAsync();
+
+        }
 
         // Helper mapper
         private CraftsmanDto MapToDto(Craftsman c)

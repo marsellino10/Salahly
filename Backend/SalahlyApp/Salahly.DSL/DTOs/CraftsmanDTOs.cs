@@ -1,3 +1,4 @@
+using Salahly.DAL.Entities;
 using Salahly.DSL.DTOs.PortfolioDtos;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Salahly.DSL.DTOs
         public decimal? HourlyRate { get; set; }
         public string? Bio { get; set; }
         public int YearsOfExperience { get; set; }
-        public DateTime? VerifiedAt { get; set; }
+        public VerificationStatus VerificationStatus { get; set; }
         public string? ProfileImageUrl { get; set; }
         public string? FullName { get; set; }
 
