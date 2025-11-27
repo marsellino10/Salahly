@@ -51,6 +51,10 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.Bio, src => src.Bio)
                 .Map(dest => dest.YearsOfExperience, src => src.YearsOfExperience)
                 .Map(dest => dest.HourlyRate, src => src.HourlyRate);
+            config.NewConfig<Craftsman, CraftsManAdminViewDto>()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.FullName, src => src.User.FullName)
+                .Map(dest => dest.IsVerified, src => src.IsVerified);
         }
     }
 }

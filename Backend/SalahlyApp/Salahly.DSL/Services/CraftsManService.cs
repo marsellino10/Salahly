@@ -220,11 +220,20 @@ namespace Salahly.DSL.Services
             var result = MapToDto(craftsman);
             return result ?? throw new InvalidOperationException("Failed to retrieve updated craftsman");
         }
+        public async Task<List<CraftsManAdminViewDto>> GetAllAdmin()
+        {
+            var list = await _unitOfWork.Craftsmen
+                .GetAll()
+                .Where(c => c.IsVerified == false)
+                .Include(c => c.User)
+                .ToListAsync();        // FIX: async ToList
+            return list.Adapt<List<CraftsManAdminViewDto>>();  // FIX: no await
+        }
 
         /// <summary>
         /// Get all craftsmen with filtering and pagination support
         /// </summary>
-        public async Task<PaginatedResponse<CraftsmanDto>> GetAllWithFiltersAsync(CraftsmanFilterDto filter)
+        public async Task<PaginatedResponse<CraftsmanDto>> GetAllWithFiltersAsync(CraftsmanFilterDto filter,bool includeUnverified=false)
         {
             if (filter == null)
                 throw new ArgumentNullException(nameof(filter));
@@ -234,7 +243,10 @@ namespace Salahly.DSL.Services
 
             // Get base query
             var query = await _unitOfWork.Craftsmen.GetAllAsync();
-
+            if (!includeUnverified)
+            {
+                query = query.Where(c => c.IsVerified == true);
+            }
             // Apply filters and pagination
             var paginatedCraftsmen = await ApplyFilters.ApplyAsync(query, filter);
 

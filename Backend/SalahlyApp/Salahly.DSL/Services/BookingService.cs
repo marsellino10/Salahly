@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs.Booking;
@@ -28,7 +30,11 @@ namespace Salahly.DSL.Services
             _paymentStrategyFactory = paymentStrategyFactory;
             _logger = logger;
         }
-
+        public async Task<List<BookingAdminViewDto>> GetAllBookingsAsync()
+        {
+            var list=await _unitOfWork.Bookings.GetAll().ToListAsync();
+            return list.Adapt<List<BookingAdminViewDto>>();
+        }
         // =====================================================================
         // ===== ORCHESTRATOR HELPER METHODS (Internal Use) =====
         // =====================================================================

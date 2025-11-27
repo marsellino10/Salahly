@@ -12,6 +12,7 @@ namespace Salahly.DSL.Interfaces
         Task<CraftsmanDto?> GetByIdAsync(int id);
         Task<CraftsmanDto> CreateAsync(CreateCraftsmanDto dto);
         Task<CraftsmanDto> UpdateAsync(UpdateCraftsmanDto dto);
+        Task<List<CraftsManAdminViewDto>> GetAllAdmin();
         Task DeleteAsync(int id);
         Task<CraftsmanDto> UpdateCraftsManImageAsync(int craftsManId, string iconUrl);
 
@@ -20,7 +21,7 @@ namespace Salahly.DSL.Interfaces
         /// </summary>
         /// <param name="filter">Filter parameters including search, craft, area, and pagination</param>
         /// <returns>Paginated list of craftsmen matching the filters</returns>
-        Task<PaginatedResponse<CraftsmanDto>> GetAllWithFiltersAsync(CraftsmanFilterDto filter);
+        Task<PaginatedResponse<CraftsmanDto>> GetAllWithFiltersAsync(CraftsmanFilterDto filter,bool includeUnverified=false);
         Task<List<int>> CraftsmenInAreaWithCraftAsync(int areaId, int craftId);
     }
 }

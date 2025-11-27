@@ -12,7 +12,7 @@ namespace Salahly.DSL.Interfaces
     public interface IBookingService
     {
         // ===== For Orchestrator (Internal Use) =====
-
+        Task<List<BookingAdminViewDto>> GetAllBookingsAsync();
         /// <summary>
         /// Create booking (simple - no payment logic)
         /// Used by orchestrator - does NOT save (orchestrator handles transaction)
