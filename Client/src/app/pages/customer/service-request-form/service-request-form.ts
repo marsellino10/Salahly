@@ -28,12 +28,6 @@ export class ServiceRequestForm implements OnInit {
   private readonly _router = inject(Router);
   private readonly _translate = inject(TranslateService);
 
-  readonly availableTimeSlots = [
-    { value: 'morning', labelKey: 'ServiceRequestForm.TimeSlots.Morning' },
-    { value: 'afternoon', labelKey: 'ServiceRequestForm.TimeSlots.Afternoon' },
-    { value: 'evening', labelKey: 'ServiceRequestForm.TimeSlots.Evening' },
-  ];
-
   readonly minDate = new Date().toISOString().split('T')[0];
   readonly maxImages = 5;
 
@@ -57,8 +51,8 @@ export class ServiceRequestForm implements OnInit {
     description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(800)]],
     address: ['', [Validators.required, Validators.maxLength(160)]],
     areaId: [null as number | null, Validators.required],
-    preferredDate: ['', Validators.required],
-    preferredTimeSlot: [''],
+    availableFromDate: ['', Validators.required],
+    availableToDate: ['', Validators.required],
     customerBudget: [null as number | null, [Validators.min(20), Validators.max(100000)]],
     maxOffers: [3, [Validators.min(1), Validators.max(10)]],
     latitude: [null as number | null, [Validators.min(-90), Validators.max(90)]],
@@ -187,8 +181,8 @@ export class ServiceRequestForm implements OnInit {
       description: '',
       address: '',
       areaId: null,
-      preferredDate: '',
-      preferredTimeSlot: '',
+      availableFromDate: '',
+      availableToDate: '',
       customerBudget: null,
       maxOffers: 3,
       latitude: null,
@@ -207,8 +201,8 @@ export class ServiceRequestForm implements OnInit {
       description: raw.description?.trim() ?? '',
       address: raw.address?.trim() ?? '',
       areaId: Number(raw.areaId),
-      preferredDate: raw.preferredDate ?? new Date(),
-      preferredTimeSlot: raw.preferredTimeSlot?.trim() || null,
+      availableFromDate: raw.availableFromDate ?? new Date().toISOString(),
+      availableToDate: raw.availableToDate ?? new Date().toISOString(),
       customerBudget:
         raw.customerBudget !== null && raw.customerBudget !== undefined
           ? Number(raw.customerBudget)
@@ -217,7 +211,7 @@ export class ServiceRequestForm implements OnInit {
         raw.latitude !== null && raw.latitude !== undefined ? Number(raw.latitude) : null,
       longitude:
         raw.longitude !== null && raw.longitude !== undefined ? Number(raw.longitude) : null,
-      maxOffers: raw.maxOffers ? Number(raw.maxOffers) : null,
+      maxOffers: raw.maxOffers ? Number(raw.maxOffers) : undefined,
     } as CreateServiceRequestPayload;
   }
 

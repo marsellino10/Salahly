@@ -586,7 +586,7 @@
       "Back": "Back to my requests",
       "Eyebrow": "Create request",
       "Title": "Tell us what needs fixing",
-      "Lead": "Share the craft, describe the issue, add a preferred date, and we’ll notify matching craftsmen. The richer the brief, the faster you’ll get accurate offers.",
+      "Lead": "Share the craft, describe the issue, add a preferred date, and we'll notify matching craftsmen. The richer the brief, the faster you'll get accurate offers.",
       "ViewExisting": "View existing requests",
       "PhotoChip": "Max {{max}} photos • {{selected}} selected",
       "Stats": {
@@ -634,6 +634,10 @@
       "DescriptionCounter": "{{used}}/{{max}} characters",
       "AreaLabel": "Service area *",
       "AreaPlaceholder": "Select area",
+      "AvailableFromLabel": "Available from *",
+      "AvailableFromHint": "First day you're available",
+      "AvailableToLabel": "Available to *",
+      "AvailableToHint": "Last day you're available",
       "DateLabel": "Preferred date *",
       "TimeLabel": "Preferred time window",
       "TimePlaceholder": "Flexible slot",
@@ -658,7 +662,9 @@
       "TitleInvalid": "Title must be 6-80 characters.",
       "DescriptionInvalid": "Please provide at least 20 characters describing the issue.",
       "AreaRequired": "Select where the technician should go.",
-      "DateRequired": "Pick when you’d like the visit.",
+      "AvailableFromRequired": "Available from date is required.",
+      "AvailableToRequired": "Available to date is required.",
+      "DateRequired": "Pick when you'd like the visit.",
       "AddressRequired": "Address is required."
     },
     "TimeSlots": {
@@ -674,7 +680,7 @@
       "PreviewAlt": "Upload preview {{index}}"
     },
     "Footer": {
-      "Line1": "We’ll surface your request to verified craftsmen in your area.",
+      "Line1": "We'll surface your request to verified craftsmen in your area.",
       "Line2": "Expect new offers within a few hours."
     },
     "Buttons": {

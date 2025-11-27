@@ -35,9 +35,6 @@ namespace Salahly.DAL.Configurations
             builder.Property(sr => sr.Longitude)
                 .HasPrecision(10, 7);
 
-            builder.Property(sr => sr.PreferredTimeSlot)
-                .HasMaxLength(50);
-
             builder.Property(sr => sr.CustomerBudget)
                 .HasPrecision(10, 2);
 
@@ -78,7 +75,7 @@ namespace Salahly.DAL.Configurations
                 .HasForeignKey<Booking>(b => b.ServiceRequestId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Area relationship
+            // Area relationship
             builder.HasOne(sr => sr.AreaData)
                 .WithMany()
                 .HasForeignKey(sr => sr.AreaId)

@@ -103,8 +103,11 @@ namespace Salahly.DSL.Services
 
             var area = await _unitOfWork.Areas.GetByIdAsync(dto.AreaId);
             if (area is not null) request.AreaId = dto.AreaId;
-            if (dto.PreferredDate.HasValue) request.PreferredDate = dto.PreferredDate.Value;
-            if (!string.IsNullOrEmpty(dto.PreferredTimeSlot)) request.PreferredTimeSlot = dto.PreferredTimeSlot;
+            if (dto.AvailableFromDate != default(DateTime))
+                request.AvailableFromDate = dto.AvailableFromDate;
+
+            if (dto.AvailableToDate != default(DateTime))
+                request.AvailableToDate = dto.AvailableToDate;
             if (dto.CustomerBudget.HasValue) request.CustomerBudget = dto.CustomerBudget.Value;
 
             request.UpdatedAt = DateTime.UtcNow;

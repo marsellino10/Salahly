@@ -14,8 +14,8 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
         public string City { get; set; }
         public string Area { get; set; }
         public string Address { get; set; }
-        public DateTime PreferredDate { get; set; }
-        public string PreferredTimeSlot { get; set; }
+        public DateTime AvailableFromDate { get; set; }
+        public DateTime AvailableToDate { get; set; }
         public decimal? CustomerBudget { get; set; }
         public string Status { get; set; }
         public int OffersCount { get; set; }

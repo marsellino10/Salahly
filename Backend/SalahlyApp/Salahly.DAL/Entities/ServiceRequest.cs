@@ -29,8 +29,8 @@ namespace Salahly.DAL.Entities
         public double? Longitude { get; set; }
 
         // Timing
-        public DateTime PreferredDate { get; set; }
-        public string? PreferredTimeSlot { get; set; }
+        public DateTime AvailableFromDate { get; set; } 
+        public DateTime AvailableToDate { get; set; }
 
         // Budget
         public decimal? CustomerBudget { get; set; }

@@ -83,9 +83,7 @@ export class ServiceRequestDetails implements OnInit {
       {
         icon: 'bi-calendar-event',
         labelKey: 'ServiceRequestDetails.Meta.PreferredDate',
-        value: `${this.formatDate(current.preferredDate)} · ${
-          current.preferredTimeSlot || this._translate.instant('ServiceRequestDetails.Meta.TimeFallback')
-        }`,
+        value: `${this.formatDate(current.availableFromDate)} - ${this.formatDate(current.availableToDate)}`,
       },
       {
         icon: 'bi-currency-dollar',

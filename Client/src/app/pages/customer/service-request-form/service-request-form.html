@@ -122,18 +122,18 @@
           <small class="error-text" *ngIf="fieldInvalid('areaId')">{{ 'ServiceRequestForm.Errors.AreaRequired' | translate }}</small>
         </label>
 
-        <label class="input-shell" [class.invalid]="fieldInvalid('preferredDate')">
-          <span>{{ 'ServiceRequestForm.Fields.DateLabel' | translate }}</span>
-          <input type="date" formControlName="preferredDate" [attr.min]="minDate" />
-          <small class="error-text" *ngIf="fieldInvalid('preferredDate')">{{ 'ServiceRequestForm.Errors.DateRequired' | translate }}</small>
+        <label class="input-shell" [class.invalid]="fieldInvalid('availableFromDate')">
+          <span>{{ 'ServiceRequestForm.Fields.AvailableFromLabel' | translate }}</span>
+          <input type="date" formControlName="availableFromDate" [attr.min]="minDate" />
+          <small class="muted">{{ 'ServiceRequestForm.Fields.AvailableFromHint' | translate }}</small>
+          <small class="error-text" *ngIf="fieldInvalid('availableFromDate')">{{ 'ServiceRequestForm.Errors.AvailableFromRequired' | translate }}</small>
         </label>
 
-        <label class="input-shell">
-          <span>{{ 'ServiceRequestForm.Fields.TimeLabel' | translate }}</span>
-          <select formControlName="preferredTimeSlot">
-            <option value="">{{ 'ServiceRequestForm.Fields.TimePlaceholder' | translate }}</option>
-            <option *ngFor="let slot of availableTimeSlots" [value]="slot.value">{{ slot.labelKey | translate }}</option>
-          </select>
+        <label class="input-shell" [class.invalid]="fieldInvalid('availableToDate')">
+          <span>{{ 'ServiceRequestForm.Fields.AvailableToLabel' | translate }}</span>
+          <input type="date" formControlName="availableToDate" [attr.min]="minDate" />
+          <small class="muted">{{ 'ServiceRequestForm.Fields.AvailableToHint' | translate }}</small>
+          <small class="error-text" *ngIf="fieldInvalid('availableToDate')">{{ 'ServiceRequestForm.Errors.AvailableToRequired' | translate }}</small>
         </label>
       </div>
 
@@ -186,6 +186,7 @@
         </div>
         <small *ngIf="selectedImages.length">{{ 'ServiceRequestForm.Upload.CountLabel' | translate:{ uploaded: selectedImages.length, max: maxImages } }}</small>
       </div>
+          <img src="https://res.cloudinary.com/dkep2voqw/image/upload/v1764258100/salahly/customer/customer_c594925d518e46359e69d602f6afb750_1978321_721292131253622_6701158353453553500_o.jpg" alt="">
 
       <div class="upload-card">
         <input type="file" accept="image/*" multiple (change)="onFilesSelected($event)" [disabled]="selectedImages.length >= maxImages" />

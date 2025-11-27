@@ -17,8 +17,8 @@ export interface CraftsmanOfferDto {
   offeredPrice: number;
   description: string;
   estimatedDurationMinutes: number;
-  availableFromDate: string;
-  availableToDate: string;
+  preferredDate: string;
+  preferredTimeSlot?: string | null;
   craftsmanName: string;
   status: CraftsmanOfferStatus | string;
   createdAt: string;
@@ -30,8 +30,8 @@ export interface CreateCraftsmanOfferPayload {
   offeredPrice: number;
   description: string;
   estimatedDurationMinutes: number;
-  availableFromDate: string;
-  availableToDate: string;
+  preferredDate: string; 
+  preferredTimeSlot?: string;
 }
 
 export interface ServiceResponse<T> {

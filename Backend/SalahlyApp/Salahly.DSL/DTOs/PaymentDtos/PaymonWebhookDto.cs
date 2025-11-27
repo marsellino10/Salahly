@@ -35,7 +35,7 @@ namespace Salahly.DSL.DTOs.PaymentDtos
         public string SourceDataSubType => Obj?.SourceData?.SubType ?? "";
         public string SourceDataType => Obj?.SourceData?.Type ?? "";
         public string CreatedAt => Obj?.CreatedAt ?? "";
-        public string? Hmac => Obj?.Hmac; // ✅ Made nullable
+        public string? Hmac => Obj?.Hmac;
     }
 
     public class PaymobWebhookObject
@@ -92,7 +92,7 @@ namespace Salahly.DSL.DTOs.PaymentDtos
         public PaymobOrder Order { get; set; }
 
         [JsonPropertyName("hmac")]
-        public string? Hmac { get; set; } // ✅ Made nullable
+        public string? Hmac { get; set; } 
     }
 
     public class PaymobSourceData

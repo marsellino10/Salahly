@@ -25,8 +25,8 @@ export interface ServiceRequestDto {
   city: string | null;
   area: string | null;
   address: string;
-  preferredDate: string;
-  preferredTimeSlot?: string | null;
+  availableFromDate: string;
+  availableToDate: string;
   customerBudget?: number | null;
   status: ServiceRequestStatus | string;
   offersCount: number;
@@ -52,8 +52,8 @@ export interface CreateServiceRequestPayload {
   description: string;
   address: string;
   areaId: number;
-  preferredDate: Date | string;
-  preferredTimeSlot?: string | null;
+  availableFromDate: Date | string;
+  availableToDate: Date | string;
   customerBudget?: number | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -65,8 +65,8 @@ export interface UpdateServiceRequestPayload {
   description?: string;
   address?: string;
   areaId?: number;
-  preferredDate?: Date | string | null;
-  preferredTimeSlot?: string | null;
+  availableFromDate?: Date | string | null;
+  availableToDate?: Date | string | null;
   customerBudget?: number | null;
 }
 
@@ -111,11 +111,8 @@ export class ServicesRequestsService {
     formData.append('Description', payload.description);
     formData.append('Address', payload.address);
     formData.append('AreaId', payload.areaId.toString());
-    formData.append('PreferredDate', this.normalizeDate(payload.preferredDate));
-
-    if (payload.preferredTimeSlot) {
-      formData.append('PreferredTimeSlot', payload.preferredTimeSlot);
-    }
+    formData.append('AvailableFromDate', this.normalizeDate(payload.availableFromDate));
+    formData.append('AvailableToDate', this.normalizeDate(payload.availableToDate));
 
     if (payload.customerBudget !== undefined && payload.customerBudget !== null) {
       formData.append('CustomerBudget', payload.customerBudget.toString());
@@ -159,12 +156,12 @@ export class ServicesRequestsService {
       formData.append('AreaId', payload.areaId.toString());
     }
 
-    if (payload.preferredDate) {
-      formData.append('PreferredDate', this.normalizeDate(payload.preferredDate));
+    if (payload.availableFromDate) {
+      formData.append('AvailableFromDate', this.normalizeDate(payload.availableFromDate));
     }
 
-    if (payload.preferredTimeSlot !== undefined && payload.preferredTimeSlot !== null) {
-      formData.append('PreferredTimeSlot', payload.preferredTimeSlot);
+    if (payload.availableToDate) {
+      formData.append('AvailableToDate', this.normalizeDate(payload.availableToDate));
     }
 
     if (payload.customerBudget !== undefined && payload.customerBudget !== null) {

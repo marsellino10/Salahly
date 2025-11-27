@@ -22,8 +22,8 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        public DateTime PreferredDate { get; set; }
-        public string? PreferredTimeSlot { get; set; }
+        public DateTime AvailableFromDate { get; set; }
+        public DateTime AvailableToDate { get; set; }
 
         public decimal? CustomerBudget { get; set; }
         public string? ImagesJson { get; set; }

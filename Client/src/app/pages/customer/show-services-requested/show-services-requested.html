@@ -135,8 +135,7 @@
             </div>
             <div>
               <i class="bi bi-calendar3"></i>
-              {{ formatIso(request.preferredDate) }} • {{ request.preferredTimeSlot || ('ShowRequests.Cards.Meta.TimeFallback' | translate) }}
-            </div>
+              {{ formatIso(request.availableFromDate) }} - {{ formatIso(request.availableToDate) || ('ShowRequests.Cards.Meta.DateFallback' | translate) }}            </div>
             <div>
               <i class="bi bi-currency-dollar"></i>
               {{ formatBudget(request.customerBudget) }}

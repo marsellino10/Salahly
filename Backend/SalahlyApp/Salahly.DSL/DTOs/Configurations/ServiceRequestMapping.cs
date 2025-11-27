@@ -14,8 +14,6 @@ namespace Salahly.DSL.DTOs.Configurations
     {
         public static void RegisterServiceAreaMappings(TypeAdapterConfig config)
         {
-            // Mapping configurations for ServiceRequest related DTOs can be added here in the future
-            //1. CreateServiceRequestDto to ServiceRequest entity
             config.NewConfig<CreateServiceRequestDto, ServiceRequest>()
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Description, src => src.Description)
@@ -23,36 +21,42 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.AreaId, src => src.AreaId)
                 .Map(dest => dest.Latitude, src => src.Latitude)
                 .Map(dest => dest.Longitude, src => src.Longitude)
-                .Map(dest => dest.PreferredDate, src => src.PreferredDate)
-                .Map(dest => dest.PreferredTimeSlot, src => src.PreferredTimeSlot)
+                .Map(dest => dest.AvailableFromDate, src => src.AvailableFromDate)
+                .Map(dest => dest.AvailableToDate, src => src.AvailableToDate)
                 .Map(dest => dest.CustomerBudget, src => src.CustomerBudget)
                 .Map(dest => dest.ImagesJson, src => src.ImagesJson)
                 .Map(dest => dest.MaxOffers, src => src.MaxOffers)
                 .Map(dest => dest.CraftId, src => src.CraftId);
-                
 
-            //2. ServiceRequest to ServiceRequestDto
             config.NewConfig<ServiceRequest, ServiceRequestDto>()
                 .Map(dest => dest.Status, src => src.Status.ToString())
-                .Map(dest => dest.CraftName, src => src.Craft.Name)
-                .Map(dest => dest.City, src => src.AreaData.City)
-                .Map(dest => dest.Area, src => src.AreaData.Region)
-                .Map(dest => dest.CustomerName, src => src.Customer.User.FullName)
-                .Map(dest => dest.Images, src => new List<string>())
-                .AfterMapping((src, dest) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(src.ImagesJson))
-                    {
-                        dest.Images = JsonSerializer
-                            .Deserialize<List<string>>(src.ImagesJson) ?? new List<string>();
-                    }
-                    else
-                    {
-                        dest.Images = new List<string>();
-                    }
-                });
+                .Map(dest => dest.CraftName, src => src.Craft != null ? src.Craft.Name : null)
+                .Map(dest => dest.City, src => src.AreaData != null ? src.AreaData.City : null)
+                .Map(dest => dest.Area, src => src.AreaData != null ? src.AreaData.Region : null)
+                .Map(dest => dest.CustomerName, src => src.Customer != null && src.Customer.User != null ? src.Customer.User.FullName : null)
+                .Map(dest => dest.Images, src => ParseImages(src.ImagesJson));
+        }
 
-            
+        private static List<string> ParseImages(string? imagesJson)
+        {
+            if (string.IsNullOrWhiteSpace(imagesJson))
+            {
+                return new List<string>();
+            }
+
+            try
+            {
+                var images = JsonSerializer.Deserialize<List<string>>(imagesJson);
+                return images ?? new List<string>();
+            }
+            catch (JsonException)
+            {
+                return new List<string>();
+            }
+            catch (Exception)
+            {
+                return new List<string>();
+            }
         }
     }
 }

@@ -18,8 +18,8 @@ namespace Salahly.DAL.Entities
         public int EstimatedDurationMinutes { get; set; }
 
         // Availability
-        public DateTime AvailableFromDate { get; set; }
-        public DateTime AvailableToDate { get; set; }
+        public DateTime PreferredDate { get; set; }
+        public string? PreferredTimeSlot { get; set; }
 
         // Status
         public OfferStatus Status { get; set; }

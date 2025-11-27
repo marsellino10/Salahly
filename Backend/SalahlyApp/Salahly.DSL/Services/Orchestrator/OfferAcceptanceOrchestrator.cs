@@ -96,8 +96,8 @@
                                 offer.ServiceRequestId,
                                 offerId,
                                 offer.OfferedPrice,
-                                serviceRequest.PreferredDate != default
-                                    ? serviceRequest.PreferredDate
+                                serviceRequest.AvailableFromDate != default
+                                    ? serviceRequest.AvailableFromDate
                                     : DateTime.UtcNow.AddDays(1));
 
                             await _unitOfWork.SaveAsync(cancellationToken); // <--- FIRST SAVE
@@ -142,8 +142,6 @@
                             }
 
                             payment.TransactionId = paymentResult.TransactionId;
-                            // Note: If you have properties like PaymentLink in your Payment entity, update them here too
-                            // e.g., payment.PaymentLink = paymentResult.PaymentLink; 
 
                             // ========== Step 8: FINAL SAVE ==========
                             // Save changes to Payment (TransactionId) and Offers (Status)
@@ -170,7 +168,7 @@
                         }
                         catch (InvalidOperationException ex)
                         {
-                            // Business logic errors (caught inside transaction to ensure rollback then rethrown)
+                            // Business logic errors
                             throw;
                         }
                     }, cancellationToken);

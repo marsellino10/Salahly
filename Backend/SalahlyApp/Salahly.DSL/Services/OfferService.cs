@@ -218,8 +218,8 @@ namespace Salahly.DSL.Services
                     OfferedPrice = dto.OfferedPrice,
                     Description = dto.Description,
                     EstimatedDurationMinutes = dto.EstimatedDurationMinutes,
-                    AvailableFromDate = dto.AvailableFromDate,
-                    AvailableToDate = dto.AvailableToDate,
+                    PreferredDate = dto.PreferredDate,
+                    PreferredTimeSlot = dto.PreferredTimeSlot,
                     Status = OfferStatus.Pending,
                     CreatedAt = DateTime.UtcNow
                 };
