@@ -1,0 +1,138 @@
+<section class="technician-profile">
+  <ng-container *ngIf="isLoading; else profileContent">
+    <div class="profile-state profile-loading">
+      <span class="spinner"></span>
+      <p>Loading technician profile…</p>
+    </div>
+  </ng-container>
+
+  <ng-template #profileContent>
+    <ng-container *ngIf="!hasError; else profileError">
+      <ng-container *ngIf="state.craftsman as craftsman; else profileError">
+        <div class="profile-summary">
+          <div class="summary-header">
+            <div class="summary-avatar">
+              <img *ngIf="craftsman.profileImageUrl; else summaryInitials" [src]="craftsman.profileImageUrl" [alt]="craftsman.fullName" />
+              <ng-template #summaryInitials>
+                <span class="summary-initials">{{ getInitials(craftsman.fullName) }}</span>
+              </ng-template>
+            </div>
+            <div class="summary-info">
+              <h1>{{ craftsman.fullName || 'Technician' }}</h1>
+              <p class="summary-title">
+                {{ craftsman.jobTitle || craftsman.craftName || 'Technician' }}
+              </p>
+              <div class="summary-rating">
+                <div class="stars">
+                  <i class="bi" *ngFor="let filled of getStarArray(craftsman.ratingAverage)" [class.bi-star-fill]="filled" [class.bi-star]="!filled"></i>
+                </div>
+                <span class="rating-value">
+                  {{ (craftsman.ratingAverage || 0) | number: '1.1-1' }} · {{ craftsman.totalCompletedBookings || 0 }} completed jobs
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-stats">
+            <div class="stat-chip">
+              <span class="stat-label">Availability</span>
+              <span class="stat-value" [class.is-available]="craftsman.isAvailable">
+                {{ craftsman.isAvailable ? 'Available now' : 'Currently unavailable' }}
+              </span>
+            </div>
+            <div class="stat-chip">
+              <span class="stat-label">Hourly Rate</span>
+              <span class="stat-value">
+                {{ craftsman.hourlyRate !== undefined && craftsman.hourlyRate !== null ? (craftsman.hourlyRate | number: '1.0-2') + ' EGP' : 'Not specified' }}
+              </span>
+            </div>
+            <div class="stat-chip">
+              <span class="stat-label">Experience</span>
+              <span class="stat-value">
+                {{ craftsman.yearsOfExperience || 0 }} years
+              </span>
+            </div>
+          </div>
+
+          <div class="summary-meta">
+            <div class="meta-block">
+              <h3>Service Areas</h3>
+              <ul *ngIf="craftsman.serviceAreas?.length; else areasEmpty">
+                <li *ngFor="let area of craftsman.serviceAreas; trackBy: trackArea">
+                  {{ area.city || 'City' }}, {{ area.region || 'Region' }}
+                </li>
+              </ul>
+              <ng-template #areasEmpty>
+                <p class="meta-empty">Service areas not specified yet.</p>
+              </ng-template>
+            </div>
+            <div class="meta-block">
+              <h3>About</h3>
+              <p>{{ craftsman.bio || 'No bio provided yet.' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <section class="profile-section">
+          <div class="section-header">
+            <h2>{{ 'TechnicianProfilePage.Portfolio.Title' | translate }}</h2>
+            <p>{{ 'TechnicianProfilePage.Portfolio.Hint' | translate }}</p>
+          </div>
+          <app-technician-portfolio-gallery
+            [items]="state.portfolio"
+            [direction]="direction"
+            (select)="openPortfolioModal($event)">
+          </app-technician-portfolio-gallery>
+          <p *ngIf="state.portfolio.length === 0" class="section-empty">{{ 'TechnicianProfilePage.Portfolio.Empty' | translate }}</p>
+        </section>
+
+        <section class="profile-section">
+          <div class="section-header">
+            <div class="section-heading-row">
+              <h2>{{ 'TechnicianProfilePage.Reviews.Title' | translate }}</h2>
+              <span class="badge">{{ combinedReviews.length }}</span>
+            </div>
+            <p>{{ 'TechnicianProfilePage.Reviews.Description' | translate }}</p>
+          </div>
+
+          <div *ngIf="combinedReviews.length; else reviewsEmpty" class="reviews-list">
+            <article class="review-card" *ngFor="let review of combinedReviews; trackBy: trackReview">
+              <div class="review-avatar">
+                <img *ngIf="review.reviewerProfileImageUrl; else reviewInitials" [src]="review.reviewerProfileImageUrl" [alt]="review.reviewerName" />
+                <ng-template #reviewInitials>
+                  <span>{{ getInitials(review.reviewerName) }}</span>
+                </ng-template>
+              </div>
+              <div class="review-content">
+                <header>
+                  <h3>{{ review.reviewerName }}</h3>
+                  <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+                </header>
+                <div class="review-rating">
+                  <i class="bi bi-star-fill" *ngFor="let _ of getRatingArray(review.rating)"></i>
+                </div>
+                <p>{{ review.comment }}</p>
+              </div>
+            </article>
+          </div>
+          <ng-template #reviewsEmpty>
+            <p class="section-empty">{{ 'TechnicianProfilePage.Reviews.Empty' | translate }}</p>
+          </ng-template>
+        </section>
+      </ng-container>
+    </ng-container>
+    <ng-template #profileError>
+      <div class="profile-state profile-error">
+        <span class="bi bi-exclamation-triangle"></span>
+        <p>{{ errorMessage || 'Unable to load technician profile.' }}</p>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <app-technician-portfolio-modal
+    *ngIf="selectedPortfolio"
+    [item]="selectedPortfolio"
+    [reviews]="selectedPortfolioReviews"
+    (close)="closePortfolioModal()">
+  </app-technician-portfolio-modal>
+</section>

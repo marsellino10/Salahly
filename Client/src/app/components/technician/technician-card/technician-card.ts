@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { Craftsman } from '../../../core/models/Craftman';
 
 @Component({
@@ -10,14 +11,15 @@ import { Craftsman } from '../../../core/models/Craftman';
 export class TechnicianCard {
   @Input() craftsman!: Craftsman;
 
+  private readonly _router = inject(Router);
+
 
   getInitials(fullName: string): string {
     return fullName.split(' ').map(name => name.charAt(0)).join('').toUpperCase();
   }
 
   viewProfile(craftsmanId: number): void {
-    console.log('View profile for craftsman:', craftsmanId);
-    // Implement navigation to craftsman profile
+    this._router.navigate(['/technicians', craftsmanId, 'profile']);
   }
   
   getStarArray(rating: number): boolean[] {

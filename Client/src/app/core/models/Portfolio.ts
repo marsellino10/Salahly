@@ -1,3 +1,5 @@
+import { CraftsmanReview } from './Craftman';
+
 export interface Portfolio {
   id: number;
   craftsmanId: number;
@@ -7,4 +9,7 @@ export interface Portfolio {
   displayOrder: number;
   isActive: boolean;
   createdAt: string;
+  reviews?: CraftsmanReview[];
 }
+
+export type PortfolioWithReviews = Portfolio & { reviews: CraftsmanReview[] };

@@ -17,7 +17,11 @@ namespace Salahly.DAL.Repositories
         }
         public async Task<IEnumerable<Review>> GetReviewsByUserIdAsync(int userId)
         {
-            return await _context.Reviews.Where(r => r.TargetUserId == userId).ToListAsync();
+            return await _context.Reviews
+                .Include(r => r.Reviewer)
+                .Where(r => r.TargetUserId == userId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
         }
         public async Task<IEnumerable<Review>> GetReviewsByBookingIdAsync(int BookingId)
         {

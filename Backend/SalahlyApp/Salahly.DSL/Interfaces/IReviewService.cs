@@ -19,6 +19,9 @@ namespace Salahly.DSL.Interfaces
             // Get reviews for a specific user (craftsman or customer)
             Task<IEnumerable<CreateReviewDto>> GetReviewsForUserAsync(int userId);
 
+            // Get enriched reviews for craftsman profile presentation
+            Task<IEnumerable<CraftsmanReviewDto>> GetReviewsForCraftsmanAsync(int craftsmanId);
+
             // Get reviews for a specific job (max 2 reviews: each direction)
             Task<IEnumerable<CreateReviewDto>> GetReviewsForBookingAsync(int BookingId);
             Task<double> GetAverageRatingForUser(int userId);

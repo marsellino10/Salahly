@@ -29,6 +29,7 @@ namespace Salahly.DSL.Services
         {
             var query = await _unitOfWork.Craftsmen.GetAllAsync();
             var list = await query
+                .Include(c => c.Craft)
                 .Include(c => c.User)
                 .Include(c => c.Portfolio)
                 .Include(c => c.CraftsmanServiceAreas).ThenInclude(sa => sa.Area)
@@ -42,9 +43,12 @@ namespace Salahly.DSL.Services
             if (id <= 0) return null;
             var query = await _unitOfWork.Craftsmen.GetAllAsync();
             var craftsman = await query
-                .Include(c => c.User)
+                .Include(c => c.Craft)
                 .Include(c => c.Portfolio)
                 .Include(c => c.CraftsmanServiceAreas).ThenInclude(sa => sa.Area)
+                .Include(c => c.User)!
+                    .ThenInclude(u => u.ReviewsReceived)
+                        .ThenInclude(r => r.Reviewer)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (craftsman == null) return null;
@@ -249,7 +253,18 @@ namespace Salahly.DSL.Services
         private CraftsmanDto MapToDto(Craftsman c)
         {
             var dto = c.Adapt<CraftsmanDto>();
-            // Mapster now handles all mapping including User and ServiceAreas
+
+            if (c.User?.ReviewsReceived != null)
+            {
+                dto.Reviews = c.User.ReviewsReceived
+                    .OrderByDescending(r => r.CreatedAt)
+                    .Adapt<IEnumerable<CraftsmanReviewDto>>();
+            }
+            else
+            {
+                dto.Reviews = Enumerable.Empty<CraftsmanReviewDto>();
+            }
+
             return dto;
         }
         //helper getWithIncludes
@@ -258,9 +273,12 @@ namespace Salahly.DSL.Services
             if (id <= 0) return null;
             var query = _unitOfWork.Craftsmen.GetAll();
             var craftsman = await query
-                .Include(c => c.User)
+                .Include(c => c.Craft)
                 .Include(c => c.Portfolio)
                 .Include(c => c.CraftsmanServiceAreas).ThenInclude(sa => sa.Area)
+                .Include(c => c.User)!
+                    .ThenInclude(u => u.ReviewsReceived)
+                        .ThenInclude(r => r.Reviewer)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (craftsman == null) return null;

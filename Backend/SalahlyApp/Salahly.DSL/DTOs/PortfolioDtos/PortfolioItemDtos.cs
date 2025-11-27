@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Salahly.DSL.DTOs;
+
 namespace Salahly.DSL.DTOs.PortfolioDtos
 {
     /// <summary>
@@ -76,5 +78,11 @@ namespace Salahly.DSL.DTOs.PortfolioDtos
     {
         public IEnumerable<PortfolioItemResponseDto> Items { get; set; } = new List<PortfolioItemResponseDto>();
         public int TotalCount { get; set; }
+    }
+
+    public class PortfolioItemDetailsDto
+    {
+        public PortfolioItemResponseDto Item { get; set; }
+        public IEnumerable<CraftsmanReviewDto> Reviews { get; set; } = new List<CraftsmanReviewDto>();
     }
 }

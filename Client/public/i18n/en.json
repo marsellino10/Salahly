@@ -686,5 +686,17 @@
       "GenericError": "Something went wrong. Please try again.",
       "ActionError": "Unable to complete the request right now. Please retry shortly."
     }
+  },
+  "TechnicianProfilePage": {
+    "Portfolio": {
+      "Title": "Portfolio",
+      "Hint": "Tap on a project to explore the details",
+      "Empty": "No portfolio items available yet."
+    },
+    "Reviews": {
+      "Title": "Reviews",
+      "Description": "What customers are saying about this technician.",
+      "Empty": "No reviews yet."
+    }
   }
 }

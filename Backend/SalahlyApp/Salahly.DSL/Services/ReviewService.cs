@@ -19,6 +19,23 @@ namespace Salahly.DSL.Services
         {
             _unitOfWork = unitOfWork;
         }
+
+        public async Task<IEnumerable<CraftsmanReviewDto>> GetReviewsForCraftsmanAsync(int craftsmanId)
+        {
+            if (craftsmanId <= 0)
+            {
+                return Enumerable.Empty<CraftsmanReviewDto>();
+            }
+
+            var craftsmanUser = await _unitOfWork.ApplicationUsers.GetByIdAsync(craftsmanId);
+            if (craftsmanUser == null)
+            {
+                return Enumerable.Empty<CraftsmanReviewDto>();
+            }
+
+            var reviews = await _unitOfWork.Reviews.GetReviewsByUserIdAsync(craftsmanUser.Id);
+            return reviews.Adapt<IEnumerable<CraftsmanReviewDto>>();
+        }
         public async Task<bool> CreateReviewAsync(CreateReviewDto dto)
         {
             var check = await HasUserReviewedAsync(dto.ReviewerUserId, dto.BookingId);

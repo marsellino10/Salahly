@@ -12,7 +12,9 @@ namespace Salahly.DSL.DTOs
     {
         public int Id { get; set; }
         public int CraftId { get; set; }
-        public decimal RatingAverage { get; set; }
+        public string? CraftName { get; set; }
+        public string? JobTitle { get; set; }
+        public double RatingAverage { get; set; }
         public int TotalCompletedBookings { get; set; }
         public bool IsAvailable { get; set; }
         public decimal? HourlyRate { get; set; }
@@ -25,6 +27,19 @@ namespace Salahly.DSL.DTOs
         public IEnumerable<PortfolioItemResponseDto> Portfolio { get; set; } = new List<PortfolioItemResponseDto>();
         // Changed to use simplified ServiceAreaDto instead of CraftsmanServiceAreaDto
         public IEnumerable<ServiceAreaDto> ServiceAreas { get; set; } = new List<ServiceAreaDto>();
+        public IEnumerable<CraftsmanReviewDto> Reviews { get; set; } = new List<CraftsmanReviewDto>();
+    }
+
+    public class CraftsmanReviewDto
+    {
+        public int Id { get; set; }
+        public int ReviewerUserId { get; set; }
+        public string ReviewerName { get; set; }
+        public string? ReviewerProfileImageUrl { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public int BookingId { get; set; }
     }
 
     public class CreateCraftsmanDto

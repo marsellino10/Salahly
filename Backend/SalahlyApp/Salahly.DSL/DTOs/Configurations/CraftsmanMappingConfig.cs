@@ -12,6 +12,8 @@ namespace Salahly.DSL.DTOs.Configurations
             config.NewConfig<Craftsman, CraftsmanDto>()
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.CraftId, src => src.CraftId)
+                .Map(dest => dest.CraftName, src => src.Craft != null ? src.Craft.Name : null)
+                .Map(dest => dest.JobTitle, src => src.Craft != null ? src.Craft.Name : null)
                 .Map(dest => dest.RatingAverage, src => src.User.RatingAverage)
                 .Map(dest => dest.TotalCompletedBookings, src => src.TotalCompletedBookings)
                 .Map(dest => dest.IsAvailable, src => src.IsAvailable)

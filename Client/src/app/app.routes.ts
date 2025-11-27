@@ -15,6 +15,7 @@ export const routes: Routes = [
       { path: 'login', loadComponent: () => import('./pages/shared/login/login').then(c => c.Login) },
       { path: 'signup', loadComponent: () => import('./pages/shared/registration/registration').then(c => c.Registration) },
       { path: 'browse', loadComponent: () => import('./pages/shared/browse-technicians/browse-technicians').then(c => c.BrowseTechnicians) },
+      { path: 'technicians/:id/profile', loadComponent: () => import('./pages/technician/technician-profile/technician-profile').then(c => c.TechnicianProfile) },
     ],
   },
   {

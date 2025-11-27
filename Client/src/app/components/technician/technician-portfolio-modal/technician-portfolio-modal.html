@@ -1,0 +1,48 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>{{ item?.title || 'Portfolio item' }}</h2>
+      <button type="button" class="modal-close" (click)="onClose()">
+        <span class="bi bi-x-lg"></span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="modal-image">
+        <img [src]="item?.imageUrl || 'https://via.placeholder.com/900x600?text=Portfolio+Item'" [alt]="item?.title || 'Portfolio item'" />
+      </div>
+      <div class="modal-description">
+        <h3>Project Description</h3>
+        <p>{{ item?.description || 'No description provided for this project.' }}</p>
+      </div>
+    </div>
+
+    <section class="modal-reviews">
+      <div class="section-header">
+        <h3>Reviews referencing this technician</h3>
+        <span class="badge">{{ reviews.length }}</span>
+      </div>
+
+      <div *ngIf="reviews.length; else noProjectReviews" class="reviews-list">
+        <article class="review-item" *ngFor="let review of reviews; trackBy: trackReview">
+          <div class="review-avatar">
+            <span>{{ getReviewerInitials(review.reviewerName) }}</span>
+          </div>
+          <div class="review-body">
+            <header>
+              <h4>{{ review.reviewerName }}</h4>
+              <time>{{ formatDate(review.createdAt) }}</time>
+            </header>
+            <div class="review-rating">
+              <i class="bi bi-star-fill" *ngFor="let _ of getRatingArray(review.rating)"></i>
+            </div>
+            <p>{{ review.comment }}</p>
+          </div>
+        </article>
+      </div>
+      <ng-template #noProjectReviews>
+        <p class="reviews-empty">No reviews mention this project yet.</p>
+      </ng-template>
+    </section>
+  </div>
+</div>

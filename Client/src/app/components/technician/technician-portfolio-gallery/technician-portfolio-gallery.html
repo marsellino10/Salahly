@@ -1,0 +1,22 @@
+<section class="portfolio-gallery" *ngIf="items?.length; else emptyState">
+  <div class="portfolio-grid">
+    <article
+      class="portfolio-card"
+      *ngFor="let item of items; trackBy: trackById"
+      (click)="onSelect(item)">
+      <div class="portfolio-image" [style.backgroundImage]="'url(' + getImageUrl(item) + ')'">
+      </div>
+      <div class="portfolio-content">
+        <h3 class="portfolio-title">{{ item.title }}</h3>
+        <p class="portfolio-description">{{ item.description || 'Tap to view details' }}</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<ng-template #emptyState>
+  <div class="portfolio-empty">
+    <span class="material-symbols-outlined">collections_bookmark</span>
+    <p>No portfolio items available yet.</p>
+  </div>
+</ng-template>

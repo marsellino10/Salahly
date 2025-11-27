@@ -70,7 +70,7 @@
           (ngModelChange)="messageDraft.set($event)"
           (keydown)="onKeyDown($event)"
           rows="2"
-          placeholder="Ask about booking, login help, or anything else..."
+          placeholder="Ask about booking, login help, or anything else..."no 
           [disabled]="isSending()"
         ></textarea>
         <button type="submit" [disabled]="isSending() || !messageDraft().trim()">

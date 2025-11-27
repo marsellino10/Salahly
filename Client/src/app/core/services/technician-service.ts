@@ -2,7 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
-import { Craftsman } from '../models/Craftman';
+import { Craftsman, CraftsmanReview } from '../models/Craftman';
+import { Portfolio } from '../models/Portfolio';
 import { AuthService } from './auth-service';
 
 export interface ApiResponse<T> {
@@ -78,6 +79,18 @@ export class TechnicianService {
 
   public getTechnicianById(id: number): Observable<ApiResponse<Craftsman>> {
     return this._HttpClient.get<ApiResponse<Craftsman>>(`${this.baseUrl}/${id}`);
+  }
+
+  public getTechnicianPortfolio(craftsmanId: number): Observable<ApiResponse<Portfolio[]>> {
+    return this._HttpClient.get<ApiResponse<Portfolio[]>>(
+      `${environment.baseApi}PortfolioItems/craftsman/${craftsmanId}`,
+    );
+  }
+
+  public getTechnicianReviews(craftsmanId: number): Observable<ApiResponse<CraftsmanReview[]>> {
+    return this._HttpClient.get<ApiResponse<CraftsmanReview[]>>(
+      `${environment.baseApi}Reviews/user/${craftsmanId}`,
+    );
   }
 
   public createTechnician(

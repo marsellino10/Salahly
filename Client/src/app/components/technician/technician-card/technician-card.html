@@ -11,7 +11,7 @@
         </div>
         <div class="provider-basic-info">
           <h3 class="provider-name">{{ craftsman.fullName }}</h3>
-          <p class="provider-profession">{{ craftsman.fullName }}</p>
+          <p class="provider-profession">{{ craftsman.jobTitle || craftsman.craftName || 'Technician' }}</p>
         </div>
       </div>
 
