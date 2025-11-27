@@ -51,9 +51,9 @@ namespace Salahly.DSL.Services
                     return dto;
                 }).ToList();
 
-                if (!dtoList.Any())
-                    return ServiceResponse<IEnumerable<OfferDto>>
-                        .FailureResponse("No offers found for this request.");
+                //if (!dtoList.Any())
+                //    return ServiceResponse<IEnumerable<OfferDto>>
+                //        .FailureResponse("No offers found for this request.");
 
                 return ServiceResponse<IEnumerable<OfferDto>>.SuccessResponse(dtoList);
             }

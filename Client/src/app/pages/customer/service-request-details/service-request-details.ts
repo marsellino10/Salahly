@@ -141,11 +141,14 @@ export class ServiceRequestDetails implements OnInit {
     this.offersError.set(null);
 
     this._offersService.getOffersForRequest(this.requestId).subscribe({
+      
       next: (response) => {
+        
         this.offers.set(response.data ?? []);
         this.isOffersLoading.set(false);
       },
       error: (error) => {
+        console.log(error);
         this.offersError.set(this.extractErrorMessage(error));
         this.isOffersLoading.set(false);
       },

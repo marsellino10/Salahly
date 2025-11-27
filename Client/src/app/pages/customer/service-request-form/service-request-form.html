@@ -186,7 +186,7 @@
         </div>
         <small *ngIf="selectedImages.length">{{ 'ServiceRequestForm.Upload.CountLabel' | translate:{ uploaded: selectedImages.length, max: maxImages } }}</small>
       </div>
-          <img src="https://res.cloudinary.com/dkep2voqw/image/upload/v1764258100/salahly/customer/customer_c594925d518e46359e69d602f6afb750_1978321_721292131253622_6701158353453553500_o.jpg" alt="">
+          <img src="" alt="">
 
       <div class="upload-card">
         <input type="file" accept="image/*" multiple (change)="onFilesSelected($event)" [disabled]="selectedImages.length >= maxImages" />

@@ -16,8 +16,8 @@ export interface OfferDto {
   offeredPrice: number;
   description: string;
   estimatedDurationMinutes: number;
-  availableFromDate: string;
-  availableToDate: string;
+  preferredDate: string;
+  preferredTimeSlot?: string | null;
   craftsmanName: string;
   status: OfferStatus;
   createdAt: string;

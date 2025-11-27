@@ -170,7 +170,7 @@
             <ul class="offer-meta">
               <li>
                 <i class="bi bi-calendar2-week"></i>
-                {{ 'ServiceRequestDetails.Offers.Availability' | translate:{ from: formatDate(offer.availableFromDate), to: formatDate(offer.availableToDate) } }}
+                {{ 'ServiceRequestDetails.Offers.Availability' | translate:{ Day: formatDate(offer.preferredDate), Time: (offer.preferredTimeSlot) } }}
               </li>
               <li>
                 <i class="bi bi-clock"></i>

@@ -171,7 +171,7 @@
                 </div>
                 <div>
                   <span class="meta-label">{{ 'BrowseOpportunities.Cards.Meta.PreferredDateLabel' | translate }}</span>
-                  <strong>{{ formatDate(opportunity.preferredDate) }}</strong>
+                  <strong>{{ formatDate(opportunity.availableFromDate) }} - {{ formatDate(opportunity.availableToDate) }}</strong>
                 </div>
                 <div>
                   <span class="meta-label">{{ 'BrowseOpportunities.Cards.Meta.ExpiresLabel' | translate }}</span>
@@ -257,48 +257,72 @@
           <form class="modal-body offer-form" [formGroup]="offerForm" (ngSubmit)="submitOffer()">
             <div class="form-grid">
               <label>
-                <span>{{ 'BrowseOpportunities.Modal.Fields.PriceLabel' | translate }}</span>
-                <input type="number" formControlName="offeredPrice" min="1" [placeholder]="'BrowseOpportunities.Modal.Fields.PricePlaceholder' | translate" />
+                <span>{{ 'BrowseOpportunities.Modal.Fields.PriceLabel' | translate }} *</span>
+                <input 
+                  type="number" 
+                  formControlName="offeredPrice" 
+                  min="1"
+                  step="10"
+                  [placeholder]="'BrowseOpportunities.Modal.Fields.PricePlaceholder' | translate" 
+                />
                 @if(offerForm.get('offeredPrice')?.invalid && offerForm.get('offeredPrice')?.touched){
                   <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.PriceError' | translate }}</small>
                 }
               </label>
 
               <label>
-                <span>{{ 'BrowseOpportunities.Modal.Fields.DurationLabel' | translate }}</span>
-                <input type="number" formControlName="estimatedDurationMinutes" min="15" [placeholder]="'BrowseOpportunities.Modal.Fields.DurationPlaceholder' | translate" />
+                <span>{{ 'BrowseOpportunities.Modal.Fields.DurationLabel' | translate }} *</span>
+                <input 
+                  type="number" 
+                  formControlName="estimatedDurationMinutes" 
+                  min="15"
+                  step="15"
+                  [placeholder]="'BrowseOpportunities.Modal.Fields.DurationPlaceholder' | translate" 
+                />
                 @if(offerForm.get('estimatedDurationMinutes')?.invalid && offerForm.get('estimatedDurationMinutes')?.touched){
                   <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.DurationError' | translate }}</small>
                 }
               </label>
 
               <label>
-                <span>{{ 'BrowseOpportunities.Modal.Fields.AvailableFromLabel' | translate }}</span>
-                <input type="datetime-local" formControlName="availableFromDate" />
-                @if(offerForm.get('availableFromDate')?.invalid && offerForm.get('availableFromDate')?.touched){
+                <span>{{ 'BrowseOpportunities.Modal.Fields.PreferredDateLabel' | translate }} *</span>
+                <input 
+                  type="date" 
+                  formControlName="preferredDate"
+                  [min]="minDate"
+                />
+                <small class="text-muted">When can you start this job?</small>
+                @if(offerForm.get('preferredDate')?.invalid && offerForm.get('preferredDate')?.touched){
                   <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.Required' | translate }}</small>
                 }
               </label>
 
               <label>
-                <span>{{ 'BrowseOpportunities.Modal.Fields.AvailableToLabel' | translate }}</span>
-                <input type="datetime-local" formControlName="availableToDate" />
-                @if(offerForm.get('availableToDate')?.invalid && offerForm.get('availableToDate')?.touched){
-                  <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.Required' | translate }}</small>
-                }
+                <span>{{ 'BrowseOpportunities.Modal.Fields.TimeSlotLabel' | translate }}</span>
+                <select formControlName="preferredTimeSlot">
+                  <option value="">Any time (Flexible)</option>
+                  <option value="morning">Morning (8 AM - 12 PM)</option>
+                  <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
+                  <option value="evening">Evening (5 PM - 9 PM)</option>
+                </select>
+                <small class="text-muted">When during the day works best?</small>
               </label>
             </div>
 
             <label class="description-field">
-              <span>{{ 'BrowseOpportunities.Modal.Fields.DetailsLabel' | translate }}</span>
+              <span>{{ 'BrowseOpportunities.Modal.Fields.DetailsLabel' | translate }} *</span>
               <textarea
                 formControlName="description"
                 rows="4"
+                maxlength="500"
                 [placeholder]="'BrowseOpportunities.Modal.Fields.DetailsPlaceholder' | translate"
               ></textarea>
-              @if(offerForm.get('description')?.invalid && offerForm.get('description')?.touched){
-                <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.DetailsError' | translate }}</small>
-              }
+              <div class="d-flex justify-content-between align-items-center mt-1">
+                <small class="text-muted">{{ offerForm.get('description')?.value?.length || 0 }} / 500</small>
+                @if(offerForm.get('description')?.invalid && offerForm.get('description')?.touched){
+                  <small class="text-danger">{{ 'BrowseOpportunities.Modal.Fields.DetailsError' | translate }}</small>
+                }
+              </div>
             </label>
 
             @if(offerSubmitMessage()){

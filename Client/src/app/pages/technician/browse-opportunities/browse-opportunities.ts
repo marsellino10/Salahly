@@ -45,6 +45,7 @@ export class BrowseOpportunities implements OnInit {
   readonly withdrawingOfferId = signal<number | null>(null);
   readonly actionBanner = signal<{ type: 'success' | 'error'; text: string } | null>(null);
   offerForm!: FormGroup;
+  minDate = new Date().toISOString().split('T')[0];
 
   readonly statusOptions: { value: ServiceRequestStatus; labelKey: string }[] = [
     { value: 'Open', labelKey: 'BrowseOpportunities.Filters.Status.Open' },
@@ -96,7 +97,7 @@ export class BrowseOpportunities implements OnInit {
   readonly stats = computed(() => {
     const list = this.opportunities();
     const now = Date.now();
-    const closingSoonThreshold = now + 3 * 24 * 60 * 60 * 1000; // 3 days
+    const closingSoonThreshold = now + 3 * 24 * 60 * 60 * 1000;
 
     const closingSoon = list.filter((item) => new Date(item.expiresAt).getTime() <= closingSoonThreshold).length;
 
@@ -127,8 +128,8 @@ export class BrowseOpportunities implements OnInit {
       offeredPrice: [null, [Validators.required, Validators.min(1)]],
       estimatedDurationMinutes: [null, [Validators.required, Validators.min(15)]],
       description: ['', [Validators.required, Validators.minLength(20)]],
-      availableFromDate: ['', Validators.required],
-      availableToDate: ['', Validators.required],
+      preferredDate: ['', Validators.required],
+      preferredTimeSlot: [''],
     });
     this.loadOpportunities();
     this.loadExistingOffers();
@@ -214,8 +215,8 @@ export class BrowseOpportunities implements OnInit {
       offeredPrice: Number(formValue['offeredPrice']),
       description: String(formValue['description']),
       estimatedDurationMinutes: Number(formValue['estimatedDurationMinutes']),
-      availableFromDate: new Date(formValue['availableFromDate']).toISOString(),
-      availableToDate: new Date(formValue['availableToDate']).toISOString(),
+      preferredDate: new Date(formValue['preferredDate']).toISOString(),
+      preferredTimeSlot: formValue['preferredTimeSlot'] || undefined,
     };
 
     this.offerSubmitting.set(true);

@@ -14,10 +14,16 @@ namespace Salahly.DAL.Data
             // Ensure database is created
             await context.Database.MigrateAsync();
 
+            // Clear existing data in correct order (respecting foreign keys)
+            await ClearAllDataAsync(context);
+
             // Seed Roles
             await SeedRolesAsync(roleManager);
 
-            // Seed Crafts
+            // Seed Areas (required by Craftsmen's service areas)
+            await SeedAreasAsync(context);
+
+            // Seed Crafts (required by Craftsmen)
             await SeedCraftsAsync(context);
 
             // Seed Admin
@@ -26,16 +32,69 @@ namespace Salahly.DAL.Data
             // Seed Customers
             await SeedCustomersAsync(userManager, context);
 
-            // Seed Craftsmen
+            // Seed Craftsmen with service areas
             await SeedCraftsmenAsync(userManager, context);
 
             // Seed Portfolio Items
             await SeedPortfolioItemsAsync(context);
 
-            // Seed Bookings and Reviews
-            await SeedBookingsAndReviewsAsync(context);
+            // Seed Service Requests
+            await SeedServiceRequestsAsync(context);
 
-            await context.SaveChangesAsync();
+            // Seed Craftsman Offers
+            await SeedCraftsmanOffersAsync(context);
+
+            // Seed Bookings and Payments
+            await SeedBookingsAndPaymentsAsync(context);
+
+            // Seed Reviews
+            await SeedReviewsAsync(context);
+
+            // Seed Notifications
+            await SeedNotificationsAsync(context);
+
+            Console.WriteLine("✅ Database seeding completed successfully!");
+        }
+
+        private static async Task ClearAllDataAsync(ApplicationDbContext context)
+        {
+            // Execute in correct order to respect foreign key constraints
+            try
+            {
+                // Delete in reverse dependency order
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Reviews]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Notifications]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Payments]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [PortfolioItems]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Bookings]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [CraftsmanOffers]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [ServiceRequests]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [CraftsmanServiceAreas]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Craftsmen]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Customers]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Admins]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Areas]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Crafts]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [RefreshTokens]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [UserLogins]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [UserTokens]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [UserClaims]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [RoleClaims]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [UserRoles]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Users]");
+                await context.Database.ExecuteSqlRawAsync("DELETE FROM [Roles]");
+
+                // Reset identity seeds if using SQL Server
+                await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('[Crafts]', RESEED, 0)");
+                await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('[Areas]', RESEED, 0)");
+                await context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('[Users]', RESEED, 0)");
+
+                Console.WriteLine("✅ Cleared all existing data");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ Warning during data cleanup: {ex.Message}");
+            }
         }
 
         private static async Task SeedRolesAsync(RoleManager<IdentityRole<int>> roleManager)
@@ -46,20 +105,48 @@ namespace Salahly.DAL.Data
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(new IdentityRole<int>(role));
-                    Console.WriteLine($"✅ Role '{role}' created");
+                    var result = await roleManager.CreateAsync(new IdentityRole<int> { Name = role });
+                    if (result.Succeeded)
+                    {
+                        Console.WriteLine($"✅ Role '{role}' created");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"❌ Failed to create role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    }
                 }
             }
         }
 
+        private static async Task SeedAreasAsync(ApplicationDbContext context)
+        {
+            var areas = new List<Area>
+            {
+                // Cairo areas
+                new Area { Region = "Cairo", City = "Nasr City" },
+                new Area { Region = "Cairo", City = "Maadi" },
+                new Area { Region = "Cairo", City = "Heliopolis" },
+                new Area { Region = "Cairo", City = "Zamalek" },
+                new Area { Region = "Cairo", City = "Downtown" },
+                new Area { Region = "Cairo", City = "New Cairo" },
+                // Giza areas
+                new Area { Region = "Giza", City = "Dokki" },
+                new Area { Region = "Giza", City = "Agouza" },
+                new Area { Region = "Giza", City = "6th of October" },
+                // Alexandria areas
+                new Area { Region = "Alexandria", City = "Downtown" },
+                new Area { Region = "Alexandria", City = "Montaza" },
+                // Ismailia
+                new Area { Region = "Ismailia", City = "Downtown" }
+            };
+
+            await context.Areas.AddRangeAsync(areas);
+            await context.SaveChangesAsync();
+            Console.WriteLine($"✅ Seeded {areas.Count} areas");
+        }
+
         private static async Task SeedCraftsAsync(ApplicationDbContext context)
         {
-            if (await context.Crafts.AnyAsync())
-            {
-                Console.WriteLine("⏭️ Crafts already exist, skipping...");
-                return;
-            }
-
             var crafts = new List<Craft>
             {
                 new Craft
@@ -147,12 +234,6 @@ namespace Salahly.DAL.Data
         {
             var adminEmail = "admin@salahly.com";
 
-            if (await userManager.FindByEmailAsync(adminEmail) != null)
-            {
-                Console.WriteLine("⏭️ Admin already exists, skipping...");
-                return;
-            }
-
             var adminUser = new ApplicationUser
             {
                 UserName = adminEmail,
@@ -162,26 +243,44 @@ namespace Salahly.DAL.Data
                 PhoneNumberConfirmed = true,
                 IsActive = true,
                 UserType = UserType.Admin,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                IsProfileCompleted = true,
+                RatingAverage = 0
             };
 
-            var result = await userManager.CreateAsync(adminUser, "Admin@123");
+            var createResult = await userManager.CreateAsync(adminUser, "Admin@123");
 
-            if (result.Succeeded)
+            if (createResult.Succeeded)
             {
-                await userManager.AddToRoleAsync(adminUser, "Admin");
-
-                var admin = new Admin
+                // Refresh user from database to ensure Id is populated
+                var createdAdmin = await userManager.FindByEmailAsync(adminEmail);
+                if (createdAdmin != null)
                 {
-                    Id = adminUser.Id,
-                    Department = "IT",
-                    HiredAt = DateTime.UtcNow
-                };
+                    // Add to role
+                    var roleResult = await userManager.AddToRoleAsync(createdAdmin, "Admin");
+                    if (roleResult.Succeeded)
+                    {
+                        // Create Admin entity
+                        var admin = new Admin
+                        {
+                            Id = createdAdmin.Id,
+                            Department = "IT",
+                            HiredAt = DateTime.UtcNow
+                        };
 
-                await context.Admins.AddAsync(admin);
-                await context.SaveChangesAsync();
-
-                Console.WriteLine($"✅ Admin created: {adminEmail} / Admin@123");
+                        await context.Admins.AddAsync(admin);
+                        await context.SaveChangesAsync();
+                        Console.WriteLine($"✅ Admin created: {adminEmail} / Admin@123");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"❌ Failed to add admin to role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine($"❌ Failed to create admin: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
             }
         }
 
@@ -189,190 +288,228 @@ namespace Salahly.DAL.Data
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context)
         {
-            var customers = new[]
+            var customers = new []
             {
-                new { Email = "ahmed.customer@salahly.com", FullName = "Ahmed Mohamed", City = "Cairo", Area = "Nasr City" },
-                new { Email = "sara.customer@salahly.com", FullName = "Sara Ali", City = "Cairo", Area = "Maadi" },
-                new { Email = "mohamed.customer@salahly.com", FullName = "Mohamed Hassan", City = "Giza", Area = "Dokki" }
+                new { Email = "ahmed.customer@salahly.com", FullName = "Ahmed Mohamed", City = "Cairo", Area = "Nasr City", Phone = "+201001234567" },
+                new { Email = "sara.customer@salahly.com", FullName = "Sara Ali", City = "Cairo", Area = "Maadi", Phone = "+201001234568" },
+                new { Email = "fatima.customer@salahly.com", FullName = "Fatima Hassan", City = "Giza", Area = "Dokki", Phone = "+201001234569" },
+                new { Email = "layla.customer@salahly.com", FullName = "Layla Mohamed", City = "Cairo", Area = "Heliopolis", Phone = "+201001234570" }
             };
 
+            int customerCount = 0;
             foreach (var customerData in customers)
             {
-                if (await userManager.FindByEmailAsync(customerData.Email) != null)
-                    continue;
-
                 var user = new ApplicationUser
                 {
                     UserName = customerData.Email,
                     Email = customerData.Email,
                     FullName = customerData.FullName,
                     EmailConfirmed = true,
+                    PhoneNumber = customerData.Phone,
                     IsActive = true,
                     UserType = UserType.Customer,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    IsProfileCompleted = true,
+                    RatingAverage = 0
                 };
 
-                var result = await userManager.CreateAsync(user, "Customer@123");
+                var createResult = await userManager.CreateAsync(user, "Customer@123");
 
-                if (result.Succeeded)
+                if (createResult.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, "Customer");
-
-                    var customer = new Customer
+                    // Refresh user from database to ensure Id is populated
+                    var createdUser = await userManager.FindByEmailAsync(customerData.Email);
+                    if (createdUser != null)
                     {
-                        Id = user.Id,
-                        City = customerData.City,
-                        Area = customerData.Area,
-                        Address = $"123 Main Street, {customerData.Area}",
-                        PhoneNumber = "+201234567890"
-                    };
+                        // Add to role
+                        var roleResult = await userManager.AddToRoleAsync(createdUser, "Customer");
+                        if (roleResult.Succeeded)
+                        {
+                            var customer = new Customer
+                            {
+                                Id = createdUser.Id,
+                                City = customerData.City,
+                                Area = customerData.Area,
+                                Address = $"123 Main Street, {customerData.Area}, {customerData.City}",
+                                PhoneNumber = customerData.Phone,
+                                DateOfBirth = new DateTime(1990, 5, 15)
+                            };
 
-                    await context.Customers.AddAsync(customer);
+                            await context.Customers.AddAsync(customer);
+                            await context.SaveChangesAsync();
+                            customerCount++;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"⚠️ Failed to add {customerData.Email} to Customer role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ Failed to create customer {customerData.Email}: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
                 }
             }
 
-            await context.SaveChangesAsync();
-            Console.WriteLine($"✅ Seeded {customers.Length} customers");
+            Console.WriteLine($"✅ Seeded {customerCount} customers");
         }
 
         private static async Task SeedCraftsmenAsync(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context)
         {
-            // Get crafts
+            // Get required data
             var electricianCraft = await context.Crafts.FirstOrDefaultAsync(c => c.Name == "Electrician");
             var plumberCraft = await context.Crafts.FirstOrDefaultAsync(c => c.Name == "Plumber");
             var carpenterCraft = await context.Crafts.FirstOrDefaultAsync(c => c.Name == "Carpenter");
+            var painterCraft = await context.Crafts.FirstOrDefaultAsync(c => c.Name == "Painter");
 
-            if (electricianCraft == null || plumberCraft == null || carpenterCraft == null)
+            var nasrCityArea = await context.Areas.FirstOrDefaultAsync(a => a.Region == "Cairo" && a.City == "Nasr City");
+            var maadiArea = await context.Areas.FirstOrDefaultAsync(a => a.Region == "Cairo" && a.City == "Maadi");
+            var dokkiArea = await context.Areas.FirstOrDefaultAsync(a => a.Region == "Giza" && a.City == "Dokki");
+            var heliosArea = await context.Areas.FirstOrDefaultAsync(a => a.Region == "Cairo" && a.City == "Heliopolis");
+
+            if (electricianCraft == null || plumberCraft == null || carpenterCraft == null || painterCraft == null)
             {
                 Console.WriteLine("❌ Crafts not found. Seed crafts first.");
                 return;
             }
 
-            var craftsmen = new[]
+            var craftsmen = new []
             {
                 new
                 {
                     Email = "ali.electrician@salahly.com",
                     FullName = "Ali Mahmoud",
                     CraftId = electricianCraft.Id,
-                    Bio = "Experienced electrician with 10+ years",
+                    Bio = "Experienced electrician with 10+ years in residential and commercial work",
                     YearsOfExperience = 10,
                     HourlyRate = 150m,
-                    City = "Cairo",
-                    Area = "Nasr City"
+                    AreaId = nasrCityArea?.Id ?? 1,
+                    Phone = "+201102234567"
                 },
                 new
                 {
                     Email = "youssef.plumber@salahly.com",
                     FullName = "Youssef Ahmed",
                     CraftId = plumberCraft.Id,
-                    Bio = "Professional plumber, available 24/7",
+                    Bio = "Professional plumber with 24/7 emergency services",
                     YearsOfExperience = 8,
                     HourlyRate = 120m,
-                    City = "Cairo",
-                    Area = "Maadi"
+                    AreaId = maadiArea?.Id ?? 2,
+                    Phone = "+201102234568"
                 },
                 new
                 {
                     Email = "omar.carpenter@salahly.com",
                     FullName = "Omar Khaled",
                     CraftId = carpenterCraft.Id,
-                    Bio = "Custom furniture and carpentry services",
+                    Bio = "Custom furniture and carpentry services with modern designs",
                     YearsOfExperience = 12,
                     HourlyRate = 180m,
-                    City = "Giza",
-                    Area = "Dokki"
+                    AreaId = dokkiArea?.Id ?? 7,
+                    Phone = "+201102234569"
                 },
                 new
                 {
                     Email = "hassan.electrician@salahly.com",
                     FullName = "Hassan Ibrahim",
                     CraftId = electricianCraft.Id,
-                    Bio = "Residential and commercial electrical work",
+                    Bio = "Residential and commercial electrical work with certification",
                     YearsOfExperience = 6,
                     HourlyRate = 130m,
-                    City = "Cairo",
-                    Area = "Heliopolis"
+                    AreaId = heliosArea?.Id ?? 3,
+                    Phone = "+201102234570"
+                },
+                new
+                {
+                    Email = "amira.painter@salahly.com",
+                    FullName = "Amira Hassan",
+                    CraftId = painterCraft.Id,
+                    Bio = "Interior and exterior painting specialist",
+                    YearsOfExperience = 5,
+                    HourlyRate = 100m,
+                    AreaId = nasrCityArea?.Id ?? 1,
+                    Phone = "+201102234571"
                 }
             };
 
+            int craftsmanCount = 0;
             foreach (var craftsmanData in craftsmen)
             {
-                if (await userManager.FindByEmailAsync(craftsmanData.Email) != null)
-                    continue;
-
                 var user = new ApplicationUser
                 {
                     UserName = craftsmanData.Email,
                     Email = craftsmanData.Email,
                     FullName = craftsmanData.FullName,
                     EmailConfirmed = true,
+                    PhoneNumber = craftsmanData.Phone,
                     IsActive = true,
                     UserType = UserType.Craftsman,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    IsProfileCompleted = true,
+                    RatingAverage = 0
                 };
 
-                var result = await userManager.CreateAsync(user, "Craftsman@123");
+                var createResult = await userManager.CreateAsync(user, "Craftsman@123");
 
-                if (result.Succeeded)
+                if (createResult.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, "Craftsman");
-
-                    var craftsman = new Craftsman
+                    // Refresh user from database to ensure Id is populated
+                    var createdUser = await userManager.FindByEmailAsync(craftsmanData.Email);
+                    if (createdUser != null)
                     {
-                        Id = user.Id,
-                        CraftId = craftsmanData.CraftId,
-                        Bio = craftsmanData.Bio,
-                        YearsOfExperience = craftsmanData.YearsOfExperience,
-                        HourlyRate = craftsmanData.HourlyRate,
-                        TotalCompletedBookings = 0,
-                        IsAvailable = true
-                    };
-                    await context.Craftsmen.AddAsync(craftsman);
-                    await context.SaveChangesAsync();
-
-                    // Ensure canonical Area exists (use City as Region and Area as City in Area table)
-                    var existingArea = await context.Areas.FirstOrDefaultAsync(a => a.Region == craftsmanData.City && a.City == craftsmanData.Area);
-                    if (existingArea == null)
-                    {
-                        existingArea = new Area
+                        // Add to role
+                        var roleResult = await userManager.AddToRoleAsync(createdUser, "Craftsman");
+                        if (roleResult.Succeeded)
                         {
-                            Region = craftsmanData.City,
-                            City = craftsmanData.Area
-                        };
+                            var craftsman = new Craftsman
+                            {
+                                Id = createdUser.Id,
+                                CraftId = craftsmanData.CraftId,
+                                Bio = craftsmanData.Bio,
+                                YearsOfExperience = craftsmanData.YearsOfExperience,
+                                HourlyRate = craftsmanData.HourlyRate,
+                                TotalCompletedBookings = 0,
+                                IsAvailable = true,
+                                IsVerified = true,
+                                VerificationStatus = VerificationStatus.Verified
+                            };
 
-                        await context.Areas.AddAsync(existingArea);
-                        await context.SaveChangesAsync();
+                            await context.Craftsmen.AddAsync(craftsman);
+                            await context.SaveChangesAsync();
+
+                            // Add service area
+                            var serviceArea = new CraftsmanServiceArea
+                            {
+                                CraftsmanId = craftsman.Id,
+                                AreaId = craftsmanData.AreaId,
+                                ServiceRadiusKm = 15,
+                                IsActive = true,
+                                CreatedAt = DateTime.UtcNow
+                            };
+
+                            await context.CraftsmanServiceAreas.AddAsync(serviceArea);
+                            await context.SaveChangesAsync();
+                            craftsmanCount++;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"⚠️ Failed to add {craftsmanData.Email} to Craftsman role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                        }
                     }
-
-                    // Add service area linking to canonical Area
-                    var serviceArea = new CraftsmanServiceArea
-                    {
-                        CraftsmanId = craftsman.Id,
-                        AreaId = existingArea.Id,
-                        ServiceRadiusKm = 10,
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow
-                    };
-
-                    await context.CraftsmanServiceAreas.AddAsync(serviceArea);
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ Failed to create craftsman {craftsmanData.Email}: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
                 }
             }
 
-            await context.SaveChangesAsync();
-            Console.WriteLine($"✅ Seeded {craftsmen.Length} craftsmen with service areas");
+            Console.WriteLine($"✅ Seeded {craftsmanCount} craftsmen with service areas");
         }
 
         private static async Task SeedPortfolioItemsAsync(ApplicationDbContext context)
         {
-            if (await context.PortfolioItems.AnyAsync())
-            {
-                Console.WriteLine("⏭️ Portfolio items already exist, skipping...");
-                return;
-            }
-
             var craftsmen = await context.Craftsmen.ToListAsync();
 
             var portfolioItems = new List<PortfolioItem>();
@@ -402,16 +539,6 @@ namespace Salahly.DAL.Data
                         DisplayOrder = displayOrder++,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow.AddMonths(-5)
-                    },
-                    new PortfolioItem
-                    {
-                        CraftsmanId = craftsmen[0].Id,
-                        Title = "LED Lighting Installation",
-                        Description = "Energy-efficient LED lighting installation for residential property",
-                        ImageUrl = "https://images.unsplash.com/photo-1565636192335-14f13faf58ab?w=400&h=300&fit=crop",
-                        DisplayOrder = displayOrder++,
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow.AddMonths(-4)
                     }
                 });
             }
@@ -440,16 +567,6 @@ namespace Salahly.DAL.Data
                         DisplayOrder = displayOrder++,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow.AddMonths(-4)
-                    },
-                    new PortfolioItem
-                    {
-                        CraftsmanId = craftsmen[1].Id,
-                        Title = "Leak Repair and Pipe Maintenance",
-                        Description = "Successfully diagnosed and repaired hidden water leaks in wall pipes",
-                        ImageUrl = "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop",
-                        DisplayOrder = displayOrder++,
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow.AddMonths(-3)
                     }
                 });
             }
@@ -478,16 +595,6 @@ namespace Salahly.DAL.Data
                         DisplayOrder = displayOrder++,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow.AddMonths(-6)
-                    },
-                    new PortfolioItem
-                    {
-                        CraftsmanId = craftsmen[2].Id,
-                        Title = "Wooden Bookshelf Installation",
-                        Description = "Custom wooden bookshelves with integrated lighting and premium finish",
-                        ImageUrl = "https://images.unsplash.com/photo-1618005182384-a83a8e3a7f1f?w=400&h=300&fit=crop",
-                        DisplayOrder = displayOrder++,
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow.AddMonths(-2)
                     }
                 });
             }
@@ -506,97 +613,369 @@ namespace Salahly.DAL.Data
                         DisplayOrder = displayOrder++,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow.AddMonths(-4)
-                    },
-                    new PortfolioItem
-                    {
-                        CraftsmanId = craftsmen[3].Id,
-                        Title = "Electrical Safety Inspection",
-                        Description = "Comprehensive electrical safety audit and remediation for commercial building",
-                        ImageUrl = "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=400&h=300&fit=crop",
-                        DisplayOrder = displayOrder++,
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow.AddMonths(-3)
                     }
                 });
             }
 
-            await context.PortfolioItems.AddRangeAsync(portfolioItems);
-            await context.SaveChangesAsync();
-            Console.WriteLine($"✅ Seeded {portfolioItems.Count} portfolio items");
+            if (portfolioItems.Count > 0)
+            {
+                await context.PortfolioItems.AddRangeAsync(portfolioItems);
+                await context.SaveChangesAsync();
+                Console.WriteLine($"✅ Seeded {portfolioItems.Count} portfolio items");
+            }
         }
 
-        private static async Task SeedBookingsAndReviewsAsync(ApplicationDbContext context)
+        private static async Task SeedServiceRequestsAsync(ApplicationDbContext context)
         {
-            if (await context.Reviews.AnyAsync())
+            var customers = await context.Customers.ToListAsync();
+            var crafts = await context.Crafts.ToListAsync();
+            var areas = await context.Areas.ToListAsync();
+
+            if (customers.Count == 0 || crafts.Count == 0 || areas.Count == 0)
             {
-                Console.WriteLine("⏭️ Reviews already exist, skipping...");
+                Console.WriteLine("⏭️ Insufficient data for service requests, skipping...");
                 return;
             }
 
-            var customers = await context.Customers.Include(c => c.User).ToListAsync();
-            var craftsmen = await context.Craftsmen.Include(c => c.User).ToListAsync();
+            var serviceRequests = new List<ServiceRequest>();
+            var baseDate = DateTime.UtcNow;
+
+            // Service Request 1: Electrical work
+            serviceRequests.Add(new ServiceRequest
+            {
+                CustomerId = customers[0].Id,
+                CraftId = crafts[0].Id, // Electrician
+                Title = "Rewire Living Room",
+                Description = "Need to rewire the living room with new outlets and switch installation for smart home",
+                Address = "123 Main Street, Nasr City, Cairo",
+                AreaId = areas[0].Id, // Nasr City
+                Latitude = 30.0444,
+                Longitude = 31.3571,
+                AvailableFromDate = baseDate.AddDays(7),
+                AvailableToDate = baseDate.AddDays(14),
+                CustomerBudget = 1500m,
+                PaymentMethod = "Cash",
+                Status = ServiceRequestStatus.Open,
+                OffersCount = 0,
+                ExpiresAt = baseDate.AddDays(30),
+                CreatedAt = baseDate,
+                MaxOffers = 5
+            });
+
+            // Service Request 2: Plumbing work
+            serviceRequests.Add(new ServiceRequest
+            {
+                CustomerId = customers[1].Id,
+                CraftId = crafts[1].Id, // Plumber
+                Title = "Fix Leaking Bathroom",
+                Description = "Water leaking from bathroom pipes. Need urgent inspection and repair",
+                Address = "456 Garden Road, Maadi, Cairo",
+                AreaId = areas[1].Id, // Maadi
+                Latitude = 29.9667,
+                Longitude = 31.3667,
+                AvailableFromDate = baseDate.AddDays(1),
+                AvailableToDate = baseDate.AddDays(3),
+                CustomerBudget = 800m,
+                PaymentMethod = "Card",
+                Status = ServiceRequestStatus.Open,
+                OffersCount = 0,
+                ExpiresAt = baseDate.AddDays(30),
+                CreatedAt = baseDate,
+                MaxOffers = 5
+            });
+
+            // Service Request 3: Carpentry work
+            serviceRequests.Add(new ServiceRequest
+            {
+                CustomerId = customers[2].Id,
+                CraftId = crafts[2].Id, // Carpenter
+                Title = "Build Wardrobe",
+                Description = "Custom wooden wardrobe for bedroom with sliding doors and shelves",
+                Address = "789 Tree Lane, Dokki, Giza",
+                AreaId = areas[6].Id, // Dokki
+                Latitude = 30.0131,
+                Longitude = 31.2089,
+                AvailableFromDate = baseDate.AddDays(10),
+                AvailableToDate = baseDate.AddDays(20),
+                CustomerBudget = 5000m,
+                PaymentMethod = "Cash",
+                Status = ServiceRequestStatus.Open,
+                OffersCount = 0,
+                ExpiresAt = baseDate.AddDays(45),
+                CreatedAt = baseDate,
+                MaxOffers = 5
+            });
+
+            // Service Request 4: Painting work
+            serviceRequests.Add(new ServiceRequest
+            {
+                CustomerId = customers[3].Id,
+                CraftId = crafts[3].Id, // Painter
+                Title = "Paint Entire House",
+                Description = "Interior and exterior painting for 2-story house with premium paint",
+                Address = "321 Paint Street, Heliopolis, Cairo",
+                AreaId = areas[2].Id, // Heliopolis
+                Latitude = 30.0894,
+                Longitude = 31.3505,
+                AvailableFromDate = baseDate.AddDays(15),
+                AvailableToDate = baseDate.AddDays(25),
+                CustomerBudget = 3000m,
+                PaymentMethod = "Cash",
+                Status = ServiceRequestStatus.Open,
+                OffersCount = 0,
+                ExpiresAt = baseDate.AddDays(45),
+                CreatedAt = baseDate,
+                MaxOffers = 5
+            });
+
+            await context.ServiceRequests.AddRangeAsync(serviceRequests);
+            await context.SaveChangesAsync();
+            Console.WriteLine($"✅ Seeded {serviceRequests.Count} service requests");
+        }
+
+        private static async Task SeedCraftsmanOffersAsync(ApplicationDbContext context)
+        {
+            var serviceRequests = await context.ServiceRequests.ToListAsync();
+            var craftsmen = await context.Craftsmen.ToListAsync();
+
+            if (serviceRequests.Count == 0 || craftsmen.Count == 0)
+            {
+                Console.WriteLine("⏭️ Insufficient data for craftsman offers, skipping...");
+                return;
+            }
+
+            var offers = new List<CraftsmanOffer>();
+            var baseDate = DateTime.UtcNow;
+
+            // Offers for Service Request 1 (Electrician)
+            if (serviceRequests.Count > 0)
+            {
+                var sr = serviceRequests[0];
+                var electricians = craftsmen.Where(c => c.CraftId == sr.CraftId).Take(2).ToList();
+
+                foreach (var electrician in electricians)
+                {
+                    offers.Add(new CraftsmanOffer
+                    {
+                        ServiceRequestId = sr.ServiceRequestId,
+                        CraftsmanId = electrician.Id,
+                        OfferedPrice = 1200m + (electrician.Id % 100),
+                        Description = "I can handle this rewiring project efficiently with all required certifications",
+                        EstimatedDurationMinutes = 480,
+                        PreferredDate = baseDate.AddDays(8),
+                        PreferredTimeSlot = "Morning",
+                        Status = OfferStatus.Pending,
+                        CreatedAt = baseDate
+                    });
+                }
+            }
+
+            // Offers for Service Request 2 (Plumber)
+            if (serviceRequests.Count > 1)
+            {
+                var sr = serviceRequests[1];
+                var plumbers = craftsmen.Where(c => c.CraftId == sr.CraftId).Take(2).ToList();
+
+                foreach (var plumber in plumbers)
+                {
+                    offers.Add(new CraftsmanOffer
+                    {
+                        ServiceRequestId = sr.ServiceRequestId,
+                        CraftsmanId = plumber.Id,
+                        OfferedPrice = 700m + (plumber.Id % 50),
+                        Description = "Emergency plumbing repair available. Can come within 2 hours",
+                        EstimatedDurationMinutes = 120,
+                        PreferredDate = baseDate.AddDays(1),
+                        PreferredTimeSlot = "Afternoon",
+                        Status = OfferStatus.Pending,
+                        CreatedAt = baseDate
+                    });
+                }
+            }
+
+            // Offers for Service Request 3 (Carpenter)
+            if (serviceRequests.Count > 2)
+            {
+                var sr = serviceRequests[2];
+                var carpenters = craftsmen.Where(c => c.CraftId == sr.CraftId).Take(2).ToList();
+
+                foreach (var carpenter in carpenters)
+                {
+                    offers.Add(new CraftsmanOffer
+                    {
+                        ServiceRequestId = sr.ServiceRequestId,
+                        CraftsmanId = carpenter.Id,
+                        OfferedPrice = 4800m + (carpenter.Id % 200),
+                        Description = "Custom wardrobe with premium materials and finishing",
+                        EstimatedDurationMinutes = 1440,
+                        PreferredDate = baseDate.AddDays(12),
+                        PreferredTimeSlot = "Morning",
+                        Status = OfferStatus.Pending,
+                        CreatedAt = baseDate
+                    });
+                }
+            }
+
+            await context.CraftsmanOffers.AddRangeAsync(offers);
+            await context.SaveChangesAsync();
+            Console.WriteLine($"✅ Seeded {offers.Count} craftsman offers");
+        }
+
+        private static async Task SeedBookingsAndPaymentsAsync(ApplicationDbContext context)
+        {
+            var customers = await context.Customers.ToListAsync();
+            var craftsmen = await context.Craftsmen.ToListAsync();
             var crafts = await context.Crafts.ToListAsync();
+            var serviceRequests = await context.ServiceRequests.ToListAsync();
+            var offers = await context.CraftsmanOffers.ToListAsync();
 
             if (customers.Count == 0 || craftsmen.Count == 0 || crafts.Count == 0)
             {
-                Console.WriteLine("❌ Insufficient data to seed bookings and reviews");
+                Console.WriteLine("⏭️ Insufficient data for bookings, skipping...");
                 return;
             }
 
             var bookings = new List<Booking>();
-            var bookingDate = DateTime.UtcNow.AddMonths(-3);
+            var payments = new List<Payment>();
+            var bookingDate = DateTime.UtcNow.AddMonths(-2);
 
-            // Create completed bookings for reviews
-            for (int i = 0; i < Math.Min(customers.Count, 3); i++)
+            // Create completed booking 1 (with completed payment)
+            if (serviceRequests.Count > 0 && offers.Count > 0)
+            {
+                var sr = serviceRequests[0];
+                var offer = offers.FirstOrDefault(o => o.ServiceRequestId == sr.ServiceRequestId);
+
+                if (offer != null)
+                {
+                    var booking = new Booking
+                    {
+                        CustomerId = sr.CustomerId,
+                        CraftsmanId = offer.CraftsmanId,
+                        CraftId = sr.CraftId,
+                        ServiceRequestId = sr.ServiceRequestId,
+                        AcceptedOfferId = offer.CraftsmanOfferId,
+                        BookingDate = bookingDate.AddDays(5),
+                        Duration = 8,
+                        TotalAmount = 1200m,
+                        Status = BookingStatus.Completed,
+                        Notes = "Living room rewiring with smart home features",
+                        RefundableAmount = 0,
+                        CompletedAt = bookingDate.AddDays(5).AddHours(8),
+                        CreatedAt = bookingDate,
+                        CompletionNotes = "Work completed successfully. All outlets tested and working."
+                    };
+
+                    bookings.Add(booking);
+                    await context.Bookings.AddAsync(booking);
+                    await context.SaveChangesAsync();
+
+                    // Add payment for completed booking
+                    payments.Add(new Payment
+                    {
+                        BookingId = booking.BookingId,
+                        Amount = 1200m,
+                        PaymentDate = booking.BookingDate,
+                        Status = PaymentStatus.Completed,
+                        TransactionId = $"TXN{booking.BookingId:D6}001",
+                        PaymentMethod = "Cash",
+                        PaymentGateway = "Manual"
+                    });
+                }
+            }
+
+            // Create more completed bookings (without offers)
+            for (int i = 1; i < Math.Min(customers.Count, 3); i++)
             {
                 var customer = customers[i];
                 var craftsman = craftsmen[i % craftsmen.Count];
-                var craft = crafts[0];
+                var craft = crafts[i % crafts.Count];
 
                 var booking = new Booking
                 {
                     CustomerId = customer.Id,
                     CraftsmanId = craftsman.Id,
                     CraftId = craft.Id,
+                    ServiceRequestId = null,
+                    AcceptedOfferId = 0,
                     BookingDate = bookingDate.AddDays(i * 10),
-                    Duration = 2,
-                    TotalAmount = 300 + (i * 50),
+                    Duration = 4,
+                    TotalAmount = 500m + (i * 100),
                     Status = BookingStatus.Completed,
-                    Notes = $"Professional work completed on schedule",
+                    Notes = $"Professional {craft.Name} work",
                     RefundableAmount = 0,
-                    CompletedAt = bookingDate.AddDays(i * 10).AddHours(2),
+                    CompletedAt = bookingDate.AddDays(i * 10).AddHours(4),
                     CreatedAt = bookingDate.AddDays(i * 10),
-                    CompletionNotes = "Great job, everything works perfectly!"
+                    CompletionNotes = "Great work! Completed as per requirements."
                 };
 
                 bookings.Add(booking);
+                await context.Bookings.AddAsync(booking);
+                await context.SaveChangesAsync();
+
+                // Add payment
+                payments.Add(new Payment
+                {
+                    BookingId = booking.BookingId,
+                    Amount = booking.TotalAmount,
+                    PaymentDate = booking.BookingDate,
+                    Status = PaymentStatus.Completed,
+                    TransactionId = $"TXN{booking.BookingId:D6}001",
+                    PaymentMethod = "Cash",
+                    PaymentGateway = "Manual"
+                });
             }
 
-            await context.Bookings.AddRangeAsync(bookings);
-            await context.SaveChangesAsync();
+            if (payments.Count > 0)
+            {
+                await context.Payments.AddRangeAsync(payments);
+                await context.SaveChangesAsync();
+            }
+            
+            Console.WriteLine($"✅ Seeded {bookings.Count} completed bookings with payments");
+        }
 
-            // Create reviews for the bookings
+        private static async Task SeedReviewsAsync(ApplicationDbContext context)
+        {
+            var bookings = await context.Bookings
+                .Where(b => b.Status == BookingStatus.Completed)
+                .Include(b => b.Customer)
+                .ThenInclude(c => c.User)
+                .Include(b => b.Craftsman)
+                .ThenInclude(c => c.User)
+                .ToListAsync();
+
+            if (bookings.Count == 0)
+            {
+                Console.WriteLine("⏭️ No completed bookings for reviews, skipping...");
+                return;
+            }
+
             var reviews = new List<Review>();
 
             for (int i = 0; i < bookings.Count; i++)
             {
                 var booking = bookings[i];
-                var customer = customers[i];
-                var craftsman = craftsmen[i % craftsmen.Count];
+
+                // Ensure relationships are loaded
+                if (booking.Customer?.User == null || booking.Craftsman?.User == null)
+                {
+                    Console.WriteLine($"⚠️ Skipping review for booking {booking.BookingId} - missing user data");
+                    continue;
+                }
 
                 // Customer review for craftsman
                 var customerReview = new Review
                 {
-                    ReviewerUserId = customer.User.Id,
-                    TargetUserId = craftsman.User.Id,
+                    ReviewerUserId = booking.Customer.User.Id,
+                    TargetUserId = booking.Craftsman.User.Id,
                     BookingId = booking.BookingId,
-                    Rating = 4 + (i % 2), // 4-5 stars
+                    Rating = 4 + (i % 2),
                     Comment = i switch
                     {
-                        0 => "Excellent work! Professional and punctual. Would definitely hire again.",
-                        1 => "Great service! Fixed all the issues efficiently. Highly recommended.",
+                        0 => "Excellent work! Professional and punctual. Highly recommended.",
+                        1 => "Great service! Fixed all issues efficiently and within budget.",
                         2 => "Very skilled and friendly. Completed the job perfectly on time.",
-                        _ => "Perfect service, exactly what was needed!"
+                        _ => "Perfect service, exceeded my expectations!"
                     },
                     CreatedAt = booking.CompletedAt!.Value.AddDays(1)
                 };
@@ -605,33 +984,110 @@ namespace Salahly.DAL.Data
                 // Craftsman review for customer
                 var craftsmanReview = new Review
                 {
-                    ReviewerUserId = craftsman.User.Id,
-                    TargetUserId = customer.User.Id,
+                    ReviewerUserId = booking.Craftsman.User.Id,
+                    TargetUserId = booking.Customer.User.Id,
                     BookingId = booking.BookingId,
-                    Rating = 4 + (i % 2), // 4-5 stars
+                    Rating = 4 + (i % 2),
                     Comment = i switch
                     {
-                        0 => "Excellent customer! Clear requirements and easy to work with.",
-                        1 => "Very cooperative and pleasant. Great communication throughout.",
-                        2 => "Professional client with clear expectations. Smooth transaction.",
-                        _ => "Great experience working with this customer!"
+                        0 => "Excellent customer! Clear requirements and very cooperative.",
+                        1 => "Very pleasant and professional. Great communication.",
+                        2 => "Professional client with clear expectations. Smooth process.",
+                        _ => "Great experience! Would work with again."
                     },
                     CreatedAt = booking.CompletedAt!.Value.AddDays(2)
                 };
                 reviews.Add(craftsmanReview);
             }
 
-            await context.Reviews.AddRangeAsync(reviews);
-
-            // Update craftsman completed bookings count
-            foreach (var craftsman in craftsmen)
+            if (reviews.Count > 0)
             {
-                craftsman.TotalCompletedBookings = bookings.Count(b => b.CraftsmanId == craftsman.Id);
+                await context.Reviews.AddRangeAsync(reviews);
+
+                // Update craftsman completed bookings count and ratings
+                var craftsmenIds = bookings.Select(b => b.CraftsmanId).Distinct();
+                foreach (var craftsmanId in craftsmenIds)
+                {
+                    var craftsman = await context.Craftsmen.FindAsync(craftsmanId);
+                    if (craftsman != null)
+                    {
+                        var completedCount = bookings.Count(b => b.CraftsmanId == craftsmanId);
+                        craftsman.TotalCompletedBookings = completedCount;
+
+                        // Update craftsman user rating
+                        var craftsmanUser = craftsman.User ?? await context.Users.FindAsync(craftsman.Id);
+                        if (craftsmanUser != null)
+                        {
+                            var craftsmanReviews = reviews
+                                .Where(r => r.TargetUserId == craftsmanUser.Id)
+                                .Select(r => (double)r.Rating)
+                                .ToList();
+
+                            if (craftsmanReviews.Count > 0)
+                            {
+                                craftsmanUser.RatingAverage = craftsmanReviews.Average();
+                            }
+                        }
+                    }
+                }
+
+                await context.SaveChangesAsync();
+                Console.WriteLine($"✅ Seeded {reviews.Count} reviews");
+            }
+            else
+            {
+                Console.WriteLine("⏭️ No reviews created - insufficient booking/user data");
+            }
+        }
+
+        private static async Task SeedNotificationsAsync(ApplicationDbContext context)
+        {
+            var users = await context.Users.ToListAsync();
+            var bookings = await context.Bookings.ToListAsync();
+
+            if (users.Count == 0)
+            {
+                Console.WriteLine("⏭️ No users for notifications, skipping...");
+                return;
             }
 
+            var notifications = new List<Notification>();
+            var baseDate = DateTime.UtcNow;
+
+            // Send welcome notifications to users
+            foreach (var user in users.Take(5))
+            {
+                notifications.Add(new Notification
+                {
+                    UserId = user.Id,
+                    Type = NotificationType.BookingConfirmed,
+                    Title = "Welcome to Salahly!",
+                    Message = $"Welcome {user.FullName}! Your account has been successfully created.",
+                    ActionUrl = "/dashboard",
+                    IsRead = false,
+                    CreatedAt = baseDate
+                });
+            }
+
+            // Add booking notifications for completed bookings
+            foreach (var booking in bookings.Where(b => b.Status == BookingStatus.Completed).Take(3))
+            {
+                notifications.Add(new Notification
+                {
+                    UserId = booking.CustomerId,
+                    Type = NotificationType.BookingCompleted,
+                    Title = "Booking Completed",
+                    Message = "Your booking has been completed successfully!",
+                    ActionUrl = $"/bookings/{booking.BookingId}",
+                    BookingId = booking.BookingId,
+                    IsRead = true,
+                    CreatedAt = baseDate.AddDays(-1)
+                });
+            }
+
+            await context.Notifications.AddRangeAsync(notifications);
             await context.SaveChangesAsync();
-            Console.WriteLine($"✅ Seeded {bookings.Count} completed bookings");
-            Console.WriteLine($"✅ Seeded {reviews.Count} reviews");
+            Console.WriteLine($"✅ Seeded {notifications.Count} notifications");
         }
     }
 }
