@@ -55,7 +55,7 @@
     "Electricians": "الكهرباء",
     "Plumbers": "سباك",
     "Carpenters": "نجّار",
-    "Certified electricians for all your needs":"نجارين موثقين لجميع احتياجاتك",
+    "Certified electricians for all your needs":"كهربائيين موثقين لجميع احتياجاتك",
     "Trusted plumbers for home repairs":"سباكين موثقين لجميع احتياجاتك",
     "Skilled carpenters for furniture & repairs":"نجّارين ماهر لجميع احتياجاتك"
   },
@@ -697,5 +697,10 @@
       "Description": "آراء العملاء حول هذا الفني.",
       "Empty": "لا توجد مراجعات حتى الآن."
     }
+  },
+  "AdminNavBar":{
+    "Dashboard": "لوحة التحكم",
+    "Craft": "الحرف",
+    "Approve Craftsman": "ادارة الحرفين"
   }
 }

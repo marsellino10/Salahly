@@ -60,4 +60,15 @@ export const routes: Routes = [
       }
     ],
   },
+  {
+    path:'',
+    loadComponent: () => import('./layouts/admin-layout/admin-layout').then(c => c.AdminLayout),
+    //canActivate: [AdminAuthGuard],
+    children:[
+      {
+        path:'dashboard',
+        loadComponent: () => import('./pages/admin/dashboard/dashboard').then(c => c.Dashboard),
+      }
+    ]
+  }
 ];

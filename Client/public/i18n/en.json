@@ -698,5 +698,10 @@
       "Description": "What customers are saying about this technician.",
       "Empty": "No reviews yet."
     }
+  },
+  "AdminNavBar":{
+    "Dashboard": "Dashboard",
+    "Craft": "Craft",
+    "Approve Craftsman":"Approve Craftsman"
   }
 }

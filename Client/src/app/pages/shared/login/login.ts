@@ -42,18 +42,26 @@ export class Login {
       next: (result: LoginResponse) => {
         this.isSubmitting = false;
         this.loginForm.reset();
+        console.log(result.data.userType.toLowerCase());
         const isTechnician = result.data.userType.toLowerCase() == 'craftsman';
+        const isCustomer = result.data.userType.toLowerCase() == 'customer';
+        const isAdmin = result.data.userType.toLowerCase() == 'admin';
         const isProfileCompleted = result.data.isProfileCompleted ?? true;
-        console.log(isTechnician,isProfileCompleted);
+        console.log(isTechnician,isCustomer,isAdmin,isProfileCompleted);
         if (isTechnician && !isProfileCompleted) {
           this._router.navigate(['/complete-profile']);
           return;
-        }else if(!isTechnician && !isProfileCompleted){
+        }else if(isAdmin){
+          this._router.navigate(['/dashboard']);
+          return;
+        }
+        else if(isCustomer && !isProfileCompleted){
           this._router.navigate(['/customer-profile']);
           return;
         }
-
-        this._router.navigate(['/home']);
+        else if(isCustomer || isTechnician){
+          this._router.navigate(['/home']);
+        }
       },
       error: (error) => {
         this.isSubmitting = false;
