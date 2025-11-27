@@ -10,10 +10,12 @@ namespace Salahly.DSL.Interfaces
 {
     public interface INotificationService
     {
-        Task CreateNotificationAsync(CreateNotificationDto dto);
+        //Task CreateNotificationAsync(CreateNotificationDto dto);
 
         Task<List<Notification>> GetNotificationsForUserAsync(int userId);
-
+        Task NotifyAsync(CreateNotificationDto dto);
+        Task NotifyPaymentSuccessAsync(int bookingId);
+        Task NotifyCraftsmenInAreaAsync(ServiceRequest request);
         Task MarkAsReadAsync(int notificationId, int userId);
     }
 }

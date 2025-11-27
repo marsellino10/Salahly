@@ -29,160 +29,103 @@ namespace Salahly.DSL.Services
             _logger = logger;
         }
 
+        // =====================================================================
+        // ===== ORCHESTRATOR HELPER METHODS (Internal Use) =====
+        // =====================================================================
+
         /// <summary>
-        /// Create Booking from Accepted Offer and Initiate Payment
+        /// Create booking (simple - no payment logic)
+        /// Used by orchestrator - does NOT save (orchestrator handles transaction)
         /// </summary>
-        public async Task<ServiceResponse<BookingPaymentDto>> CreateAndInitiatePaymentAsync(
+        public async Task<Booking> CreateBookingAsync(
             int customerId,
-            int offerId,
-            string paymentMethod = "Card",
-            CancellationToken cancellationToken = default)
+            int craftsmanId,
+            int craftId,
+            int serviceRequestId,
+            int acceptedOfferId,
+            decimal amount,
+            DateTime bookingDate)
         {
-            try
-            {
-                var offer = await _unitOfWork.CraftsmanOffers
-                    .GetOfferForCustomerByIdAsync(offerId, customerId);
-
-                if (offer == null)
-                {
-                    _logger.LogWarning($"Offer {offerId} not found for customer {customerId}");
-                    return ServiceResponse<BookingPaymentDto>
-                        .FailureResponse("Offer not found or inaccessible.");
-                }
-
-                if (offer.Status != OfferStatus.Accepted)
-                {
-                    _logger.LogWarning($"Offer {offerId} has invalid status: {offer.Status}");
-                    return ServiceResponse<BookingPaymentDto>
-                        .FailureResponse("Offer is not in accepted status.");
-                }
-
-                var serviceRequest = await _unitOfWork.ServiceRequests
-                    .GetByIdAsync(offer.ServiceRequestId);
-                var craftsman = await _unitOfWork.Craftsmen
-                    .GetByIdAsync(offer.CraftsmanId);
-                var customer = await _unitOfWork.Customers
-                    .GetByIdAsync(customerId);
-
-                if (serviceRequest == null || craftsman == null || customer == null)
-                {
-                    _logger.LogError($"Required data not found. ServiceRequest: {serviceRequest != null}, Craftsman: {craftsman != null}, Customer: {customer != null}");
-                    return ServiceResponse<BookingPaymentDto>
-                        .FailureResponse("Required data not found.");
-                }
-
-                _logger.LogInformation("Basic entities loaded successfully");
-
-                var customerUser = await _unitOfWork.ApplicationUsers.GetByIdAsync(customer.Id);
-                var craftsmanUser = await _unitOfWork.ApplicationUsers.GetByIdAsync(craftsman.Id);
-                var craft = await _unitOfWork.Crafts.GetByIdAsync(serviceRequest.CraftId);
-
-                if (customerUser == null || craftsmanUser == null || craft == null)
-                {
-                    _logger.LogError($"User or Craft data not found. CustomerUser: {customerUser != null}, CraftsmanUser: {craftsmanUser != null}, Craft: {craft != null}");
-                    return ServiceResponse<BookingPaymentDto>
-                        .FailureResponse("User or craft data not found.");
-                }
-
-                _logger.LogInformation($"All data loaded. Customer: {customerUser.Email}, Craftsman: {craftsmanUser.Email}, Craft: {craft.Name}");
-
-                var booking = new Booking
-                {
-                    CustomerId = customerId,
-                    CraftsmanId = offer.CraftsmanId,
-                    CraftId = serviceRequest.CraftId,
-                    ServiceRequestId = offer.ServiceRequestId,
-                    AcceptedOfferId = offerId,
-                    BookingDate = serviceRequest.PreferredDate != default(DateTime) ? serviceRequest.PreferredDate : DateTime.UtcNow.AddDays(1),
-                    Duration = 0,
-                    TotalAmount = offer.OfferedPrice,
-                    Status = BookingStatus.InProgress,
-                    PaymentDeadline = DateTime.UtcNow.AddHours(24),
-                    RefundableAmount = offer.OfferedPrice,
-                    CreatedAt = DateTime.UtcNow
-                };
-
-                await _unitOfWork.Bookings.AddAsync(booking);
-                await _unitOfWork.SaveAsync(cancellationToken);
-
-                _logger.LogInformation($"Booking created with ID: {booking.BookingId}");
-
-                var paymentStrategy = _paymentStrategyFactory.GetStrategy(paymentMethod);
-
-                var payment = new Payment
-                {
-                    BookingId = booking.BookingId,
-                    Amount = offer.OfferedPrice,
-                    PaymentDate = DateTime.UtcNow,
-                    Status = PaymentStatus.Pending,
-                    PaymentMethod = paymentMethod,
-                    PaymentGateway = paymentStrategy.GetProviderName()
-                };
-
-                await _unitOfWork.Payments.AddAsync(payment);
-                await _unitOfWork.SaveAsync(cancellationToken);
-
-                _logger.LogInformation($"Payment record created with ID: {payment.Id}");
-
-                var paymentInitRequest = new PaymentInitializationRequest
-                {
-                    BookingId = booking.BookingId,
-                    CustomerId = customerId,
-                    Amount = offer.OfferedPrice,
-                    CustomerEmail = customerUser.Email ?? "customer@test.com",
-                    CustomerPhone = customer.PhoneNumber ?? customerUser.PhoneNumber ?? "0100000000",
-                    CustomerName = customerUser.FullName ?? "Customer",
-                    CustomerAddress = customer.Address ?? "Cairo",
-                    CraftName = craft.Name ?? "Service",
-                    CraftsmanName = craftsmanUser.FullName ?? "Craftsman",
-                    BookingDate = booking.BookingDate
-                };
-
-                _logger.LogInformation($"Initiating payment for amount: {paymentInitRequest.Amount}");
-
-                var paymentResult = await paymentStrategy.InitializeAsync(
-                    paymentInitRequest,
-                    cancellationToken);
-
-                if (!paymentResult.IsSuccess)
-                {
-                    _logger.LogError($"Payment initialization failed: {paymentResult.ErrorMessage}");
-                    return ServiceResponse<BookingPaymentDto>
-                        .FailureResponse($"Failed to initialize payment: {paymentResult.ErrorMessage}");
-                }
-
-                payment.TransactionId = paymentResult.TransactionId;
-                await _unitOfWork.SaveAsync(cancellationToken);
-
-                _logger.LogInformation($"Payment initialized successfully. Booking: {booking.BookingId}, Transaction: {paymentResult.TransactionId}");
-
-                var response = new BookingPaymentDto
-                {
-                    BookingId = booking.BookingId,
-                    PaymentId = payment.Id,
-                    Amount = offer.OfferedPrice,
-                    PaymentLink = paymentResult.PaymentLink,
-                    PaymentToken = paymentResult.PaymentToken,
-                    TransactionId = paymentResult.TransactionId,
-                    BookingDate = booking.BookingDate,
-                    PaymentDeadline = booking.PaymentDeadline,
-                    CraftsmanName = craftsmanUser.FullName ?? "Craftsman",
-                    CraftName = craft.Name ?? "Service"
-                };
-
-                return ServiceResponse<BookingPaymentDto>
-                    .SuccessResponse(response, "Booking created and payment initiated successfully.");
+            var existingBooking = await _unitOfWork.Bookings.GetByOfferIdAsync(acceptedOfferId);
+            if (existingBooking != null) { 
+                return existingBooking;
             }
-            catch (Exception ex)
+
+            var booking = new Booking
             {
-                _logger.LogError(ex, "Error in CreateAndInitiatePaymentAsync");
-                return ServiceResponse<BookingPaymentDto>
-                    .FailureResponse($"Error: {ex.Message}");
+                CustomerId = customerId,
+                CraftsmanId = craftsmanId,
+                CraftId = craftId,
+                ServiceRequestId = serviceRequestId,
+                AcceptedOfferId = acceptedOfferId,
+                BookingDate = bookingDate,
+                Duration = 0,
+                TotalAmount = amount,
+                RefundableAmount = 0,
+                Status = BookingStatus.InProgress, 
+                PaymentDeadline = DateTime.UtcNow.AddHours(24),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.Bookings.AddAsync(booking);
+
+            _logger.LogInformation(
+                $"Booking created for offer {acceptedOfferId}. " +
+                $"Status: Pending, Deadline: {booking.PaymentDeadline}");
+
+
+            return booking;
+        }
+
+        /// <summary>
+        /// Delete booking (compensation)
+        /// Used by orchestrator on rollback - DOES save
+        /// </summary>
+        public async Task DeleteBookingAsync(int bookingId)
+        {
+            var booking = await _unitOfWork.Bookings.GetByIdAsync(bookingId);
+
+            if (booking != null)
+            {
+                await _unitOfWork.Bookings.DeleteAsync(booking);
+                await _unitOfWork.SaveAsync();
+
+                _logger.LogWarning(
+                    $"🔄 Deleted booking {bookingId} (compensation)");
             }
         }
 
         /// <summary>
-        /// Confirm Booking after payment success
+        /// Update booking status (helper method)
+        /// </summary>
+        public async Task UpdateBookingStatusAsync(
+            int bookingId,
+            BookingStatus status)
+        {
+            var booking = await _unitOfWork.Bookings.GetByIdAsync(bookingId);
+
+            if (booking != null)
+            {
+                booking.Status = status;
+                booking.UpdatedAt = DateTime.UtcNow;
+
+                if (status == BookingStatus.Cancelled)
+                    booking.CancelledAt = DateTime.UtcNow;
+                else if (status == BookingStatus.Completed)
+                    booking.CompletedAt = DateTime.UtcNow;
+
+                await _unitOfWork.SaveAsync();
+
+                _logger.LogInformation($"Booking {bookingId} status updated to {status}");
+            }
+        }
+
+        // =====================================================================
+        // ===== PUBLIC METHODS (For Webhooks & Controllers) =====
+        // =====================================================================
+
+        /// <summary>
+        /// Confirm booking after payment success (called by webhook)
         /// </summary>
         public async Task<ServiceResponse<bool>> ConfirmBookingAsync(
             int bookingId,
@@ -199,11 +142,13 @@ namespace Salahly.DSL.Services
                         .FailureResponse("Booking not found.");
                 }
 
+                // Accept Pending status (not InProgress anymore)
                 if (booking.Status != BookingStatus.InProgress)
                 {
-                    _logger.LogWarning($"Booking {bookingId} is not awaiting payment. Current status: {booking.Status}");
+                    _logger.LogWarning(
+                        $"Booking {bookingId} cannot be confirmed. Current status: {booking.Status}");
                     return ServiceResponse<bool>
-                        .FailureResponse("Booking is not awaiting payment.");
+                        .FailureResponse("Booking is not in pending status.");
                 }
 
                 booking.Status = BookingStatus.Confirmed;
@@ -225,7 +170,7 @@ namespace Salahly.DSL.Services
         }
 
         /// <summary>
-        /// Cancel Booking with Refund
+        /// Cancel booking with refund calculation
         /// </summary>
         public async Task<ServiceResponse<CancellationResultDto>> CancelBookingAsync(
             int bookingId,
@@ -243,21 +188,28 @@ namespace Salahly.DSL.Services
                         .FailureResponse("Booking not found.");
                 }
 
+                // Check if booking can be cancelled
                 if (booking.Status == BookingStatus.Completed ||
                     booking.Status == BookingStatus.Cancelled)
                 {
-                    _logger.LogWarning($"Cannot cancel booking {bookingId}. Current status: {booking.Status}");
+                    _logger.LogWarning(
+                        $"Cannot cancel booking {bookingId}. Current status: {booking.Status}");
                     return ServiceResponse<CancellationResultDto>
                         .FailureResponse("Cannot cancel a completed or already cancelled booking.");
                 }
 
+                // Calculate refund based on cancellation timing
                 var hoursUntilBooking = (booking.BookingDate - DateTime.UtcNow).TotalHours;
                 var (refundAmount, refundPercentage) = CalculateRefundAmount(
                     booking.TotalAmount,
                     hoursUntilBooking);
 
-                _logger.LogInformation($"Cancellation: Booking {bookingId}, Hours until: {hoursUntilBooking:F2}, Refund: {refundAmount} ({refundPercentage}%)");
+                _logger.LogInformation(
+                    $"Cancellation calculation for booking {bookingId}: " +
+                    $"Hours until booking: {hoursUntilBooking:F2}, " +
+                    $"Refund: {refundAmount} EGP ({refundPercentage}%)");
 
+                // Find payment record
                 var allPayments = await _unitOfWork.Payments.GetAllAsync();
                 var payment = allPayments.FirstOrDefault(p => p.BookingId == bookingId);
 
@@ -268,6 +220,7 @@ namespace Salahly.DSL.Services
                         .FailureResponse("Payment record not found.");
                 }
 
+                // Process refund if payment was completed and refund amount > 0
                 if (payment.Status == PaymentStatus.Completed && refundAmount > 0)
                 {
                     var paymentStrategy = _paymentStrategyFactory.GetStrategy(payment.PaymentMethod);
@@ -281,13 +234,16 @@ namespace Salahly.DSL.Services
                         Reason = cancellationReason ?? "Customer cancelled booking"
                     };
 
+                    _logger.LogInformation($"Initiating refund for booking {bookingId}");
+
                     var refundResult = await paymentStrategy.RefundAsync(
                         refundRequest,
                         cancellationToken);
 
                     if (!refundResult.IsSuccess)
                     {
-                        _logger.LogError($"Refund failed for booking {bookingId}: {refundResult.ErrorMessage}");
+                        _logger.LogError(
+                            $"Refund failed for booking {bookingId}: {refundResult.ErrorMessage}");
                         return ServiceResponse<CancellationResultDto>
                             .FailureResponse($"Refund failed: {refundResult.ErrorMessage}");
                     }
@@ -296,9 +252,11 @@ namespace Salahly.DSL.Services
                     payment.RefundTransactionId = refundResult.RefundTransactionId;
                     payment.RefundedAt = refundResult.RefundDate;
 
-                    _logger.LogInformation($"Refund processed successfully: {refundResult.RefundTransactionId}");
+                    _logger.LogInformation(
+                        $"Refund processed successfully: {refundResult.RefundTransactionId}");
                 }
 
+                // Update booking status
                 booking.Status = BookingStatus.Cancelled;
                 booking.CancellationReason = cancellationReason;
                 booking.CancelledAt = DateTime.UtcNow;
@@ -307,7 +265,8 @@ namespace Salahly.DSL.Services
 
                 await _unitOfWork.SaveAsync(cancellationToken);
 
-                _logger.LogInformation($"Booking {bookingId} cancelled successfully. Refund amount: {refundAmount}");
+                _logger.LogInformation(
+                    $"Booking {bookingId} cancelled successfully. Refund amount: {refundAmount} EGP");
 
                 var result = new CancellationResultDto
                 {
@@ -315,7 +274,9 @@ namespace Salahly.DSL.Services
                     CancellationDate = booking.CancelledAt.Value,
                     RefundAmount = refundAmount,
                     RefundPercentage = refundPercentage,
-                    Message = $"Booking cancelled. Refund of {refundAmount:C} will be processed."
+                    Message = refundAmount > 0
+                        ? $"Booking cancelled. Refund of {refundAmount:C} EGP will be processed."
+                        : "Booking cancelled. No refund applicable."
                 };
 
                 return ServiceResponse<CancellationResultDto>
@@ -338,13 +299,146 @@ namespace Salahly.DSL.Services
         {
             int refundPercentage = hoursUntilBooking switch
             {
-                > 24 => 100,
-                > 2 => 75,
-                _ => 50
+                > 24 => 100,  // Full refund if cancelled 24+ hours before
+                > 12 => 75,   // 75% refund if 12-24 hours before
+                > 2 => 50,    // 50% refund if 2-12 hours before
+                _ => 0        // No refund if less than 2 hours
             };
 
             var refundAmount = totalAmount * refundPercentage / 100;
             return (refundAmount, refundPercentage);
+        }
+
+        // =====================================================================
+        // ===== QUERY METHODS =====
+        // =====================================================================
+
+        /// <summary>
+        /// Get booking by ID
+        /// </summary>
+        public async Task<ServiceResponse<BookingDto>> GetBookingByIdAsync(
+            int bookingId,
+            int userId)
+        {
+            try
+            {
+                var booking = await _unitOfWork.Bookings.GetByIdAsync(bookingId);
+
+                if (booking == null)
+                {
+                    _logger.LogWarning($"Booking {bookingId} not found");
+                    return ServiceResponse<BookingDto>
+                        .FailureResponse("Booking not found.");
+                }
+
+                // Verify user has access (either customer or craftsman)
+                if (booking.CustomerId != userId && booking.CraftsmanId != userId)
+                {
+                    _logger.LogWarning(
+                        $"User {userId} attempted to access booking {bookingId} without permission");
+                    return ServiceResponse<BookingDto>
+                        .FailureResponse("You don't have access to this booking.");
+                }
+
+                // Map to DTO (you can use Mapster or manual mapping)
+                var dto = new BookingDto
+                {
+                    BookingId = booking.BookingId,
+                    CustomerId = booking.CustomerId,
+                    CraftsmanId = booking.CraftsmanId,
+                    CraftId = booking.CraftId,
+                    BookingDate = booking.BookingDate,
+                    TotalAmount = booking.TotalAmount,
+                    Status = booking.Status.ToString(),
+                    PaymentDeadline = booking.PaymentDeadline,
+                    CreatedAt = booking.CreatedAt,
+                    CancellationReason = booking.CancellationReason
+                };
+
+                return ServiceResponse<BookingDto>.SuccessResponse(dto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving booking {bookingId}");
+                return ServiceResponse<BookingDto>
+                    .FailureResponse($"Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get all bookings for customer
+        /// </summary>
+        public async Task<ServiceResponse<IEnumerable<BookingDto>>> GetCustomerBookingsAsync(
+            int customerId)
+        {
+            try
+            {
+                var allBookings = await _unitOfWork.Bookings.GetAllAsync();
+                var customerBookings = allBookings
+                    .Where(b => b.CustomerId == customerId)
+                    .OrderByDescending(b => b.CreatedAt)
+                    .ToList();
+
+                var dtos = customerBookings.Select(b => new BookingDto
+                {
+                    BookingId = b.BookingId,
+                    CustomerId = b.CustomerId,
+                    CraftsmanId = b.CraftsmanId,
+                    CraftId = b.CraftId,
+                    BookingDate = b.BookingDate,
+                    TotalAmount = b.TotalAmount,
+                    Status = b.Status.ToString(),
+                    PaymentDeadline = b.PaymentDeadline,
+                    CreatedAt = b.CreatedAt,
+                    CancellationReason = b.CancellationReason
+                }).ToList();
+
+                return ServiceResponse<IEnumerable<BookingDto>>.SuccessResponse(dtos);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving bookings for customer {customerId}");
+                return ServiceResponse<IEnumerable<BookingDto>>
+                    .FailureResponse($"Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Get all bookings for craftsman
+        /// </summary>
+        public async Task<ServiceResponse<IEnumerable<BookingDto>>> GetCraftsmanBookingsAsync(
+            int craftsmanId)
+        {
+            try
+            {
+                var allBookings = await _unitOfWork.Bookings.GetAllAsync();
+                var craftsmanBookings = allBookings
+                    .Where(b => b.CraftsmanId == craftsmanId)
+                    .OrderByDescending(b => b.CreatedAt)
+                    .ToList();
+
+                var dtos = craftsmanBookings.Select(b => new BookingDto
+                {
+                    BookingId = b.BookingId,
+                    CustomerId = b.CustomerId,
+                    CraftsmanId = b.CraftsmanId,
+                    CraftId = b.CraftId,
+                    BookingDate = b.BookingDate,
+                    TotalAmount = b.TotalAmount,
+                    Status = b.Status.ToString(),
+                    PaymentDeadline = b.PaymentDeadline,
+                    CreatedAt = b.CreatedAt,
+                    CancellationReason = b.CancellationReason
+                }).ToList();
+
+                return ServiceResponse<IEnumerable<BookingDto>>.SuccessResponse(dtos);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving bookings for craftsman {craftsmanId}");
+                return ServiceResponse<IEnumerable<BookingDto>>
+                    .FailureResponse($"Error: {ex.Message}");
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Salahly.DAL.Entities
 
         // Links to Request & Offer
         public int? ServiceRequestId { get; set; }
-        public int? AcceptedOfferId { get; set; }
+        public int AcceptedOfferId { get; set; }
 
         // Booking Details
         public DateTime BookingDate { get; set; }
@@ -38,9 +38,9 @@ namespace Salahly.DAL.Entities
         public Customer Customer { get; set; }
         public Craftsman Craftsman { get; set; }
         public Craft Craft { get; set; }
-        public ServiceRequest? ServiceRequest { get; set; }
+        public ServiceRequest ServiceRequest { get; set; }
         public CraftsmanOffer? AcceptedOffer { get; set; }
-        public Payment? Payment { get; set; }
+        public ICollection<Payment> Payments { get; set; }
         public ICollection<Review>? Reviews { get; set; }
     }
 
@@ -49,6 +49,7 @@ namespace Salahly.DAL.Entities
         Confirmed = 0,
         InProgress = 1,
         Completed = 2,
-        Cancelled = 3
+        Cancelled = 3,
+        failed = 4,
     }
 }

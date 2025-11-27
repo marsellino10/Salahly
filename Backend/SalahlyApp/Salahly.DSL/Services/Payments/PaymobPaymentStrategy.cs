@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Salahly.DAL.Entities;
 using Salahly.DSL.DTOs.PaymentDtos;
 using Salahly.DSL.Interfaces.Payments;
 using System;
@@ -308,7 +309,7 @@ namespace Salahly.DSL.Services.Payments
                     delivery_needed = "false",
                     amount_cents = (int)(request.Amount * 100), // Convert to cents
                     currency = "EGP",
-                    merchant_order_id = request.BookingId.ToString(),
+                    merchant_order_id = $"{request.BookingId}-{request.PaymentId}",
                     items = Array.Empty<object>()
                 };
 
@@ -381,7 +382,7 @@ namespace Salahly.DSL.Services.Payments
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                    _logger.LogError($"❌ Paymob Payment Key Error: {errorContent}");
+                    _logger.LogError($"Paymob Payment Key Error: {errorContent}");
                     return null;
                 }
 

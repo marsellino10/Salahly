@@ -12,6 +12,9 @@ namespace Salahly.DSL.DTOs.PaymentDtos
         [JsonPropertyName("obj")]
         public PaymobWebhookObject Obj { get; set; }
 
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+
         // Extracted properties from Obj for convenience
         public int TransactionId => Obj?.Id ?? 0;
         public int OrderId => Obj?.Order?.Id ?? 0;
@@ -32,12 +35,7 @@ namespace Salahly.DSL.DTOs.PaymentDtos
         public string SourceDataSubType => Obj?.SourceData?.SubType ?? "";
         public string SourceDataType => Obj?.SourceData?.Type ?? "";
         public string CreatedAt => Obj?.CreatedAt ?? "";
-
-        [JsonPropertyName("type")]
-        public string Type { get; set; }
-
-        [JsonPropertyName("hmac")]
-        public string Hmac { get; set; }
+        public string? Hmac => Obj?.Hmac; // ✅ Made nullable
     }
 
     public class PaymobWebhookObject
@@ -92,6 +90,9 @@ namespace Salahly.DSL.DTOs.PaymentDtos
 
         [JsonPropertyName("order")]
         public PaymobOrder Order { get; set; }
+
+        [JsonPropertyName("hmac")]
+        public string? Hmac { get; set; } // ✅ Made nullable
     }
 
     public class PaymobSourceData
@@ -110,5 +111,8 @@ namespace Salahly.DSL.DTOs.PaymentDtos
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
+
+        [JsonPropertyName("merchant_order_id")]
+        public string MerchantOrderId { get; set; }
     }
 }

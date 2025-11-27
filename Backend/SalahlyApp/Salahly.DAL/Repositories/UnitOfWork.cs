@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Salahly.DAL.Data;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
@@ -14,10 +15,10 @@ namespace Salahly.DAL.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-
+        private IDbContextTransaction? _currentTransaction;
         public IGenericRepository<Admin> Admins { get; }
         public IGenericRepository<ApplicationUser> ApplicationUsers { get; }
-        public IGenericRepository<Booking> Bookings { get; }
+        public IBookingRepository Bookings { get; }
         public IGenericRepository<Craft> Crafts { get; }
         public IGenericRepository<Craftsman> Craftsmen { get; }
         public ICraftsmanOfferRepository CraftsmanOffers { get; }
@@ -40,7 +41,7 @@ namespace Salahly.DAL.Repositories
 
             Admins = new GenericRepository<Admin>(_context);
             ApplicationUsers = new GenericRepository<ApplicationUser>(_context);
-            Bookings = new GenericRepository<Booking>(_context);
+            Bookings = new BookingRepository(_context);
             Crafts = new GenericRepository<Craft>(_context);
             Craftsmen = new GenericRepository<Craftsman>(_context);
             CraftsmanOffers = new CraftsmanOfferRepository(_context);
@@ -58,8 +59,62 @@ namespace Salahly.DAL.Repositories
 
         public Task<int> SaveAsync(CancellationToken cancellationToken = default) => _context.SaveChangesAsync(cancellationToken);
 
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+        {
+            var executionStrategy = _context.Database.CreateExecutionStrategy();
+
+            await executionStrategy.ExecuteAsync(async () =>
+            {
+                _currentTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            });
+
+            return _currentTransaction;
+        }
+
+        public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
+        {
+            if (_currentTransaction != null)
+            {
+                await _currentTransaction.CommitAsync(cancellationToken);
+                await _currentTransaction.DisposeAsync();
+                _currentTransaction = null;
+            }
+        }
+
+        public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
+        {
+            if (_currentTransaction != null)
+            {
+                await _currentTransaction.RollbackAsync(cancellationToken);
+                await _currentTransaction.DisposeAsync();
+                _currentTransaction = null;
+            }
+        }
+        public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken = default)
+        {
+            var executionStrategy = _context.Database.CreateExecutionStrategy();
+
+            return await executionStrategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+                try
+                {
+                    var result = await operation();
+                    await SaveAsync(cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
+                    return result;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    throw;
+                }
+            });
+        }
         public void Dispose()
         {
+            _currentTransaction?.Dispose();
             _context.Dispose();
         }
     }

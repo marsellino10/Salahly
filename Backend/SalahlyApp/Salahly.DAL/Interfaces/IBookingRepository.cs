@@ -9,5 +9,6 @@ namespace Salahly.DAL.Interfaces
 {
     public interface IBookingRepository : IGenericRepository<Booking>
     {
+        Task<Booking?> GetByOfferIdAsync(int offerId);
     }
 }

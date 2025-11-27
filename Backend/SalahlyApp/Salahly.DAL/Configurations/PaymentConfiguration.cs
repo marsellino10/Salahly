@@ -39,16 +39,12 @@ namespace Salahly.DAL.Configurations
 
             // Relationships
             builder.HasOne(p => p.Booking)
-                .WithOne(b => b.Payment)
-                .HasForeignKey<Payment>(p => p.BookingId)
+                .WithMany(b => b.Payments)
+                .HasForeignKey(p => p.BookingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Indexes
-            builder.HasIndex(p => p.BookingId)
-                .IsUnique();
-
-            builder.HasIndex(p => p.BookingId)
-                .IsUnique();
+            builder.HasIndex(p => p.BookingId);
 
             builder.HasIndex(p => p.TransactionId)
                 .IsUnique()

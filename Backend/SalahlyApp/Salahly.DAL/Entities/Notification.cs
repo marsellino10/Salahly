@@ -51,6 +51,6 @@ namespace Salahly.DAL.Entities
         BookingCancelled = 6,
         BookingCompleted = 7,
         NewReview = 8,
-        PaymentReceived = 9
+        PaymentFailed = 9
     }
 }

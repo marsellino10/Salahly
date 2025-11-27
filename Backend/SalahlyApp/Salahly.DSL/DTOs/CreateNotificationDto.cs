@@ -9,13 +9,13 @@ namespace Salahly.DSL.DTOs
 {
     public class CreateNotificationDto
     {
-       public int userId { get; set; }
-        public NotificationType type { get; set; }
-        public string title { get; set; }
-        public string message { get; set; }
-        public string? actionUrl { get; set; } = null;
-        public int? serviceRequestId { get; set; } = null;
-        public int? craftsmanOfferId { get; set; } = null;
-        public int? bookingId { get; set; } = null;
+       public IEnumerable<int> UserIds { get; set; }
+        public NotificationType Type { get; set; }
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string? ActionUrl { get; set; } = null;
+        public int? ServiceRequestId { get; set; } = null;
+        public int? CraftsmanOfferId { get; set; } = null;
+        public int? BookingId { get; set; } = null;
     }
 }

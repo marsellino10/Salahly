@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
-using Salahly.DAL.Repositories;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
 using System.Text.Json;
@@ -11,10 +10,12 @@ namespace Salahly.DSL.Services
     public class ServiceRequestService : IServiceRequestService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
 
-        public ServiceRequestService(IUnitOfWork unitOfWork)
+        public ServiceRequestService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
 
         public async Task<ServiceRequestResponseDto> CreateAsync(CreateServiceRequestDto dto, int customerId)
@@ -31,7 +32,7 @@ namespace Salahly.DSL.Services
                 // Add to DB via UnitOfWork
                 await _unitOfWork.ServiceRequests.AddAsync(entity);
                 await _unitOfWork.SaveAsync();
-
+                await _notificationService.NotifyCraftsmenInAreaAsync(entity);
                 // Map back to response DTO
                 var response = entity.Adapt<ServiceRequestResponseDto>();
                 response.Status = entity.Status.ToString();
@@ -185,6 +186,12 @@ namespace Salahly.DSL.Services
                 );
             }
         }
+        
+        public async Task ChangeStatusAsync(int id, ServiceRequestStatus status)
+        {
+             await _unitOfWork.ServiceRequests.ChangeStatusAsync(id, status);
+        }
+
 
         private ServiceRequestDto MapToDto(ServiceRequest sr)
         {

@@ -91,9 +91,15 @@
           </div>
 
           <div class="hero-media">
-            <div class="media-card" >
-              @if(getCoverImage()) {
-                <img  src="{{ getCoverImage() }}" width="100%" height="400px" alt="">
+            <div class="media-card">
+              @if(requestImages().length) {
+                <owl-carousel-o [options]="heroCarouselOptions">
+                  @for(image of requestImages(); track trackImage($index, image)) {
+                    <ng-template carouselSlide>
+                      <img [src]="image" [alt]="requestData.title" loading="lazy" />
+                    </ng-template>
+                  }
+                </owl-carousel-o>
               } @else {
                 <div class="media-fallback">
                   <i class="bi bi-image"></i>

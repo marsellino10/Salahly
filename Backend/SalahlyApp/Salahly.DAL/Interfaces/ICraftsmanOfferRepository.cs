@@ -1,4 +1,5 @@
 ﻿using Salahly.DAL.Entities;
+using System;
 
 namespace Salahly.DAL.Interfaces
 {
@@ -10,5 +11,10 @@ namespace Salahly.DAL.Interfaces
         // Craftsman methods
         Task<IEnumerable<CraftsmanOffer>> GetOffersByCraftsmanAsync(int craftsmanId);
         Task<CraftsmanOffer?> GetOfferByIdForCraftsmanAsync(int craftsmanId, int offerId);
+
+        // General methods
+        Task<CraftsmanOffer> GetByIdWithServiceRequestAsync(int id);
+
+        Task<IQueryable<CraftsmanOffer>> GetOffersByServiceRequestIdAsync(int serviceRequestId);
     }
 }

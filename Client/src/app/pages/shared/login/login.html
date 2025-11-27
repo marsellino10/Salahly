@@ -24,11 +24,11 @@
       }
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column gap-3">
-        <div>
-          <label class="form-label">{{ 'Login.Username' | translate }}</label>
-          <div class="input-group modern-input" [class.invalid]="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched">
-            <span class="input-group-text"><i class="bi bi-person"></i></span>
-            <input type="text" class="form-control" formControlName="userName" placeholder="e.g. salahly_user" />
+        <div class="field col-span-2">
+          <label class="field-label">{{ 'Login.Username' | translate }}</label>
+          <div class="input-shell" [class.invalid]="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched">
+            <span class=""><i class="bi bi-person"></i></span>
+            <input type="text" formControlName="userName" placeholder="e.g. salahly_user" />
           </div>
         </div>
 
@@ -37,9 +37,9 @@
             <label class="form-label mb-0">{{ 'Login.Password' | translate }}</label>
             <a class="text-decoration-none small" href="#">{{ 'Login.Forgot password?' | translate }}</a>
           </div>
-          <div class="input-group modern-input" [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            <span class="input-group-text"><i class="bi bi-lock"></i></span>
-            <input type="password" class="form-control" formControlName="password" placeholder="••••••••" />
+          <div class="input-shell" [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <span class=""><i class="bi bi-lock"></i></span>
+            <input type="password" formControlName="password" placeholder="••••••••" />
           </div>
         </div>
 

@@ -39,6 +39,7 @@ namespace Salahly.DAL.Entities
         public string? ImagesJson { get; set; }
 
         public int MaxOffers { get; set; } = 10;
+        public string ? PaymentMethod { get; set; }
 
         // Status & Tracking
         public ServiceRequestStatus Status { get; set; }
@@ -63,9 +64,7 @@ namespace Salahly.DAL.Entities
     public enum ServiceRequestStatus
     {
         Open = 0,
-        HasOffers = 1,
         OfferAccepted = 2,
-        InProgress = 3,
         Completed = 4,
         Cancelled = 5,
         Expired = 6

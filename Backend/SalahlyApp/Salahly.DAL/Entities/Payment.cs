@@ -27,7 +27,7 @@ namespace Salahly.DAL.Entities
         public DateTime? RefundedAt { get; set; }
 
         // Navigation
-        public Booking Booking { get; set; }
+        public Booking? Booking { get; set; }
     }
 
     public enum PaymentStatus

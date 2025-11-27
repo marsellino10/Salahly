@@ -1,0 +1,178 @@
+<section class="history-page">
+  <header class="hero">
+    <div class="hero-heading">
+      <p class="eyebrow">Offer archive</p>
+      <h1>History & insights</h1>
+      <p class="subtitle">
+        Review every offer you have submitted with instant context about the customer request, budget expectations, and deadlines.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <article class="stat-card primary">
+        <span>Total offers</span>
+        <strong>{{ summaryStats().total }}</strong>
+        <small>All time</small>
+      </article>
+      <article class="stat-card">
+        <span>Pending decisions</span>
+        <strong>{{ summaryStats().pending }}</strong>
+        <small>Waiting for customers</small>
+      </article>
+      <article class="stat-card">
+        <span>Accepted</span>
+        <strong>{{ summaryStats().accepted }}</strong>
+        <small>Secured jobs</small>
+      </article>
+      <article class="stat-card">
+        <span>Rejected</span>
+        <strong>{{ summaryStats().rejected }}</strong>
+        <small>Follow up or archive</small>
+      </article>
+      <article class="stat-card">
+        <span>Withdrawn / Expired</span>
+        <strong>{{ summaryStats().withdrawn + summaryStats().expired }}</strong>
+        <small>Need attention</small>
+      </article>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn btn-secondary" type="button" (click)="refresh()" [disabled]="isLoading()">
+        Refresh feed
+      </button>
+    </div>
+  </header>
+
+  <section class="filters-card">
+    <div class="filters-toolbar">
+      <label class="filter-control">
+        <span>Offer status</span>
+        <select class="status-select" [value]="statusFilter()" (change)="onStatusChange($any($event.target).value)">
+          @for(option of statusOptions; track option.value){
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+      <div class="filter-summary">
+        <strong>{{ filteredRecords().length }}</strong>
+        <span>records match the current filter.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    @if(errorMessage()){
+      <div class="state state-error">
+        <h3>Unable to load offer history</h3>
+        <p>{{ errorMessage() }}</p>
+        <button class="btn btn-primary" type="button" (click)="refresh()">Try again</button>
+      </div>
+    }
+
+    @if(isLoading()){
+      <div class="records-grid">
+        @for(_ of skeletonPlaceholders; track $index){
+          <article class="history-card skeleton">
+            <div class="skeleton-line w-60"></div>
+            <div class="skeleton-line w-90"></div>
+            <div class="skeleton-grid">
+              <span class="skeleton-pill"></span>
+              <span class="skeleton-pill"></span>
+              <span class="skeleton-pill"></span>
+            </div>
+          </article>
+        }
+      </div>
+    }@else if(!filteredRecords().length && hasLoaded()){
+      <div class="state state-empty">
+        <h3>No offers match this filter</h3>
+        <p>Change the status filter to review other offers or submit a new one from the opportunities feed.</p>
+        <button class="btn btn-secondary" type="button" (click)="onStatusChange('all')">Show all offers</button>
+      </div>
+    }@else{
+      <div class="records-grid">
+        @for(record of filteredRecords(); track trackByOfferId($index, record)){
+          <article class="history-card">
+            <div class="card-head">
+              <div>
+                <span class="chip" [class]="getRequestStatusClass(record.request?.status)">
+                  {{ getRequestStatusLabel(record.request?.status) }}
+                </span>
+                <h3>{{ getRequestTitle(record.request) }}</h3>
+                <p>{{ record.request?.description ?? 'The service request details are no longer available.' }}</p>
+              </div>
+              <div class="offer-status-block">
+                <span class="pill-label">Offer status</span>
+                <span [class]="getOfferStatusClass(record.offer.status)">
+                  {{ getOfferStatusLabel(record.offer.status) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="details-grid">
+                <div class="detail">
+                  <span>Craft</span>
+                  <strong>{{ record.request?.craftName ?? 'General services' }}</strong>
+                </div>
+                <div class="detail">
+                  <span>Customer</span>
+                  <strong>{{ record.request?.customerName ?? 'Hidden for privacy' }}</strong>
+                </div>
+                <div class="detail">
+                  <span>Budget</span>
+                  <strong>{{ formatCurrency(record.request?.customerBudget) }}</strong>
+                </div>
+                <div class="detail">
+                  <span>City / area</span>
+                  <strong>{{ getLocationLabel(record.request) }}</strong>
+                </div>
+                <div class="detail">
+                  <span>Address</span>
+                  <strong>{{ record.request?.address ?? 'Address not shared yet' }}</strong>
+                </div>
+                <div class="detail">
+                  <span>Request created</span>
+                  <strong>{{ formatDateTime(record.request?.createdAt) }}</strong>
+                </div>
+                <div class="detail">
+                  <span>Expires</span>
+                  <strong>{{ formatDateTime(record.request?.expiresAt) }}</strong>
+                </div>
+              </div>
+
+              <div class="offer-summary">
+                <div class="offer-meta">
+                  <div>
+                    <span>Offer submitted</span>
+                    <strong>{{ formatDateTime(record.offer.createdAt) }}</strong>
+                  </div>
+                  <div>
+                    <span>Offered price</span>
+                    <strong>{{ formatCurrency(record.offer.offeredPrice) }}</strong>
+                  </div>
+                  <div>
+                    <span>Availability window</span>
+                    <strong>{{ formatDate(record.offer.availableFromDate) }} – {{ formatDate(record.offer.availableToDate) }}</strong>
+                  </div>
+                  <div>
+                    <span>Estimated duration</span>
+                    <strong>{{ formatDuration(record.offer.estimatedDurationMinutes) }}</strong>
+                  </div>
+                </div>
+                <p class="offer-description">{{ record.offer.description }}</p>
+
+                @if(record.offer.rejectionReason){
+                  <div class="alert warning">
+                    <strong>Reason provided:</strong>
+                    <span>{{ record.offer.rejectionReason }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</section>

@@ -332,7 +332,7 @@ namespace Salahly.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"));
 
-                    b.Property<int?>("AcceptedOfferId")
+                    b.Property<int>("AcceptedOfferId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("BookingDate")
@@ -395,8 +395,7 @@ namespace Salahly.DAL.Migrations
                     b.HasKey("BookingId");
 
                     b.HasIndex("AcceptedOfferId")
-                        .IsUnique()
-                        .HasFilter("[AcceptedOfferId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("BookingDate");
 
@@ -482,13 +481,16 @@ namespace Salahly.DAL.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
                     b.Property<int>("TotalCompletedBookings")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<DateTime?>("VerifiedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("VerificationStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("YearsOfExperience")
                         .ValueGeneratedOnAdd()
@@ -750,8 +752,7 @@ namespace Salahly.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId")
-                        .IsUnique();
+                    b.HasIndex("BookingId");
 
                     b.HasIndex("PaymentMethod");
 
@@ -959,6 +960,9 @@ namespace Salahly.DAL.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
+                    b.Property<string>("PaymentMethod")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("PreferredDate")
                         .HasColumnType("datetime2");
 
@@ -1061,7 +1065,8 @@ namespace Salahly.DAL.Migrations
                     b.HasOne("Salahly.DAL.Entities.CraftsmanOffer", "AcceptedOffer")
                         .WithOne("Booking")
                         .HasForeignKey("Salahly.DAL.Entities.Booking", "AcceptedOfferId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Salahly.DAL.Entities.Craft", "Craft")
                         .WithMany("Bookings")
@@ -1200,8 +1205,8 @@ namespace Salahly.DAL.Migrations
             modelBuilder.Entity("Salahly.DAL.Entities.Payment", b =>
                 {
                     b.HasOne("Salahly.DAL.Entities.Booking", "Booking")
-                        .WithOne("Payment")
-                        .HasForeignKey("Salahly.DAL.Entities.Payment", "BookingId")
+                        .WithMany("Payments")
+                        .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1306,7 +1311,7 @@ namespace Salahly.DAL.Migrations
 
             modelBuilder.Entity("Salahly.DAL.Entities.Booking", b =>
                 {
-                    b.Navigation("Payment");
+                    b.Navigation("Payments");
 
                     b.Navigation("Reviews");
                 });
