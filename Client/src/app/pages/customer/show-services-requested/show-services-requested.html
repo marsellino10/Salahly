@@ -37,6 +37,16 @@
     </div>
   </header>
 
+  <div class="banner" *ngIf="actionBanner() as banner" [ngClass]="banner.type">
+    <div>
+      <p class="eyebrow">{{ 'ShowRequests.Banner.Title' | translate }}</p>
+      <p>{{ banner.text }}</p>
+    </div>
+    <button type="button" class="ghost-btn" (click)="dismissActionBanner()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
   <div *ngIf="errorMessage()" class="banner error">
     <div>
       <i class="bi bi-exclamation-triangle"></i>
@@ -157,10 +167,34 @@
               <small>{{ 'ShowRequests.Cards.Meta.CreatedLabel' | translate }} {{ formatIso(request.createdAt) }}</small>
               <small>{{ 'ShowRequests.Cards.Meta.ExpiresLabel' | translate }} {{ formatIso(request.expiresAt) }}</small>
             </div>
-            <button type="button" [routerLink]="['/service-request-details', request.serviceRequestId]" class="ghost-btn">
-              {{ 'ShowRequests.Cards.Actions.ViewDetails' | translate }}
-              <i class="bi bi-arrow-right"></i>
-            </button>
+            <div class="card-actions">
+              <div class="primary-actions">
+                <button type="button" class="ghost-btn action-btn" (click)="openEditModal(request)">
+                  <i class="bi bi-pencil-square"></i>
+                  {{ 'ShowRequests.Cards.Actions.Edit' | translate }}
+                </button>
+                <button
+                  type="button"
+                  class="ghost-btn action-btn text-danger"
+                  (click)="promptDelete(request.serviceRequestId)"
+                  [disabled]="isDeleting() && deleteTargetId() === request.serviceRequestId"
+                >
+                  <i class="bi bi-trash"></i>
+                  <ng-container *ngIf="isDeleting() && deleteTargetId() === request.serviceRequestId; else deleteLabel">
+                    {{ 'ShowRequests.Buttons.Processing' | translate }}
+                  </ng-container>
+                  <ng-template #deleteLabel>{{ 'ShowRequests.Cards.Actions.Delete' | translate }}</ng-template>
+                </button>
+              </div>
+              <button
+                type="button"
+                [routerLink]="['/service-request-details', request.serviceRequestId]"
+                class="ghost-btn secondary-link"
+              >
+                {{ 'ShowRequests.Cards.Actions.ViewDetails' | translate }}
+                <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
           </div>
         </article>
       </div>
@@ -191,4 +225,96 @@
       </button>
     </div>
   </ng-template>
+
+  <ng-container *ngIf="editingRequest() as editing">
+    <div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">{{ 'ShowRequests.Edit.Title' | translate }}</p>
+              <h2 class="modal-title">{{ editing.title }}</h2>
+            </div>
+            <button type="button" class="btn-close" aria-label="Close" (click)="closeEditModal()"></button>
+          </div>
+
+          <form class="modal-body modal-form" [formGroup]="editForm" (ngSubmit)="submitEdit()">
+            <div class="form-grid">
+              <label class="input-shell" [class.invalid]="editForm.get('title')?.invalid && (editForm.get('title')?.touched || editForm.get('title')?.dirty)">
+                <span>{{ 'ShowRequests.Edit.Fields.Title' | translate }}</span>
+                <input type="text" formControlName="title" maxlength="80" />
+              </label>
+
+              <label class="input-shell" [class.invalid]="editForm.get('description')?.invalid && (editForm.get('description')?.touched || editForm.get('description')?.dirty)">
+                <span>{{ 'ShowRequests.Edit.Fields.Description' | translate }}</span>
+                <textarea rows="4" formControlName="description" maxlength="800"></textarea>
+              </label>
+
+              <label class="input-shell" [class.invalid]="editForm.get('availableFromDate')?.invalid && editForm.get('availableFromDate')?.touched">
+                <span>{{ 'ShowRequests.Edit.Fields.AvailableFrom' | translate }}</span>
+                <input type="date" formControlName="availableFromDate" />
+              </label>
+
+              <label class="input-shell" [class.invalid]="editForm.get('availableToDate')?.invalid && editForm.get('availableToDate')?.touched">
+                <span>{{ 'ShowRequests.Edit.Fields.AvailableTo' | translate }}</span>
+                <input type="date" formControlName="availableToDate" />
+              </label>
+
+              <label class="input-shell" [class.invalid]="editForm.get('address')?.invalid && (editForm.get('address')?.touched || editForm.get('address')?.dirty)">
+                <span>{{ 'ShowRequests.Edit.Fields.Address' | translate }}</span>
+                <input type="text" formControlName="address" maxlength="160" />
+              </label>
+
+              <label class="input-shell">
+                <span>{{ 'ShowRequests.Edit.Fields.Budget' | translate }}</span>
+                <input type="number" min="0" step="10" formControlName="customerBudget" />
+              </label>
+            </div>
+
+            <p class="error-text" *ngIf="editError()">{{ editError() }}</p>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost" (click)="closeEditModal()" [disabled]="isSaving()">
+                {{ 'ShowRequests.Buttons.Cancel' | translate }}
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+                <ng-container *ngIf="isSaving(); else saveLabel">{{ 'ShowRequests.Buttons.Processing' | translate }}</ng-container>
+                <ng-template #saveLabel>{{ 'ShowRequests.Buttons.Save' | translate }}</ng-template>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+  </ng-container>
+
+  <ng-container *ngIf="deleteTargetId()">
+    <div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">{{ 'ShowRequests.Delete.Title' | translate }}</p>
+              <h2 class="modal-title">{{ 'ShowRequests.Delete.Confirm' | translate }}</h2>
+            </div>
+            <!-- <button type="button" class="btn-close" aria-label="Close" (click)="cancelDelete()"></button> -->
+          </div>
+          <div class="modal-body">
+            <p>{{ 'ShowRequests.Delete.Description' | translate }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" (click)="cancelDelete()" [disabled]="isDeleting()">
+              {{ 'ShowRequests.Buttons.Cancel' | translate }}
+            </button>
+            <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting()">
+              <ng-container *ngIf="isDeleting(); else confirmLabel">{{ 'ShowRequests.Buttons.Processing' | translate }}</ng-container>
+              <ng-template #confirmLabel>{{ 'ShowRequests.Delete.Confirm' | translate }}</ng-template>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+  </ng-container>
 </section>

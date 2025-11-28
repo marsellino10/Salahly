@@ -452,7 +452,13 @@
       }
     },
     "Buttons": {
-      "Retry": "Retry"
+      "Retry": "Retry",
+      "Processing": "Processing…",
+      "Cancel": "Cancel",
+      "Save": "Save"
+    },
+    "Banner": {
+      "Title": "Update"
     },
     "Tabs": {
       "Active": "Active",
@@ -478,7 +484,31 @@
         "ExpiresLabel": "Expires"
       },
       "Actions": {
-        "ViewDetails": "View details"
+        "ViewDetails": "View details",
+        "Edit": "Edit",
+        "Delete": "Delete"
+      }
+    },
+    "Edit": {
+      "Title": "Edit service request",
+      "Fields": {
+        "Title": "Title",
+        "Description": "Description",
+        "AvailableFrom": "Available from",
+        "AvailableTo": "Available to",
+        "Address": "Address",
+        "Budget": "Budget"
+      },
+      "Messages": {
+        "Success": "Service request updated successfully."
+      }
+    },
+    "Delete": {
+      "Title": "Delete service request",
+      "Description": "Are you sure you want to permanently delete this request? This action cannot be undone.",
+      "Confirm": "Delete",
+      "Messages": {
+        "Success": "Service request deleted successfully."
       }
     },
     "Empty": {
@@ -542,7 +572,10 @@
       "AcceptOffer": "Accept offer",
       "RejectOffer": "Reject",
       "Cancel": "Cancel",
-      "SendRejection": "Send rejection"
+      "SendRejection": "Send rejection",
+      "EditRequest": "Edit request",
+      "DeleteRequest": "Delete request",
+      "SaveChanges": "Save changes"
     },
     "Offers": {
       "Title": "Offers received",
@@ -563,6 +596,28 @@
     "Reject": {
       "ReasonLabel": "Reason (optional)",
       "Placeholder": "Share a short note with the craftsman"
+    },
+    "Edit": {
+      "Title": "Edit service request",
+      "Fields": {
+        "Title": "Title",
+        "Description": "Description",
+        "AvailableFrom": "Available from",
+        "AvailableTo": "Available to",
+        "Address": "Address",
+        "Budget": "Budget"
+      },
+      "Messages": {
+        "Success": "Service request updated successfully."
+      }
+    },
+    "Delete": {
+      "Title": "Delete service request",
+      "Description": "Are you sure you want to permanently delete this request? This action cannot be undone.",
+      "Confirm": "Delete",
+      "Messages": {
+        "Success": "Service request deleted successfully."
+      }
     },
     "StatusLabels": {
       "Open": "Open",

@@ -451,7 +451,12 @@
       }
     },
     "Buttons": {
-      "Retry": "إعادة المحاولة"
+      "Retry": "إعادة المحاولة",
+      "Cancel": "إلغاء",
+      "Save": "حفظ",
+      "Delete": "حذف",
+      "Edit": "تعديل",
+      "Processing": "معالجة..."
     },
     "Tabs": {
       "Active": "نشطة",
@@ -477,7 +482,31 @@
         "ExpiresLabel": "ينتهي"
       },
       "Actions": {
-        "ViewDetails": "عرض التفاصيل"
+        "ViewDetails": "عرض التفاصيل",
+        "Edit": "تعديل",
+        "Delete": "حذف"
+      }
+    },
+    "Edit": {
+      "Title": "تعديل طلب الخدمة",
+      "Fields": {
+        "Title": "العنوان",
+        "Description": "الوصف",
+        "AvailableFrom": "الإمكاني من",
+        "AvailableTo": "الإمكاني حتى",
+        "Address": "العنوان",
+        "Budget": "الميزانية"
+      },
+      "Messages": {
+        "Success": "تم تحديث طلب الخدمة بنجاح."
+      }
+    },
+    "Delete": {
+      "Title": "حذف طلب الخدمة",
+      "Description": "هل أنت متأكد من حذف طلب الخدمة؟ هذه الخطوة لا يمكن التراجع عنها.",
+      "Confirm": "حذف",
+      "Messages": {
+        "Success": "تم حذف طلب الخدمة بنجاح."
       }
     },
     "Empty": {
@@ -541,7 +570,10 @@
       "AcceptOffer": "قبول العرض",
       "RejectOffer": "رفض",
       "Cancel": "إلغاء",
-      "SendRejection": "إرسال الرفض"
+      "SendRejection": "إرسال الرفض",
+      "EditRequest": "تعديل طلب الخدمة",
+      "DeleteRequest": "حذف طلب الخدمة",
+      "SaveChanges": "حفظ التغييرات"
     },
     "Offers": {
       "Title": "العروض المستلمة",
@@ -562,6 +594,28 @@
     "Reject": {
       "ReasonLabel": "السبب (اختياري)",
       "Placeholder": "شارك ملاحظة قصيرة مع الفني"
+    },
+    "Edit": {
+      "Title": "تعديل طلب الخدمة",
+      "Fields": {
+        "Title": "العنوان",
+        "Description": "الوصف",
+        "AvailableFrom": "الإمكاني من",
+        "AvailableTo": "الإمكاني حتى",
+        "Address": "العنوان",
+        "Budget": "الميزانية"
+      },
+      "Messages": {
+        "Success": "تم تحديث طلب الخدمة بنجاح."
+      }
+    },
+    "Delete": {
+      "Title": "حذف طلب الخدمة",
+      "Description": "هل أنت متأكد من حذف طلب الخدمة؟ هذه الخطوة لا يمكن التراجع عنها.",
+      "Confirm": "حذف",
+      "Messages": {
+        "Success": "تم حذف طلب الخدمة بنجاح."
+      }
     },
     "StatusLabels": {
       "Open": "مفتوحة",

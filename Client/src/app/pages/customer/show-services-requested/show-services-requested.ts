@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ServicesRequestsService, ServiceRequestDto, ServiceRequestStatus } from '../../../core/services/services-requests.service';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ServicesRequestsService,
+  ServiceRequestDto,
+  ServiceRequestStatus,
+  UpdateServiceRequestPayload,
+} from '../../../core/services/services-requests.service';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -12,13 +18,14 @@ const HISTORY_STATUSES: ServiceRequestStatus[] = ['Completed', 'Cancelled', 'Exp
 @Component({
   selector: 'app-show-services-requested',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule],
+  imports: [CommonModule, RouterLink, TranslateModule, ReactiveFormsModule],
   templateUrl: './show-services-requested.html',
   styleUrl: './show-services-requested.css',
 })
 export class ShowServicesRequested implements OnInit {
   private readonly _requestsService = inject(ServicesRequestsService);
   private readonly _translate = inject(TranslateService);
+  private readonly _fb = inject(FormBuilder);
 
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
@@ -28,6 +35,21 @@ export class ShowServicesRequested implements OnInit {
   readonly activeTab = signal<RequestTab>('active');
   readonly requests = signal<ServiceRequestDto[]>([]);
   readonly skeletonPlaceholders = Array.from({ length: 4 });
+  readonly actionBanner = signal<{ type: 'success' | 'error'; text: string } | null>(null);
+  readonly editingRequest = signal<ServiceRequestDto | null>(null);
+  readonly editError = signal<string | null>(null);
+  readonly isSaving = signal(false);
+  readonly deleteTargetId = signal<number | null>(null);
+  readonly isDeleting = signal(false);
+
+  readonly editForm = this._fb.nonNullable.group({
+    title: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(80)]],
+    description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(800)]],
+    availableFromDate: ['', Validators.required],
+    availableToDate: ['', Validators.required],
+    address: ['', [Validators.required, Validators.maxLength(160)]],
+    customerBudget: [null as number | null, [Validators.min(0)]],
+  });
 
   readonly uniqueAreas = computed(() => {
     const areas = new Set<string>();
@@ -53,6 +75,16 @@ export class ShowServicesRequested implements OnInit {
     Completed: { bg: 'var(--chip-green)', text: 'var(--chip-green-text)' },
     Cancelled: { bg: 'var(--chip-red)', text: 'var(--chip-red-text)' },
     Expired: { bg: 'var(--chip-gray)', text: 'var(--chip-gray-text)' },
+  };
+
+  private readonly statusLabelKeys: Record<string, string> = {
+    Open: 'ShowRequests.StatusLabels.Open',
+    HasOffers: 'ShowRequests.StatusLabels.HasOffers',
+    OfferAccepted: 'ShowRequests.StatusLabels.OfferAccepted',
+    InProgress: 'ShowRequests.StatusLabels.InProgress',
+    Completed: 'ShowRequests.StatusLabels.Completed',
+    Cancelled: 'ShowRequests.StatusLabels.Cancelled',
+    Expired: 'ShowRequests.StatusLabels.Expired',
   };
 
   readonly filteredRequests = computed(() => {
@@ -106,10 +138,12 @@ export class ShowServicesRequested implements OnInit {
       next: (response) => {
         this.requests.set(response.data ?? []);
         this.isLoading.set(false);
+        this.isDeleting.set(false);
       },
       error: (error: unknown) => {
         this.errorMessage.set(this.extractErrorMessage(error));
         this.isLoading.set(false);
+        this.isDeleting.set(false);
       },
     });
   }
@@ -182,6 +216,89 @@ export class ShowServicesRequested implements OnInit {
     return key ? this._translate.instant(key) : String(status);
   }
 
+  openEditModal(request: ServiceRequestDto): void {
+    this.editingRequest.set(request);
+    this.editError.set(null);
+    this.editForm.reset({
+      title: request.title,
+      description: request.description,
+      availableFromDate: this.toDateInputValue(request.availableFromDate),
+      availableToDate: this.toDateInputValue(request.availableToDate),
+      address: request.address,
+      customerBudget: request.customerBudget ?? null,
+    });
+  }
+
+  closeEditModal(): void {
+    this.editingRequest.set(null);
+    this.editForm.reset();
+    this.isSaving.set(false);
+  }
+
+  submitEdit(): void {
+    const target = this.editingRequest();
+    if (!target) {
+      return;
+    }
+
+    if (this.editForm.invalid || this.isSaving()) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.buildUpdatePayload();
+    this.isSaving.set(true);
+    this._requestsService.updateRequest(target.serviceRequestId, payload).subscribe({
+      next: (response) => {
+        const message = response?.message ?? this._translate.instant('ShowRequests.Edit.Messages.Success');
+        this.actionBanner.set({ type: 'success', text: message });
+        this.closeEditModal();
+        this.loadRequests();
+        this.isSaving.set(false);
+      },
+      error: (error) => {
+        this.editError.set(this.extractErrorMessage(error));
+        this.isSaving.set(false);
+      },
+    });
+  }
+
+  promptDelete(requestId: number): void {
+    this.deleteTargetId.set(requestId);
+  }
+
+  cancelDelete(): void {
+    this.deleteTargetId.set(null);
+    this.isDeleting.set(false);
+  }
+
+  confirmDelete(): void {
+    const targetId = this.deleteTargetId();
+    if (!targetId || this.isDeleting()) {
+      return;
+    }
+
+    this.isDeleting.set(true);
+    this._requestsService.deleteRequest(targetId).subscribe({
+      next: () => {
+        this.actionBanner.set({
+          type: 'success',
+          text: this._translate.instant('ShowRequests.Delete.Messages.Success'),
+        });
+        this.cancelDelete();
+        this.loadRequests();
+      },
+      error: (error) => {
+        this.actionBanner.set({ type: 'error', text: this.extractErrorMessage(error) });
+        this.cancelDelete();
+      },
+    });
+  }
+
+  dismissActionBanner(): void {
+    this.actionBanner.set(null);
+  }
+
   private extractErrorMessage(error: unknown): string {
     if (!error) {
       return this._translate.instant('ShowRequests.Messages.LoadError');
@@ -199,13 +316,35 @@ export class ShowServicesRequested implements OnInit {
     return this._translate.instant('ShowRequests.Messages.GenericError');
   }
 
-  private readonly statusLabelKeys: Record<string, string> = {
-    Open: 'ShowRequests.StatusLabels.Open',
-    HasOffers: 'ShowRequests.StatusLabels.HasOffers',
-    OfferAccepted: 'ShowRequests.StatusLabels.OfferAccepted',
-    InProgress: 'ShowRequests.StatusLabels.InProgress',
-    Completed: 'ShowRequests.StatusLabels.Completed',
-    Cancelled: 'ShowRequests.StatusLabels.Cancelled',
-    Expired: 'ShowRequests.StatusLabels.Expired',
-  };
+  private buildUpdatePayload(): UpdateServiceRequestPayload {
+    const raw = this.editForm.value;
+    const payload: UpdateServiceRequestPayload = {
+      title: raw.title?.trim(),
+      description: raw.description?.trim(),
+      address: raw.address?.trim(),
+      availableFromDate: raw.availableFromDate ? new Date(raw.availableFromDate).toISOString() : undefined,
+      availableToDate: raw.availableToDate ? new Date(raw.availableToDate).toISOString() : undefined,
+    };
+
+    if (raw.customerBudget !== null && raw.customerBudget !== undefined) {
+      payload.customerBudget = Number(raw.customerBudget);
+    } else {
+      payload.customerBudget = null;
+    }
+
+    return payload;
+  }
+
+  private toDateInputValue(value: string | null | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toISOString().split('T')[0];
+  }
 }

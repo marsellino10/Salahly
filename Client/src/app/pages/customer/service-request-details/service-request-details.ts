@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CustomerOffersService, OfferDto, OfferStatus } from '../../../core/services/customer-offers.service';
 import {
   ServiceRequestDto,
   ServiceRequestStatus,
   ServicesRequestsService,
+  UpdateServiceRequestPayload,
 } from '../../../core/services/services-requests.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
@@ -19,7 +20,7 @@ type TimelineStep = {
 @Component({
   selector: 'app-service-request-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, CarouselModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslateModule, CarouselModule],
   templateUrl: './service-request-details.html',
   styleUrl: './service-request-details.css',
 })
@@ -29,6 +30,7 @@ export class ServiceRequestDetails implements OnInit {
   private readonly _requestsService = inject(ServicesRequestsService);
   private readonly _offersService = inject(CustomerOffersService);
   private readonly _translate = inject(TranslateService);
+  private readonly _fb = inject(FormBuilder);
 
   private requestId: number | null = null;
   readonly OfferStatusEnum = OfferStatus;
@@ -47,6 +49,20 @@ export class ServiceRequestDetails implements OnInit {
   readonly offerActionLoadingId = signal<number | null>(null);
   readonly activeRejectOfferId = signal<number | null>(null);
   rejectReason: string = '';
+  readonly editModalOpen = signal(false);
+  readonly deleteModalOpen = signal(false);
+  readonly editError = signal<string | null>(null);
+  readonly isSaving = signal(false);
+  readonly isDeletingRequest = signal(false);
+
+  readonly editForm = this._fb.nonNullable.group({
+    title: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(80)]],
+    description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(800)]],
+    availableFromDate: ['', Validators.required],
+    availableToDate: ['', Validators.required],
+    address: ['', [Validators.required, Validators.maxLength(160)]],
+    customerBudget: [null as number | null, [Validators.min(0)]],
+  });
 
   readonly lifecycleSteps: TimelineStep[] = [
     { key: 'Open', labelKey: 'ServiceRequestDetails.Timeline.Posted' },
@@ -124,6 +140,10 @@ export class ServiceRequestDetails implements OnInit {
       next: (response) => {
         this.request.set(response.data ?? null);
         this.isRequestLoading.set(false);
+        const current = this.request();
+        if (current && this.editModalOpen()) {
+          this.populateEditForm(current);
+        }
       },
       error: (error) => {
         this.requestError.set(this.extractErrorMessage(error));
@@ -257,6 +277,84 @@ export class ServiceRequestDetails implements OnInit {
     this.actionBanner.set(null);
   }
 
+  openEditModal(): void {
+    const current = this.request();
+    if (!current) {
+      return;
+    }
+
+    this.populateEditForm(current);
+    this.editError.set(null);
+    this.editModalOpen.set(true);
+  }
+
+  closeEditModal(): void {
+    this.editModalOpen.set(false);
+    this.editForm.reset();
+    this.editError.set(null);
+    this.isSaving.set(false);
+  }
+
+  submitEdit(): void {
+    if (!this.requestId) {
+      return;
+    }
+
+    if (this.editForm.invalid || this.isSaving()) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.buildUpdatePayload();
+    this.isSaving.set(true);
+    this._requestsService.updateRequest(this.requestId, payload).subscribe({
+      next: (response) => {
+        const message = response?.message ?? this._translate.instant('ServiceRequestDetails.Edit.Messages.Success');
+        this.actionBanner.set(message);
+        this.isSaving.set(false);
+        this.closeEditModal();
+        this.loadRequest();
+      },
+      error: (error) => {
+        this.editError.set(this.extractErrorMessage(error));
+        this.isSaving.set(false);
+      },
+    });
+  }
+
+  promptDelete(): void {
+    if (!this.request()) {
+      return;
+    }
+    this.deleteModalOpen.set(true);
+  }
+
+  cancelDelete(): void {
+    this.deleteModalOpen.set(false);
+    this.isDeletingRequest.set(false);
+  }
+
+  confirmDelete(): void {
+    if (!this.requestId || this.isDeletingRequest()) {
+      return;
+    }
+
+    this.isDeletingRequest.set(true);
+    this._requestsService.deleteRequest(this.requestId).subscribe({
+      next: () => {
+        this.actionBanner.set(this._translate.instant('ServiceRequestDetails.Delete.Messages.Success'));
+        this.isDeletingRequest.set(false);
+        this.deleteModalOpen.set(false);
+        void this._router.navigate(['/show-services-requested']);
+      },
+      error: (error) => {
+        this.actionBanner.set(this.extractErrorMessage(error));
+        this.isDeletingRequest.set(false);
+        this.deleteModalOpen.set(false);
+      },
+    });
+  }
+
   trackByOfferId(_: number, offer: OfferDto): number {
     return offer.craftsmanOfferId;
   }
@@ -368,5 +466,48 @@ export class ServiceRequestDetails implements OnInit {
 
   trackImage(_: number, image: string): string {
     return image;
+  }
+
+  private populateEditForm(request: ServiceRequestDto): void {
+    this.editForm.reset({
+      title: request.title,
+      description: request.description,
+      availableFromDate: this.toDateInputValue(request.availableFromDate),
+      availableToDate: this.toDateInputValue(request.availableToDate),
+      address: request.address,
+      customerBudget: request.customerBudget ?? null,
+    });
+  }
+
+  private buildUpdatePayload(): UpdateServiceRequestPayload {
+    const raw = this.editForm.value;
+    const payload: UpdateServiceRequestPayload = {
+      title: raw.title?.trim(),
+      description: raw.description?.trim(),
+      address: raw.address?.trim(),
+      availableFromDate: raw.availableFromDate ? new Date(raw.availableFromDate).toISOString() : undefined,
+      availableToDate: raw.availableToDate ? new Date(raw.availableToDate).toISOString() : undefined,
+    };
+
+    if (raw.customerBudget !== null && raw.customerBudget !== undefined) {
+      payload.customerBudget = Number(raw.customerBudget);
+    } else {
+      payload.customerBudget = null;
+    }
+
+    return payload;
+  }
+
+  private toDateInputValue(value: string | null | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toISOString().split('T')[0];
   }
 }
