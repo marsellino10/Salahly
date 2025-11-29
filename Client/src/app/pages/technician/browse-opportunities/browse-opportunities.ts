@@ -82,7 +82,7 @@ export class BrowseOpportunities implements OnInit {
             opportunity.description.toLowerCase().includes(search) ||
             (opportunity.area ?? '').toLowerCase().includes(search),
       );
-
+      console.log('Filtered Opportunities:', filtered);
     return [...filtered].sort((a, b) => this.sortItems(a, b, sortOption));
   });
 

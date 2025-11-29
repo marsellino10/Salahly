@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Salahly.DSL.DTOs.PaymentDtos;
 using Salahly.DSL.Interfaces.Payments;
@@ -7,6 +8,7 @@ namespace SalahlyProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAll")]
     public class PaymobWebhookController : ControllerBase
     {
         private readonly IPaymentService _paymentService;

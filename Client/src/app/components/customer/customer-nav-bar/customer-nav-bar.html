@@ -7,6 +7,46 @@
       </a>
 
       <div class="d-none d-md-flex align-items-center gap-4">
+        <!-- NOTIFICATION BELL -->
+<div class="notification-wrapper position-relative me-3">
+  <button class="btn p-0 border-0 bg-transparent" (click)="toggleNotifications()">
+    <i class="fa-regular fa-bell fs-4"></i>
+
+    @if(unread > 0){
+      <span class="notification-dot"></span>
+    }
+  </button>
+
+  @if(showNotifications){
+    <div class="notification-dropdown shadow-sm">
+      @for(n of notifications; track n.notificationId){
+        <div class="notification-item"
+     [ngClass]="{
+       'unread': !n.isRead,
+       'type-request': n.type == 1,
+       'type-offer': n.type == 2,
+       'type-accepted': n.type == 3,
+       'type-rejected': n.type == 4,
+       'type-booking': n.type >= 5 && n.type <= 7,
+       'type-review': n.type == 8,
+       'type-payment': n.type == 9
+     }"
+     (click)="openNotification(n)">
+
+
+          <p class="m-0 fw-semibold">{{ n.title }}</p>
+          <small class="text-muted">{{ n.message }}</small>
+        </div>
+      }
+
+      @if(notifications.length === 0){
+        <p class="text-center text-muted m-2">No notifications</p>
+      }
+    </div>
+  }
+</div>
+        <!-- END NOTIFICATION BELL -->
+
         <a routerLink="/home" routerLinkActive="active" class="d-flex align-items-center gap-2 text-secondary nav-link">
           <i class="fa-regular fa-house"></i>
           <span>{{ 'BlankNavBar.Home' | translate }}</span>

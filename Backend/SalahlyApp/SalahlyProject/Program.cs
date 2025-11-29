@@ -221,8 +221,7 @@ namespace SalahlyProject
                 options.AddPolicy("AllowAngular", policy =>
                 {
                     policy.WithOrigins(
-                              "http://localhost:4200",
-                              "http://127.0.0.1:3000"
+                              "http://localhost:4200"
                           )
                           .AllowAnyMethod()
                           .AllowAnyHeader()
@@ -356,7 +355,7 @@ namespace SalahlyProject
             app.UseHttpsRedirection();
 
             // ✅ CORS - Must be before Authentication/Authorization
-            app.UseCors("AllowAll");  // ⬅️ يسمح لـ Paymob webhook
+            app.UseCors("AllowAngular");  // ⬅️ يسمح لـ Paymob webhook
 
             // Static files (if needed)
             app.UseStaticFiles();

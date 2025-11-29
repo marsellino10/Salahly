@@ -29,7 +29,7 @@ namespace Salahly.DAL.Entities
         public int? BookingId { get; set; }
 
         // Status
-        public bool IsRead { get; set; }
+        public bool IsRead { get; set; } = false;
         public DateTime? ReadAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

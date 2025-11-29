@@ -97,3 +97,45 @@
     border-top: 1px solid #e5e7eb;
   }
 }
+.notification-dot {
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: white;
+  width: 250px;
+  border-radius: 8px;
+  z-index: 20;
+  padding: 10px;
+}
+
+.notification-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.type-request { border-left: 4px solid #007bff; }
+.type-offer { border-left: 4px solid #6f42c1; }
+.type-accepted { border-left: 4px solid #28a745; }
+.type-rejected { border-left: 4px solid #dc3545; }
+.type-booking { border-left: 4px solid #17a2b8; }
+.type-review { border-left: 4px solid #ffc107; }
+.type-payment { border-left: 4px solid #fd7e14; }
+
+.unread {
+  background: #eef5ff;
+}
+

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Azure.Core;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
@@ -60,18 +62,7 @@ namespace Salahly.DSL.Services
                 // Send in real-time
                 foreach (var n in notifications)
                 {
-                    await _hubSender.SendToUserAsync(n.UserId.ToString(), new
-                    {
-                        type = (int)n.Type,
-                        n.Title,
-                        n.Message,
-                        n.ActionUrl,
-                        n.ServiceRequestId,
-                        n.CraftsmanOfferId,
-                        n.BookingId,
-                        notificationId = n.NotificationId,
-                        n.CreatedAt
-                    });
+                    await _hubSender.SendToUserAsync(n.UserId.ToString());
                 }
             }
             catch (Exception ex)
@@ -116,12 +107,12 @@ namespace Salahly.DSL.Services
         }
 
 
-        public async Task<List<Notification>> GetNotificationsForUserAsync(int userId)
+        public async Task<List<NotificationDto>> GetNotificationsForUserAsync(int userId)
         {
             try
             {
                 var list = await _unitOfWork.Notifications.GetForUserAsync(userId);
-                return list;
+                return list.Adapt<List<NotificationDto>>();
             }
             catch (Exception ex)
             {
@@ -152,6 +143,17 @@ namespace Salahly.DSL.Services
                 _logger.LogError(ex, "Error marking notification {NotificationId} as read for user {UserId}", notificationId, userId);
                 throw;
             }
+        }
+        public async Task MarkAllAsRead(int userId)
+        {
+            var notifications = await _unitOfWork.Notifications
+            .GetAll()
+             .Where(n => n.UserId == userId && !n.IsRead)
+             .ToListAsync();
+
+            foreach (var n in notifications)
+                n.IsRead = true;
+            await _unitOfWork.SaveAsync();
         }
     }
 }

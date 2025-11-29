@@ -8,6 +8,6 @@ namespace Salahly.DSL.Interfaces
 {
     public interface INotificationHubSender
     {
-        Task SendToUserAsync(string userId, object payload);
+        Task SendToUserAsync(string userId);
     }
 }
