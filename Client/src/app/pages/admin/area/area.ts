@@ -4,13 +4,14 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angu
 import { finalize } from 'rxjs/operators';
 import { AreaService, CreateAreaPayload } from '../../../core/services/area-service';
 import { Area as AreaModel } from '../../../core/models/Area';
+import { TranslateModule } from '@ngx-translate/core';
 
 type FormMessage = { type: 'success' | 'error'; text: string };
 
 @Component({
   selector: 'app-area',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,TranslateModule],
   templateUrl: './area.html',
   styleUrl: './area.css'
 })

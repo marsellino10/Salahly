@@ -978,5 +978,125 @@
         "Subtitle": "Engagement level"
       }
     }
+  },
+  "Area": {
+    "PageHeader": {
+      "Areas": "Areas",
+      "ManageServiceCoverage": "Manage Service Coverage",
+      "Subtitle": "Keep regions and cities up to date so customers can find technicians near them."
+    },
+
+    "Buttons": {
+      "RefreshList": "Refresh list",
+      "Refreshing": "Refreshing…",
+      "Clear": "Clear",
+      "SaveChanges": "Save changes",
+      "AddArea": "Add area",
+      "Saving": "Saving…",
+      "TryAgain": "Try again",
+      "Edit": "Edit",
+      "Delete": "Delete",
+      "Deleting": "Deleting…"
+    },
+
+    "Stats": {
+      "TotalAreas": "Total areas",
+      "ActiveCoverageRecords": "Active coverage records",
+      "Regions": "Regions",
+      "UniqueRegionsServiced": "Unique regions serviced",
+      "FilteredResults": "Filtered results",
+      "MatchingCurrentFilters": "Matching current filters"
+    },
+
+    "Filters": {
+      "Search": "Search",
+      "SearchPlaceholder": "Search by region or city",
+      "Region": "Region",
+      "AllRegions": "All regions",
+      "ClearFilters": "Clear filters"
+    },
+
+    "Form": {
+      "EditingArea": "Editing area",
+      "NewArea": "New area",
+      "AreaDetails": "Area details",
+      "CancelEdit": "Cancel edit",
+
+      "Region": "Region",
+      "RegionPlaceholder": "e.g., Cairo",
+      "RegionHint": "Keep region names short and descriptive.",
+
+      "City": "City",
+      "CityPlaceholder": "e.g., Nasr City",
+      "CityHint": "City should belong to the selected region."
+    },
+
+    "Errors": {
+      "RegionRequired": "Region is required.",
+      "CityRequired": "City is required."
+    },
+
+    "List": {
+      "AreaDirectory": "Area directory",
+      "ExistingAreas": "Existing areas",
+      "Of": "of",
+      "Shown": "shown",
+      "NoAreasMatch": "No areas match your filters.",
+      "AdjustFiltersOrAdd": "Adjust the filters or add a new area."
+    },
+
+    "Loading": {
+      "LoadingAreas": "Loading areas…"
+    }
+  },
+  "PortfolioApproval": {
+    "PageHeader": {
+      "Title": "Craftsmen portfolio moderation",
+      "Subtitle": "Approve inactive portfolio items",
+      "Description": "Review the latest submissions from craftsmen, highlight risky delays, and activate the best work to keep the marketplace fresh.",
+      "RefreshList": "Refresh list"
+    },
+    "Stats": {
+      "PendingItems": "Pending items",
+      "AwaitingApproval": "Awaiting approval",
+      "ImpactedCraftsmen": "Impacted craftsmen",
+      "UniqueSubmitters": "Unique submitters",
+      "LongestWait": "Longest wait",
+      "SinceUpload": "Since upload"
+    },
+    "Filters": {
+      "Search": "Search",
+      "SearchPlaceholder": "Search title, description, or ID",
+      "ClearSearch": "Clear search",
+      "Craftsman": "Craftsman",
+      "All": "All ({{count}})",
+      "SortBy": "Sort by",
+      "NewestFirst": "Newest first",
+      "OldestFirst": "Oldest first",
+      "TitleAZ": "Title A-Z",
+      "ResetFilters": "Reset filters"
+    },
+    "Feedback": {
+      "Error": "Error",
+      "Success": "Success"
+    },
+    "Card": {
+      "NoDescription": "No description provided.",
+      "Craftsman": "Craftsman",
+      "DisplayOrder": "Display order",
+      "Status": "Status",
+      "Inactive": "Inactive",
+      "ApproveItem": "Approve item",
+      "Approving": "Approving…",
+      "PreviewFullPortfolio": "Preview full portfolio"
+    },
+    "Skeleton": {
+      "Loading": "Loading…"
+    },
+    "EmptyState": {
+      "Title": "No pending portfolio items",
+      "Description": "Every inactive submission has been reviewed. Great job!",
+      "Refresh": "Refresh to double-check"
+    }
   }
 }

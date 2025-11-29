@@ -1,50 +1,57 @@
 <div class="area-admin">
+
   <header class="page-header">
     <div>
-      <p class="eyebrow">Areas</p>
-      <h1>Manage Service Coverage</h1>
+      <p class="eyebrow">{{ 'Area.PageHeader.Areas' | translate }}</p>
+      <h1>{{ 'Area.PageHeader.ManageServiceCoverage' | translate }}</h1>
       <p class="subtitle">
-        Keep regions and cities up to date so customers can find technicians near them.
+        {{ 'Area.PageHeader.Subtitle' | translate }}
       </p>
     </div>
+
     <button
       type="button"
       class="btn btn--ghost"
       (click)="loadAreas()"
       [disabled]="loading"
     >
-      <span *ngIf="!loading">Refresh list</span>
-      <span *ngIf="loading">Refreshing…</span>
+      <span *ngIf="!loading">{{ 'Area.Buttons.RefreshList' | translate }}</span>
+      <span *ngIf="loading">{{ 'Area.Buttons.Refreshing' | translate }}</span>
     </button>
   </header>
 
+  <!-- Stats -->
   <section class="stats">
     <article class="stat-card">
-      <p class="stat-label">Total areas</p>
+      <p class="stat-label">{{ 'Area.Stats.TotalAreas' | translate }}</p>
       <p class="stat-value">{{ totalAreas }}</p>
-      <p class="stat-hint">Active coverage records</p>
+      <p class="stat-hint">{{ 'Area.Stats.ActiveCoverageRecords' | translate }}</p>
     </article>
+
     <article class="stat-card">
-      <p class="stat-label">Regions</p>
+      <p class="stat-label">{{ 'Area.Stats.Regions' | translate }}</p>
       <p class="stat-value">{{ totalRegions }}</p>
-      <p class="stat-hint">Unique regions serviced</p>
+      <p class="stat-hint">{{ 'Area.Stats.UniqueRegionsServiced' | translate }}</p>
     </article>
+
     <article class="stat-card">
-      <p class="stat-label">Filtered results</p>
+      <p class="stat-label">{{ 'Area.Stats.FilteredResults' | translate }}</p>
       <p class="stat-value">{{ filteredAreas.length }}</p>
-      <p class="stat-hint">Matching current filters</p>
+      <p class="stat-hint">{{ 'Area.Stats.MatchingCurrentFilters' | translate }}</p>
     </article>
   </section>
 
+  <!-- Filters -->
   <section class="filters">
     <div class="form-field">
-      <label for="search">Search</label>
+      <label for="search">{{ 'Area.Filters.Search' | translate }}</label>
+
       <div class="input-wrapper">
         <span class="material-symbol"><i class="fa-solid fa-magnifying-glass"></i></span>
         <input
           id="search"
           type="text"
-          placeholder="Search by region or city"
+          placeholder="{{ 'Area.Filters.SearchPlaceholder' | translate }}"
           [(ngModel)]="searchTerm"
           (input)="applyFilters()"
         />
@@ -52,93 +59,179 @@
     </div>
 
     <div class="form-field">
-      <label for="region">Region</label>
+      <label for="region">{{ 'Area.Filters.Region' | translate }}</label>
+
       <select id="region" [(ngModel)]="selectedRegion" (change)="applyFilters()">
-        <option [ngValue]="null">All regions</option>
+        <option [ngValue]="null">{{ 'Area.Filters.AllRegions' | translate }}</option>
         <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
       </select>
     </div>
 
-    <button type="button" class="btn btn--ghost" (click)="clearFilters()" [disabled]="!searchTerm && !selectedRegion">
-      Clear filters
+    <button
+      type="button"
+      class="btn btn--ghost"
+      (click)="clearFilters()"
+      [disabled]="!searchTerm && !selectedRegion"
+    >
+      {{ 'Area.Filters.ClearFilters' | translate }}
     </button>
   </section>
 
   <section class="content-grid">
+
     <!-- Add/Edit Area Panel -->
     <article class="panel">
       <header class="panel__header">
         <div>
-          <p class="panel__eyebrow">{{ isEdit ? 'Editing area' : 'New area' }}</p>
-          <h2>{{ isEdit ? (editingArea?.city + ', ' + editingArea?.region) : 'Area details' }}</h2>
+          <p class="panel__eyebrow">
+            {{ isEdit ? ('Area.Form.EditingArea' | translate) : ('Area.Form.NewArea' | translate) }}
+          </p>
+
+          <h2>
+            {{ isEdit ? (editingArea?.city + ', ' + editingArea?.region) : ('Area.Form.AreaDetails' | translate) }}
+          </h2>
         </div>
-        <button type="button" class="btn btn--text" *ngIf="isEdit" (click)="cancelEdit()">Cancel edit</button>
+
+        <button
+          type="button"
+          class="btn btn--text"
+          *ngIf="isEdit"
+          (click)="cancelEdit()"
+        >
+          {{ 'Area.Form.CancelEdit' | translate }}
+        </button>
       </header>
 
       <form class="area-form" [formGroup]="form" (ngSubmit)="submitForm()">
         <div class="form-row">
-          <div class="form-field" [class.form-field--error]="form.get('region')?.touched && form.get('region')?.invalid">
-            <label for="regionField">Region</label>
-            <input id="regionField" type="text" placeholder="e.g., Cairo" formControlName="region" maxlength="80" />
-            <p class="field-hint">Keep region names short and descriptive.</p>
-            <p class="field-error" *ngIf="form.get('region')?.touched && form.get('region')?.hasError('required')">Region is required.</p>
+
+          <!-- Region field -->
+          <div class="form-field"
+            [class.form-field--error]="form.get('region')?.touched && form.get('region')?.invalid">
+            <label for="regionField">{{ 'Area.Form.Region' | translate }}</label>
+
+            <input
+              id="regionField"
+              type="text"
+              placeholder="{{ 'Area.Form.RegionPlaceholder' | translate }}"
+              formControlName="region"
+              maxlength="80"
+            />
+
+            <p class="field-hint">{{ 'Area.Form.RegionHint' | translate }}</p>
+
+            <p class="field-error"
+               *ngIf="form.get('region')?.touched && form.get('region')?.hasError('required')">
+              {{ 'Area.Errors.RegionRequired' | translate }}
+            </p>
           </div>
 
-          <div class="form-field" [class.form-field--error]="form.get('city')?.touched && form.get('city')?.invalid">
-            <label for="cityField">City</label>
-            <input id="cityField" type="text" placeholder="e.g., Nasr City" formControlName="city" maxlength="80" />
-            <p class="field-hint">City should belong to the selected region.</p>
-            <p class="field-error" *ngIf="form.get('city')?.touched && form.get('city')?.hasError('required')">City is required.</p>
+          <!-- City field -->
+          <div class="form-field"
+            [class.form-field--error]="form.get('city')?.touched && form.get('city')?.invalid">
+
+            <label for="cityField">{{ 'Area.Form.City' | translate }}</label>
+
+            <input
+              id="cityField"
+              type="text"
+              placeholder="{{ 'Area.Form.CityPlaceholder' | translate }}"
+              formControlName="city"
+              maxlength="80"
+            />
+
+            <p class="field-hint">{{ 'Area.Form.CityHint' | translate }}</p>
+
+            <p class="field-error"
+               *ngIf="form.get('city')?.touched && form.get('city')?.hasError('required')">
+              {{ 'Area.Errors.CityRequired' | translate }}
+            </p>
           </div>
+
         </div>
 
-        <div class="form-feedback" *ngIf="formMessage" [class.form-feedback--error]="formMessage.type === 'error'">
+        <!-- Feedback -->
+        <div class="form-feedback"
+             *ngIf="formMessage"
+             [class.form-feedback--error]="formMessage.type === 'error'">
           {{ formMessage.text }}
         </div>
 
+        <!-- Actions -->
         <div class="form-actions">
-          <button type="button" class="btn btn--ghost" (click)="clearForm()" [disabled]="saving">Clear</button>
+          <button
+            type="button"
+            class="btn btn--ghost"
+            (click)="clearForm()"
+            [disabled]="saving"
+          >
+            {{ 'Area.Buttons.Clear' | translate }}
+          </button>
+
           <button type="submit" class="btn" [disabled]="saving">
-            <span *ngIf="!saving">{{ isEdit ? 'Save changes' : 'Add area' }}</span>
-            <span *ngIf="saving">Saving…</span>
+            <span *ngIf="!saving">
+              {{ isEdit ? ('Area.Buttons.SaveChanges' | translate) : ('Area.Buttons.AddArea' | translate) }}
+            </span>
+
+            <span *ngIf="saving">{{ 'Area.Buttons.Saving' | translate }}</span>
           </button>
         </div>
       </form>
     </article>
 
-    <!-- Area List Panel -->
+    <!-- List Panel -->
     <article class="panel">
       <header class="panel__header">
         <div>
-          <p class="panel__eyebrow">Area directory</p>
-          <h2>Existing areas</h2>
+          <p class="panel__eyebrow">{{ 'Area.List.AreaDirectory' | translate }}</p>
+          <h2>{{ 'Area.List.ExistingAreas' | translate }}</h2>
         </div>
-        <p class="panel__hint">{{ filteredAreas.length }} of {{ areas.length }} shown</p>
+
+        <p class="panel__hint">
+          {{ filteredAreas.length }} {{ 'Area.List.Of' | translate }} {{ areas.length }} {{ 'Area.List.Shown' | translate }}
+        </p>
       </header>
 
       <div class="list-state" *ngIf="listError">
         <p class="state-text">{{ listError }}</p>
-        <button type="button" class="btn btn--ghost" (click)="loadAreas()">Try again</button>
+
+        <button type="button" class="btn btn--ghost" (click)="loadAreas()">
+          {{ 'Area.Buttons.TryAgain' | translate }}
+        </button>
       </div>
 
       <div class="list-state" *ngIf="!listError && !loading && !filteredAreas.length">
         <span class="material-symbol">location_off</span>
-        <p class="state-title">No areas match your filters.</p>
-        <p class="state-text">Adjust the filters or add a new area.</p>
+
+        <p class="state-title">{{ 'Area.List.NoAreasMatch' | translate }}</p>
+        <p class="state-text">{{ 'Area.List.AdjustFiltersOrAdd' | translate }}</p>
       </div>
 
       <div class="area-list" *ngIf="filteredAreas.length">
-        <article class="area-card" *ngFor="let area of filteredAreas; trackBy: trackById">
+        <article
+          class="area-card"
+          *ngFor="let area of filteredAreas; trackBy: trackById"
+        >
           <div class="area-card__icon"></div>
+
           <div class="area-card__body">
             <p class="area-card__region">{{ area.region }}</p>
             <h3 class="area-card__city">{{ area.city }}</h3>
           </div>
+
           <div class="area-card__actions">
-            <button type="button" class="btn btn--text" (click)="startEdit(area)">Edit</button>
-            <button type="button" class="btn btn--text btn--danger" (click)="deleteArea(area)" [disabled]="deletingId === area.id">
-              <span *ngIf="deletingId !== area.id">Delete</span>
-              <span *ngIf="deletingId === area.id">Deleting…</span>
+            <button type="button" class="btn btn--text" (click)="startEdit(area)">
+              {{ 'Area.Buttons.Edit' | translate }}
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--text btn--danger"
+              (click)="deleteArea(area)"
+              [disabled]="deletingId === area.id"
+            >
+              <span *ngIf="deletingId !== area.id">{{ 'Area.Buttons.Delete' | translate }}</span>
+              <span *ngIf="deletingId === area.id">{{ 'Area.Buttons.Deleting' | translate }}</span>
             </button>
           </div>
         </article>
@@ -146,8 +239,9 @@
 
       <div class="loading-overlay" *ngIf="loading">
         <div class="spinner"></div>
-        <p>Loading areas…</p>
+        <p>{{ 'Area.Loading.LoadingAreas' | translate }}</p>
       </div>
     </article>
+
   </section>
 </div>

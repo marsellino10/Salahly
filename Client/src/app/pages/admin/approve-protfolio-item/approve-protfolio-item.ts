@@ -7,13 +7,14 @@ import {
   PortfolioItemResponseDto,
 } from '../../../core/services/admin-service';
 import { RouterLink } from "@angular/router";
+import { TranslateModule } from '@ngx-translate/core';
 
 type SortMode = 'newest' | 'oldest' | 'title';
 
 @Component({
   selector: 'app-approve-protfolio-item',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink,TranslateModule],
   templateUrl: './approve-protfolio-item.html',
   styleUrl: './approve-protfolio-item.css',
 })

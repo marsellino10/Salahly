@@ -981,5 +981,125 @@
         "Subtitle": "مستوى التفاعل"
       }
     }
+  },
+  "Area": {
+    "PageHeader": {
+      "Areas": "المناطق",
+      "ManageServiceCoverage": "إدارة تغطية الخدمة",
+      "Subtitle": "حافظ على تحديث المناطق والمدن ليتمكن العملاء من إيجاد الفنيين القريبين منهم."
+    },
+
+    "Buttons": {
+      "RefreshList": "تحديث القائمة",
+      "Refreshing": "جاري التحديث…",
+      "Clear": "مسح",
+      "SaveChanges": "حفظ التغييرات",
+      "AddArea": "إضافة منطقة",
+      "Saving": "جاري الحفظ…",
+      "TryAgain": "إعادة المحاولة",
+      "Edit": "تعديل",
+      "Delete": "حذف",
+      "Deleting": "جاري الحذف…"
+    },
+
+    "Stats": {
+      "TotalAreas": "إجمالي المناطق",
+      "ActiveCoverageRecords": "سجلات التغطية النشطة",
+      "Regions": "المناطق الإدارية",
+      "UniqueRegionsServiced": "المناطق الإدارية المخدومة",
+      "FilteredResults": "النتائج المصفّاة",
+      "MatchingCurrentFilters": "مطابقة لعوامل التصفية الحالية"
+    },
+
+    "Filters": {
+      "Search": "بحث",
+      "SearchPlaceholder": "ابحث حسب المنطقة أو المدينة",
+      "Region": "المنطقة",
+      "AllRegions": "جميع المناطق",
+      "ClearFilters": "مسح عوامل التصفية"
+    },
+
+    "Form": {
+      "EditingArea": "تعديل منطقة",
+      "NewArea": "منطقة جديدة",
+      "AreaDetails": "تفاصيل المنطقة",
+      "CancelEdit": "إلغاء التعديل",
+
+      "Region": "المنطقة",
+      "RegionPlaceholder": "مثال: القاهرة",
+      "RegionHint": "يُفضل أن تكون أسماء المناطق مختصرة وواضحة.",
+
+      "City": "المدينة",
+      "CityPlaceholder": "مثال: مدينة نصر",
+      "CityHint": "يجب أن تكون المدينة تابعة للمنطقة المختارة."
+    },
+
+    "Errors": {
+      "RegionRequired": "اسم المنطقة مطلوب.",
+      "CityRequired": "اسم المدينة مطلوب."
+    },
+
+    "List": {
+      "AreaDirectory": "دليل المناطق",
+      "ExistingAreas": "المناطق الحالية",
+      "Of": "من",
+      "Shown": "المعروضة",
+      "NoAreasMatch": "لا توجد مناطق مطابقة لعوامل التصفية.",
+      "AdjustFiltersOrAdd": "قم بتعديل عوامل التصفية أو أضف منطقة جديدة."
+    },
+
+    "Loading": {
+      "LoadingAreas": "جاري تحميل المناطق…"
+    }
+  },
+  "PortfolioApproval": {
+    "PageHeader": {
+      "Title": "إدارة محفظة الحرفيين",
+      "Subtitle": "الموافقة على العناصر غير النشطة",
+      "Description": "راجع أحدث الإضافات من الحرفيين، وسلط الضوء على التأخيرات الخطرة، وفعّل أفضل الأعمال للحفاظ على حداثة السوق.",
+      "RefreshList": "تحديث القائمة"
+    },
+    "Stats": {
+      "PendingItems": "العناصر المعلقة",
+      "AwaitingApproval": "في انتظار الموافقة",
+      "ImpactedCraftsmen": "الحرفيين المتأثرين",
+      "UniqueSubmitters": "المقدمون الفريدون",
+      "LongestWait": "أطول فترة انتظار",
+      "SinceUpload": "منذ التحميل"
+    },
+    "Filters": {
+      "Search": "بحث",
+      "SearchPlaceholder": "ابحث بالعنوان أو الوصف أو الرقم التعريفي",
+      "ClearSearch": "مسح البحث",
+      "Craftsman": "الحرفي",
+      "All": "الكل ({{count}})",
+      "SortBy": "ترتيب حسب",
+      "NewestFirst": "الأحدث أولاً",
+      "OldestFirst": "الأقدم أولاً",
+      "TitleAZ": "العنوان من أ إلى ي",
+      "ResetFilters": "إعادة تعيين عوامل التصفية"
+    },
+    "Feedback": {
+      "Error": "خطأ",
+      "Success": "نجاح"
+    },
+    "Card": {
+      "NoDescription": "لم يتم توفير وصف.",
+      "Craftsman": "الحرفي",
+      "DisplayOrder": "ترتيب العرض",
+      "Status": "الحالة",
+      "Inactive": "غير نشط",
+      "ApproveItem": "الموافقة على العنصر",
+      "Approving": "جاري الموافقة…",
+      "PreviewFullPortfolio": "معاينة المحفظة كاملة"
+    },
+    "Skeleton": {
+      "Loading": "جاري التحميل…"
+    },
+    "EmptyState": {
+      "Title": "لا توجد عناصر معلقة",
+      "Description": "تمت مراجعة جميع العناصر غير النشطة. عمل رائع!",
+      "Refresh": "تحديث للتحقق مرة أخرى"
+    }
   }
 }

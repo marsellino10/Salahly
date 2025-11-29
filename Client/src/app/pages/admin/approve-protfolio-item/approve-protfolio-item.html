@@ -1,46 +1,43 @@
 <section class="approve-portfolio-page">
   <header class="page-hero">
     <div>
-      <p class="eyebrow">Craftsmen portfolio moderation</p>
-      <h1>Approve inactive portfolio items</h1>
-      <p class="subtitle">
-        Review the latest submissions from craftsmen, highlight risky delays, and activate the best work to keep
-        the marketplace fresh.
-      </p>
+      <p class="eyebrow">{{ 'PortfolioApproval.PageHeader.Title' | translate }}</p>
+      <h1>{{ 'PortfolioApproval.PageHeader.Subtitle' | translate }}</h1>
+      <p class="subtitle">{{ 'PortfolioApproval.PageHeader.Description' | translate }}</p>
     </div>
     <button class="action ghost" type="button" (click)="loadInactivePortfolios()" [disabled]="loading">
       <span class="material-symbols-outlined"><i class="fa-solid fa-rotate"></i></span>
-      Refresh list
+      {{ 'PortfolioApproval.PageHeader.RefreshList' | translate }}
     </button>
   </header>
 
   <section class="stats-panel">
     <article class="stat-card">
-      <p class="label">Pending items</p>
+      <p class="label">{{ 'PortfolioApproval.Stats.PendingItems' | translate }}</p>
       <p class="value">{{ summary.total }}</p>
-      <p class="hint">Awaiting approval</p>
+      <p class="hint">{{ 'PortfolioApproval.Stats.AwaitingApproval' | translate }}</p>
     </article>
     <article class="stat-card">
-      <p class="label">Impacted craftsmen</p>
+      <p class="label">{{ 'PortfolioApproval.Stats.ImpactedCraftsmen' | translate }}</p>
       <p class="value">{{ summary.craftsmanCount }}</p>
-      <p class="hint">Unique submitters</p>
+      <p class="hint">{{ 'PortfolioApproval.Stats.UniqueSubmitters' | translate }}</p>
     </article>
     <article class="stat-card">
-      <p class="label">Longest wait</p>
+      <p class="label">{{ 'PortfolioApproval.Stats.LongestWait' | translate }}</p>
       <p class="value">{{ summary.longestWaitingDays }}d</p>
-      <p class="hint">Since upload</p>
+      <p class="hint">{{ 'PortfolioApproval.Stats.SinceUpload' | translate }}</p>
     </article>
   </section>
 
   <section class="filters-panel">
     <div class="field search">
-      <label for="portfolio-search">Search</label>
+      <label for="portfolio-search">{{ 'PortfolioApproval.Filters.Search' | translate }}</label>
       <div class="input-wrapper">
         <span class="material-symbols-outlined"><i class="fa-solid fa-magnifying-glass"></i></span>
         <input
           id="portfolio-search"
           type="text"
-          placeholder="Search title, description, or ID"
+          placeholder="{{ 'PortfolioApproval.Filters.SearchPlaceholder' | translate }}"
           [(ngModel)]="searchTerm"
           (ngModelChange)="applyFilters()"
         />
@@ -49,7 +46,7 @@
           type="button"
           *ngIf="searchTerm"
           (click)="searchTerm=''; applyFilters()"
-          aria-label="Clear search"
+          [attr.aria-label]="'PortfolioApproval.Filters.ClearSearch' | translate"
         >
           <span class="material-symbols-outlined"><i class="fa-solid fa-xmark"></i></span>
         </button>
@@ -57,13 +54,13 @@
     </div>
 
     <div class="field select">
-      <label for="craftsman-filter">Craftsman</label>
+      <label for="craftsman-filter">{{ 'PortfolioApproval.Filters.Craftsman' | translate }}</label>
       <select
         id="craftsman-filter"
         [(ngModel)]="selectedCraftsmanId"
         (ngModelChange)="applyFilters()"
       >
-        <option value="all">All ({{ summary.craftsmanCount }})</option>
+        <option value="all">{{ 'PortfolioApproval.Filters.All' | translate:{ count: summary.craftsmanCount } }}</option>
         <option *ngFor="let craftsmanId of craftsmanOptions" [value]="craftsmanId">
           #{{ craftsmanId }}
         </option>
@@ -71,16 +68,16 @@
     </div>
 
     <div class="field select">
-      <label for="sort-mode">Sort by</label>
+      <label for="sort-mode">{{ 'PortfolioApproval.Filters.SortBy' | translate }}</label>
       <select id="sort-mode" [(ngModel)]="sortMode" (ngModelChange)="applyFilters()">
-        <option value="newest">Newest first</option>
-        <option value="oldest">Oldest first</option>
-        <option value="title">Title A-Z</option>
+        <option value="newest">{{ 'PortfolioApproval.Filters.NewestFirst' | translate }}</option>
+        <option value="oldest">{{ 'PortfolioApproval.Filters.OldestFirst' | translate }}</option>
+        <option value="title">{{ 'PortfolioApproval.Filters.TitleAZ' | translate }}</option>
       </select>
     </div>
 
     <button class="action tertiary" type="button" (click)="clearFilters()" [disabled]="!searchTerm && selectedCraftsmanId==='all' && sortMode==='newest'">
-      Reset filters
+      {{ 'PortfolioApproval.Filters.ResetFilters' | translate }}
     </button>
   </section>
 
@@ -110,19 +107,19 @@
           <img [src]="item.imageUrl || 'assets/images/portfolio-placeholder.svg'" [alt]="item.title" loading="lazy" />
         </figure>
         <div class="details">
-          <p class="description">{{ item.description || 'No description provided.' }}</p>
+          <p class="description">{{ item.description || ('PortfolioApproval.Card.NoDescription' | translate) }}</p>
           <div class="meta-grid">
             <div>
-              <p class="meta-label">Craftsman</p>
+              <p class="meta-label">{{ 'PortfolioApproval.Card.Craftsman' | translate }}</p>
               <p class="meta-value">#{{ item.craftsmanId }}</p>
             </div>
             <div>
-              <p class="meta-label">Display order</p>
+              <p class="meta-label">{{ 'PortfolioApproval.Card.DisplayOrder' | translate }}</p>
               <p class="meta-value">{{ item.displayOrder }}</p>
             </div>
             <div>
-              <p class="meta-label">Status</p>
-              <p class="meta-value warning">Inactive</p>
+              <p class="meta-label">{{ 'PortfolioApproval.Card.Status' | translate }}</p>
+              <p class="meta-value warning">{{ 'PortfolioApproval.Card.Inactive' | translate }}</p>
             </div>
           </div>
         </div>
@@ -136,11 +133,11 @@
           [disabled]="approvingId === item.id"
         >
           <i class="bi bi-check2-all"></i>
-          {{ approvingId === item.id ? 'Approving…' : 'Approve item' }}
+          {{ approvingId === item.id ? ('PortfolioApproval.Card.Approving' | translate) : ('PortfolioApproval.Card.ApproveItem' | translate) }}
         </button>
         <button type="button" class="action ghost" [routerLink]="['/technicians', item.craftsmanId, 'profile']" [disabled]="approvingId === item.id">
           <i class="bi bi-eye-fill"></i>
-          Preview full portfolio
+          {{ 'PortfolioApproval.Card.PreviewFullPortfolio' | translate }}
         </button>
       </footer>
     </article>
@@ -158,8 +155,10 @@
 
   <section class="empty-state" *ngIf="!loading && !filteredItems.length">
     <span class="material-symbols-outlined"><i class="fa-solid fa-face-smile"></i></span>
-    <h2>No pending portfolio items</h2>
-    <p>Every inactive submission has been reviewed. Great job!</p>
-    <button class="action ghost" type="button" (click)="loadInactivePortfolios()">Refresh to double-check</button>
+    <h2>{{ 'PortfolioApproval.EmptyState.Title' | translate }}</h2>
+    <p>{{ 'PortfolioApproval.EmptyState.Description' | translate }}</p>
+    <button class="action ghost" type="button" (click)="loadInactivePortfolios()">
+      {{ 'PortfolioApproval.EmptyState.Refresh' | translate }}
+    </button>
   </section>
 </section>
