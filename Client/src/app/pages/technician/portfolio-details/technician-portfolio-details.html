@@ -29,11 +29,11 @@
 
       <div class="hero-content">
         <div>
-          <p class="eyebrow">{{ 'TechnicianPortfolioDetails.Hero.Eyebrow' | translate }}</p>
+          <!-- <p class="eyebrow">{{ 'TechnicianPortfolioDetails.Hero.Eyebrow' | translate }}</p> -->
           <h1>{{ portfolio.title }}</h1>
         </div>
         <div class="hero-actions">
-          <button type="button" class="ghost-btn" (click)="openEdit()">
+          <button type="button" class="primary-btn" (click)="openEdit()">
             <i class="bi bi-pencil-square"></i>
             {{ 'TechnicianPortfolioDetails.Hero.Edit' | translate }}
           </button>
@@ -64,7 +64,7 @@
         <dl class="meta-list">
           <div>
             <dt>{{ 'TechnicianPortfolioDetails.Meta.DisplayOrder' | translate }}</dt>
-            <dd>{{ portfolio.displayOrder ?? 0 }}</dd>
+            <dd>{{ portfolio?.displayOrder ?? 0 }}</dd>
           </div>
           <div>
             <dt>{{ 'TechnicianPortfolioDetails.Meta.Created' | translate }}</dt>
@@ -97,7 +97,7 @@
       <ng-container *ngIf="reviews().length; else noReviews">
         <div class="reviews-list">
           <article class="review-card" *ngFor="let review of reviews(); trackBy: trackReview">
-            <div class="avatar-circle">{{ review.reviewerName?.slice(0,2) || '--' }}</div>
+            <div class="avatar-circle">{{ review.reviewerName.slice(0,2) || '--' }}</div>
             <div class="review-content">
               <div class="review-head">
                 <div>
@@ -119,7 +119,7 @@
           <div class="empty-icon">
             <i class="bi bi-chat-square-text"></i>
           </div>
-          <h3>{{ 'TechnicianPortfolioDetails.Reviews.Empty' | translate }}</h3>
+          <p>{{ 'TechnicianPortfolioDetails.Reviews.Empty' | translate }}<p>
         </div>
       </ng-template>
     </section>
