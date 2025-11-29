@@ -14,9 +14,11 @@ namespace SalahlyProject.Services
             _hubContext = hubContext;
         }
 
-        public async Task SendToUserAsync(string userId, object payload)
+        public async Task SendToUserAsync(string userId)
         {
-            await _hubContext.Clients.User(userId).SendAsync("ReceiveNotification", payload);
+            // Just send a simple flag or empty object
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveNotification", true);
+            // or even simpler: SendAsync("ReceiveNotification")
         }
     }
 

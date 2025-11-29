@@ -34,27 +34,46 @@ namespace Salahly.DSL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> RegisterAsync(RegisterDto dto, string role)
+        public async Task<RegistrationResponse> RegisterAsync(RegisterDto dto, string role)
         {
-            var user = new ApplicationUser
+            try
             {
-                FullName = dto.FullName,
-                UserName = dto.UserName,
-                Email = dto.Email,
-                UserType= Enum.Parse<UserType>(role),
-            };
+                var user = new ApplicationUser
+                {
+                    FullName = dto.FullName,
+                    UserName = dto.UserName,
+                    Email = dto.Email,
+                    UserType = Enum.Parse<UserType>(role),
+                };
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
-            if (!result.Succeeded)
-                return false;
+                var result = await _userManager.CreateAsync(user, dto.Password);
 
-            // Ensure role exists
-            if (!await _userManager.IsInRoleAsync(user, role))
-            {
-                await _userManager.AddToRoleAsync(user, role);
+                if (!result.Succeeded)
+                {
+                    return new RegistrationResponse
+                    {
+                        Errors = result.Errors.Select(e => e.Description),
+                        IsSuccess = false,
+                    };
+                }
+
+                if (!await _userManager.IsInRoleAsync(user, role))
+                {
+                    await _userManager.AddToRoleAsync(user, role);
+                }
+
+                return new RegistrationResponse
+                {
+                    IsSuccess = true,
+                };
             }
-
-            return true;
+            catch (Exception ex)
+            {
+                return new RegistrationResponse
+                {
+                    IsSuccess = false,
+                };
+            }
         }
 
         public async Task<Tuple<ApplicationUser?, string?>> LoginAsync(LoginDto dto)

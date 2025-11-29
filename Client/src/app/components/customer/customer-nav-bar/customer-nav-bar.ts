@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TranslateSelect } from '../../shared/translate-select/translate-select';
 import { CustomerService } from '../../../core/services/customer-service';
 import { AuthService } from '../../../core/services/auth-service';
+import { NotificationService } from '../../../core/services/notification-service';
 
 @Component({
   selector: 'app-customer-nav-bar',
@@ -15,6 +16,9 @@ import { AuthService } from '../../../core/services/auth-service';
 export class CustomerNavBar implements OnInit {
   mobileMenuOpen = false;
   userMenuOpen = false;
+   notifications: any[] = [];
+  unread = 0;
+  showNotifications = false;
 
   user = {
     name: 'Customer',
@@ -26,11 +30,49 @@ export class CustomerNavBar implements OnInit {
     private elementRef: ElementRef<HTMLElement>,
     private customerService: CustomerService,
     private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.loadUserProfile();
+      const token = this.authService.getToken();
+
+    // Start SignalR
+    if(token)
+    this.notificationService.startConnection(token);
+
+    // Load initial notifications
+    this.notificationService.loadUserNotifications();
+
+    // Subscribe to updates
+    this.notificationService.notifications$.subscribe(list => {
+      //console.log('Notifications updated:', list);
+      this.notifications = list;
+    });
+
+    this.notificationService.unreadCount$.subscribe(count => {
+      this.unread = count;
+    });
   }
+  
+toggleNotifications() {
+  this.showNotifications = !this.showNotifications;
+
+  if (this.showNotifications) {
+    this.notificationService.loadUserNotifications(); // refresh from backend
+
+    if (this.unread > 0) {
+      this.notificationService.markAllRead().subscribe(() => {
+        this.notificationService.markAllAsRead(); // remove red dot instantly
+      });
+    }
+  }
+}
+
+openNotification(n: any) {
+  this.router.navigateByUrl(n.actionUrl);
+}
+
 
   get userInitials(): string {
     return this.computeInitials(this.user.name);

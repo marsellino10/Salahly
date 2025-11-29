@@ -44,6 +44,7 @@ export class BrowseTechnicians implements OnInit {
   GetTechnicians(PageNumber: number = 1,PageSize: number = 3,SearchName: string = '',CraftId: number = 0,Region: string = '',City: string = '',IsAvailable: boolean = true): void {
     this._TechnicianService.getTechnicians(PageNumber,PageSize,SearchName,CraftId,Region,City,IsAvailable).subscribe((data) => {
       this.craftsmans = [...this.craftsmans,...data.data.items];
+      console.log(this.craftsmans);
       this.craftsTotalCount = data.data.totalCount;
       this.totalPages = data.data.totalPages;
       this.hasNextPage = data.data.hasNextPage;
@@ -58,6 +59,7 @@ export class BrowseTechnicians implements OnInit {
     if (this.isLoading || this.isLastPage) return;
     this.isLoading = true;
     this.GetTechnicians(this.pageNumber, this.pageSize,params.searchQuery,params.selectedCraftId,params.region,params.city,true);
+    console.log("Hello");
   }
 onScrollDown() {
     this._Router.queryParams.subscribe((params: any) => {

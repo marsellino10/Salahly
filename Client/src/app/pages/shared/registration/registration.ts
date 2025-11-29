@@ -78,12 +78,13 @@ export class Registration {
         this._router.navigate(['/login']);
       },
       error: (error) => {
-        console.log(error);
+        //console.log(error);
         this.isSubmitting = false;
-        this.errorMessage =
-          typeof error?.error === 'string'
-            ? error.error
-            : 'Unable to complete registration right now. Please try again.';
+        this.errorMessage = error?.error?.errors?.join('\n') || error?.error?.data?.errors?.join('\n') || 'An error occurred';
+          // typeof error?.errors[0] === 'string'
+          //   ? error.errors[0]
+          //   : 'Unable to complete registration right now. Please try again.';
+
       },
     });
   }

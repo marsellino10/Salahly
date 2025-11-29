@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Salahly.DSL.DTOs;
 
 namespace Salahly.DSL.Interfaces
 {
@@ -12,7 +13,7 @@ namespace Salahly.DSL.Interfaces
 
     public interface IAuthService
     {
-        Task<bool> RegisterAsync(RegisterDto dto, string role);
+        Task<RegistrationResponse> RegisterAsync(RegisterDto dto, string role);
         Task<Tuple<ApplicationUser?, string?>> LoginAsync(LoginDto dto);
         Task<Tuple<ApplicationUser?, string?>> RefreshAccessTokenAsync(string refreshToken);
     }

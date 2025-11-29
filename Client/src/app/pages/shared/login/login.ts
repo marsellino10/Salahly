@@ -66,8 +66,8 @@ export class Login {
       error: (error) => {
         this.isSubmitting = false;
         this.errorMessage =
-          typeof error?.error === 'string'
-            ? error.error
+          typeof error?.error.message === 'string'
+            ? error.error.message
             : 'Unable to sign you in right now. Please try again.';
       },
     });

@@ -21,19 +21,37 @@ namespace SalahlyProject.Controllers
         [HttpPost("register-customer")]
         public async Task<IActionResult> RegisterCustomer([FromBody] RegisterDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(new ApiResponse<RegistrationResponse>(400, "Validation failed", new RegistrationResponse { Errors = errors }));
+            }
             var success = await _authService.RegisterAsync(dto, "Customer");
-            if (!success)
-                return BadRequest(new ApiResponse<string>(400, "Registration failed.", null));
-            return Ok(new ApiResponse<string>(200, "Customer registered successfully.", null));
+            if (!success.IsSuccess)
+                return BadRequest(new ApiResponse<RegistrationResponse>(400, "Registration failed.", success));
+            return Ok(new ApiResponse<RegistrationResponse>(200, "Customer registered successfully.", success));
         }
 
         [HttpPost("register-technician")]
         public async Task<IActionResult> RegisterTechnician([FromBody] RegisterDto dto)
         {
+                        if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                var success1 = new RegistrationResponse { Errors = errors, IsSuccess = false };
+                return BadRequest(new ApiResponse<RegistrationResponse>(400, "Validation failed", success1));
+            }
             var success = await _authService.RegisterAsync(dto, "Craftsman");
-            if (!success)
-                return BadRequest(new ApiResponse<string>(400, "Registration failed.", null));
-            return Ok(new ApiResponse<string>(200,"Technician registered successfully.",null));
+            if (!success.IsSuccess)
+                return BadRequest(new ApiResponse<RegistrationResponse>(400, "Registration failed.", success));
+            return Ok(new ApiResponse<RegistrationResponse>(200,"Technician registered successfully.",success));
         }
 
         [HttpPost("login")]
