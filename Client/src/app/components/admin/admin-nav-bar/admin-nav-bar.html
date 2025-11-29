@@ -25,9 +25,13 @@
 
           @if(userMenuOpen){
             <div class="user-dropdown shadow-sm">
-              <button class="dropdown-item" (click)="navigate('/craft')">
+              <button class="dropdown-item" (click)="navigate('/crafts')">
                 <i class="fa-regular fa-plus"></i>
                 <span>{{ 'AdminNavBar.Craft' | translate }}</span>
+              </button>
+              <button class="dropdown-item" (click)="navigate('/areas')">
+                <i class="fa-regular fa-plus"></i>
+                <span>{{ 'AdminNavBar.Area' | translate }}</span>
               </button>
               <button class="dropdown-item" (click)="navigate('/approve-craftsman')">
                 <i class="fa-solid fa-list-check"></i>
@@ -76,9 +80,13 @@
         </a>
 
         <div class="pt-3 border-top mt-3">
-          <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigate('/customer-profile')">
+          <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigate('/crafts')">
             <i class="fa-regular fa-plus"></i>
             <span>{{ 'AdminNavBar.Craft' | translate }}</span>
+          </button>
+          <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigate('/areas')">
+            <i class="fa-regular fa-plus"></i>
+            <span>{{ 'AdminNavBar.Area' | translate }}</span>
           </button>
           <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigateToRequests()">
             <i class="fa-solid fa-list-check"></i>

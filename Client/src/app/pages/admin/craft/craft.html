@@ -1,0 +1,186 @@
+<div class="craft-admin">
+  <header class="craft-admin__header">
+    <div>
+      <p class="eyebrow">Crafts</p>
+      <h1>Manage Craft Catalog</h1>
+      <p class="subtitle">Create, organize, and curate the crafts available to customers.</p>
+    </div>
+    <button type="button" class="btn btn--ghost" (click)="loadCrafts()" [disabled]="loadingList">
+      <span *ngIf="!loadingList">Refresh</span>
+      <span *ngIf="loadingList">Refreshing…</span>
+    </button>
+  </header>
+
+  <section class="panel">
+    <header class="panel__header">
+      <div>
+        <p class="panel__eyebrow">{{ isEditMode ? 'Editing craft' : 'Add new craft' }}</p>
+        <h2>{{ isEditMode ? editingCraft?.name : 'Craft details' }}</h2>
+      </div>
+      <button type="button" class="btn btn--text" *ngIf="isEditMode" (click)="cancelEdit()">
+        Cancel edit
+      </button>
+    </header>
+
+    <form class="craft-form" [formGroup]="form" (ngSubmit)="submitForm()">
+      <div class="form-field" [class.form-field--error]="hasError('name', 'required')">
+        <label for="name">Craft name</label>
+        <input id="name" type="text" formControlName="name" placeholder="e.g., Electrician" />
+        <p class="field-hint">Max 60 characters.</p>
+        <p class="field-error" *ngIf="hasError('name', 'required')">Name is required.</p>
+      </div>
+
+      <div class="form-field form-field--full" [class.form-field--error]="hasError('description', 'required')">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          rows="3"
+          formControlName="description"
+          placeholder="Explain what the craft covers"
+        ></textarea>
+        <p class="field-error" *ngIf="hasError('description', 'required')">Description is required.</p>
+      </div>
+
+      <div class="form-field form-field--full">
+        <label for="craftIcon">Craft icon</label>
+        <div class="upload" [class.upload--has-preview]="iconPreviewUrl">
+          <div class="upload__preview" *ngIf="iconPreviewUrl; else emptyIcon">
+            <img [src]="iconPreviewUrl" alt="Craft icon preview" />
+          </div>
+          <ng-template #emptyIcon>
+            <div class="upload__placeholder">
+              <span class="material-symbol">image</span>
+              <p>Drop an image or browse files</p>
+            </div>
+          </ng-template>
+
+          <div class="upload__controls">
+            <label class="btn btn--ghost">
+              <input
+                #iconInput
+                id="craftIcon"
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                (change)="onIconSelected($event)"
+              />
+              <span>{{ iconPreviewUrl ? 'Replace icon' : 'Upload icon' }}</span>
+            </label>
+            <button type="button" class="btn btn--text" *ngIf="iconPreviewUrl" (click)="removeSelectedIcon()">
+              Remove
+            </button>
+            <p class="field-hint">PNG, JPG, or SVG up to 2MB. Leaving blank keeps the current icon.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="displayOrder">Display order</label>
+        <input id="displayOrder" type="number" min="0" formControlName="displayOrder" />
+        <p class="field-hint">Lower numbers appear first.</p>
+      </div>
+
+      <div class="form-field form-field--toggle">
+        <label for="isActive">Visibility</label>
+        <label class="switch">
+          <input id="isActive" type="checkbox" formControlName="isActive" />
+          <span class="slider"></span>
+        </label>
+        <p class="field-hint">Inactive crafts stay hidden from customers.</p>
+      </div>
+
+      <div class="form-actions">
+        <div class="form-feedback" *ngIf="formMessage" [class.form-feedback--error]="formMessage.type === 'error'">
+          {{ formMessage.text }}
+        </div>
+        <div class="form-buttons">
+          <button type="button" class="btn btn--ghost" (click)="clearForm()" [disabled]="saving">
+            Clear
+          </button>
+          <button type="submit" class="btn" [disabled]="saving">
+            <span *ngIf="!saving">{{ isEditMode ? 'Save changes' : 'Add craft' }}</span>
+            <span *ngIf="saving">Saving…</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <header class="panel__header">
+      <div>
+        <p class="panel__eyebrow">Catalog</p>
+        <h2>All crafts</h2>
+      </div>
+      <p class="panel__hint" *ngIf="crafts.length">{{ crafts.length }} total</p>
+    </header>
+
+    <div class="table-state" *ngIf="loadingList">
+      <div class="skeleton" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+
+    <div class="table-state table-state--error" *ngIf="!loadingList && listError">
+      <p>{{ listError }}</p>
+      <button type="button" class="btn btn--ghost" (click)="loadCrafts()">Try again</button>
+    </div>
+
+    <div *ngIf="!loadingList && !listError">
+      <table class="table" *ngIf="crafts.length; else emptyState">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Display order</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Craftsmen</th>
+            <th>Active requests</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let craft of crafts; trackBy: trackCraft">
+            <td>
+              <div class="craft-name">
+                <img *ngIf="craft.iconUrl" [src]="craft.iconUrl" [alt]="craft.name" />
+                <div>
+                  <p class="craft-name__title">{{ craft.name }}</p>
+                  <p class="craft-name__url" *ngIf="craft.iconUrl">{{ craft.iconUrl }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="description-cell">{{ craft.description }}</td>
+            <td>{{ craft.displayOrder }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="statusClass(craft)">{{ statusLabel(craft) }}</span>
+            </td>
+            <td>{{ formatDate(craft.createdAt) }}</td>
+            <td>{{ getCraftsmenCount(craft) }}</td>
+            <td>{{ getActiveRequestsCount(craft) }}</td>
+            <td class="actions-column">
+              <button type="button" class="icon-button" (click)="startEdit(craft)" [disabled]="deletingId === craft.id">
+                <span class="material-symbol">edit</span>
+              </button>
+              <button
+                type="button"
+                class="icon-button icon-button--danger"
+                (click)="deleteCraft(craft)"
+                [disabled]="deletingId === craft.id"
+                [attr.aria-busy]="deletingId === craft.id"
+              >
+                <span *ngIf="deletingId !== craft.id" class="material-symbol">delete</span>
+                <span *ngIf="deletingId === craft.id" class="spinner"></span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <p>No crafts have been created yet.</p>
+          <p>Add your first craft using the form above.</p>
+        </div>
+      </ng-template>
+    </div>
+  </section>
+</div>

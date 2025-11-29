@@ -1,1 +1,246 @@
-<p>dashboard works!</p>
+<div class="dashboard">
+  <header class="dashboard__header">
+    <div>
+      <p class="dashboard__eyebrow">
+        {{ 'AdminDashboard.Header.Overview' | translate }}
+      </p>
+
+      <h1>
+        {{ 'AdminDashboard.Header.Title' | translate }}
+      </h1>
+
+      <p class="dashboard__subtitle">
+        {{ 'AdminDashboard.Header.Subtitle' | translate }}
+      </p>
+    </div>
+
+    <button type="button" class="btn" (click)="refresh()" [disabled]="loading">
+      <span *ngIf="!loading">
+        {{ 'AdminDashboard.Header.Refresh' | translate }}
+      </span>
+      <span *ngIf="loading">
+        {{ 'AdminDashboard.Header.Refreshing' | translate }}
+      </span>
+    </button>
+  </header>
+
+  <section *ngIf="loading" class="dashboard__state" aria-live="polite">
+    <div class="skeleton skeleton--row" *ngFor="let i of [1,2,3,4]"></div>
+    <div class="skeleton skeleton--panel"></div>
+  </section>
+
+  <section *ngIf="!loading && error" class="dashboard__state dashboard__state--error" aria-live="assertive">
+    <p>{{ error }}</p>
+    <button type="button" class="btn" (click)="refresh()">
+      {{ 'AdminDashboard.Header.Refresh' | translate }}
+    </button>
+  </section>
+
+  <ng-container *ngIf="!loading && !error && data as vm">
+
+    <!-- Summary Cards -->
+    <section class="cards-grid">
+      <article
+        class="summary-card"
+        *ngFor="let card of summaryCards; trackBy: trackCard"
+        [ngClass]="'summary-card--' + card.accent"
+      >
+        <p class="summary-card__subtitle">
+          {{ card.subtitle | translate }}
+        </p>
+        <p class="summary-card__title">
+          {{ card.title | translate }}
+        </p>
+        <p class="summary-card__value">
+          {{ card.value }}
+        </p>
+      </article>
+    </section>
+
+    <!-- Craft Performance + Engagement Panels -->
+    <section class="dashboard__grid">
+
+      <!-- Craft Performance -->
+      <article class="panel">
+        <header class="panel__header">
+          <div>
+            <p class="panel__eyebrow">
+              {{ 'AdminDashboard.CraftPerformance.Eyebrow' | translate }}
+            </p>
+
+            <h2>
+              {{ 'AdminDashboard.CraftPerformance.Title' | translate }}
+            </h2>
+          </div>
+
+          <span class="panel__hint">
+            {{ 'AdminDashboard.CraftPerformance.Hint' | translate:{count: craftAveragePreview.length} }}
+          </span>
+        </header>
+
+        <div class="bars" *ngIf="craftAveragePreview.length; else emptyCrafts">
+          <div class="bar" *ngFor="let craft of craftAveragePreview; trackBy: trackCraftAverage">
+            <div class="bar__label">
+              <span>{{ craft.craftName }}</span>
+              <span>{{ craft.averageReview | number:'1.1-2' }}/5</span>
+            </div>
+
+            <div class="bar__track">
+              <div class="bar__value" [style.width.%]="getCraftAverageWidth(craft.averageReview)"></div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #emptyCrafts>
+          <p class="panel__empty">
+            {{ 'AdminDashboard.CraftPerformance.Empty' | translate }}
+          </p>
+        </ng-template>
+      </article>
+
+      <!-- Engagement Panel -->
+      <article class="panel panel--accent">
+        <header class="panel__header">
+          <div>
+            <p class="panel__eyebrow">
+              {{ 'AdminDashboard.Engagement.Eyebrow' | translate }}
+            </p>
+
+            <h2>
+              {{ 'AdminDashboard.Engagement.Title' | translate }}
+            </h2>
+          </div>
+        </header>
+
+        <div class="insights">
+          <div>
+            <p class="insights__label">
+              {{ 'AdminDashboard.Engagement.MostActiveArea' | translate }}
+            </p>
+
+            <p class="insights__value" *ngIf="vm.mostActiveArea; else noArea">
+              {{ vm.mostActiveArea.city }}, {{ vm.mostActiveArea.region }}
+            </p>
+
+            <p class="insights__meta" *ngIf="vm.mostActiveArea">
+              {{ vm.mostActiveArea.requestCount }}
+              {{ 'AdminDashboard.Engagement.Requests' | translate }}
+            </p>
+
+            <ng-template #noArea>
+              <p class="panel__empty">
+                {{ 'AdminDashboard.Engagement.NoActiveArea' | translate }}
+              </p>
+            </ng-template>
+          </div>
+
+          <div>
+            <p class="insights__label">
+              {{ 'AdminDashboard.Engagement.AverageOffers' | translate }}
+            </p>
+
+            <p class="insights__value">
+              {{ vm.offersStats.averageOffersPerServiceRequest | number:'1.1-2' }}
+            </p>
+
+            <p class="insights__meta">
+              {{ 'AdminDashboard.Engagement.TotalOffersMeta' | translate:{count: vm.offersStats.totalOffers} }}
+            </p>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Top Rated Craftsmen + Recent Requests -->
+    <section class="dashboard__grid dashboard__grid--tables">
+
+      <!-- Top Craftsmen -->
+      <article class="panel">
+        <header class="panel__header">
+          <div>
+            <p class="panel__eyebrow">
+              {{ 'AdminDashboard.TopCraftsmen.Eyebrow' | translate }}
+            </p>
+
+            <h2>
+              {{ 'AdminDashboard.TopCraftsmen.Title' | translate }}
+            </h2>
+          </div>
+        </header>
+
+        <table class="table" *ngIf="vm.topCraftsmen.length; else emptyCraftsmen">
+          <thead>
+            <tr>
+              <th>{{ 'AdminDashboard.TopCraftsmen.Table.Name' | translate }}</th>
+              <th>{{ 'AdminDashboard.TopCraftsmen.Table.Craft' | translate }}</th>
+              <th>{{ 'AdminDashboard.TopCraftsmen.Table.Rating' | translate }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let craftsman of vm.topCraftsmen; trackBy: trackCraftsman">
+              <td>{{ craftsman.fullName }}</td>
+              <td>{{ craftsman.craftName || '—' }}</td>
+              <td>{{ craftsman.ratingAverage | number:'1.1-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #emptyCraftsmen>
+          <p class="panel__empty">
+            {{ 'AdminDashboard.TopCraftsmen.Empty' | translate }}
+          </p>
+        </ng-template>
+      </article>
+
+      <!-- Recent Requests -->
+      <article class="panel">
+        <header class="panel__header">
+          <div>
+            <p class="panel__eyebrow">
+              {{ 'AdminDashboard.RecentRequests.Eyebrow' | translate }}
+            </p>
+
+            <h2>
+              {{ 'AdminDashboard.RecentRequests.Title' | translate }}
+            </h2>
+          </div>
+        </header>
+
+        <table class="table" *ngIf="vm.recentRequests.length; else emptyRequests">
+          <thead>
+            <tr>
+              <th>{{ 'AdminDashboard.RecentRequests.Table.Title' | translate }}</th>
+              <th>{{ 'AdminDashboard.RecentRequests.Table.Craft' | translate }}</th>
+              <th>{{ 'AdminDashboard.RecentRequests.Table.Status' | translate }}</th>
+              <th>{{ 'AdminDashboard.RecentRequests.Table.Date' | translate }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let req of vm.recentRequests; trackBy: trackRequest">
+              <td>{{ req.title }}</td>
+              <td>{{ req.craftName || '—' }}</td>
+
+              <td>
+                <span class="status-pill" [ngClass]="statusClass(req.status)">
+                  {{ req.status | translate }}
+                </span>
+              </td>
+
+              <td>{{ formatDate(req.createdAt) }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #emptyRequests>
+          <p class="panel__empty">
+            {{ 'AdminDashboard.RecentRequests.Empty' | translate }}
+          </p>
+        </ng-template>
+      </article>
+
+    </section>
+  </ng-container>
+</div>

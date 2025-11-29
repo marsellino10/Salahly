@@ -1,0 +1,153 @@
+<div class="area-admin">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Areas</p>
+      <h1>Manage Service Coverage</h1>
+      <p class="subtitle">
+        Keep regions and cities up to date so customers can find technicians near them.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn--ghost"
+      (click)="loadAreas()"
+      [disabled]="loading"
+    >
+      <span *ngIf="!loading">Refresh list</span>
+      <span *ngIf="loading">Refreshing…</span>
+    </button>
+  </header>
+
+  <section class="stats">
+    <article class="stat-card">
+      <p class="stat-label">Total areas</p>
+      <p class="stat-value">{{ totalAreas }}</p>
+      <p class="stat-hint">Active coverage records</p>
+    </article>
+    <article class="stat-card">
+      <p class="stat-label">Regions</p>
+      <p class="stat-value">{{ totalRegions }}</p>
+      <p class="stat-hint">Unique regions serviced</p>
+    </article>
+    <article class="stat-card">
+      <p class="stat-label">Filtered results</p>
+      <p class="stat-value">{{ filteredAreas.length }}</p>
+      <p class="stat-hint">Matching current filters</p>
+    </article>
+  </section>
+
+  <section class="filters">
+    <div class="form-field">
+      <label for="search">Search</label>
+      <div class="input-wrapper">
+        <span class="material-symbol"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input
+          id="search"
+          type="text"
+          placeholder="Search by region or city"
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+        />
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="region">Region</label>
+      <select id="region" [(ngModel)]="selectedRegion" (change)="applyFilters()">
+        <option [ngValue]="null">All regions</option>
+        <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+      </select>
+    </div>
+
+    <button type="button" class="btn btn--ghost" (click)="clearFilters()" [disabled]="!searchTerm && !selectedRegion">
+      Clear filters
+    </button>
+  </section>
+
+  <section class="content-grid">
+    <!-- Add/Edit Area Panel -->
+    <article class="panel">
+      <header class="panel__header">
+        <div>
+          <p class="panel__eyebrow">{{ isEdit ? 'Editing area' : 'New area' }}</p>
+          <h2>{{ isEdit ? (editingArea?.city + ', ' + editingArea?.region) : 'Area details' }}</h2>
+        </div>
+        <button type="button" class="btn btn--text" *ngIf="isEdit" (click)="cancelEdit()">Cancel edit</button>
+      </header>
+
+      <form class="area-form" [formGroup]="form" (ngSubmit)="submitForm()">
+        <div class="form-row">
+          <div class="form-field" [class.form-field--error]="form.get('region')?.touched && form.get('region')?.invalid">
+            <label for="regionField">Region</label>
+            <input id="regionField" type="text" placeholder="e.g., Cairo" formControlName="region" maxlength="80" />
+            <p class="field-hint">Keep region names short and descriptive.</p>
+            <p class="field-error" *ngIf="form.get('region')?.touched && form.get('region')?.hasError('required')">Region is required.</p>
+          </div>
+
+          <div class="form-field" [class.form-field--error]="form.get('city')?.touched && form.get('city')?.invalid">
+            <label for="cityField">City</label>
+            <input id="cityField" type="text" placeholder="e.g., Nasr City" formControlName="city" maxlength="80" />
+            <p class="field-hint">City should belong to the selected region.</p>
+            <p class="field-error" *ngIf="form.get('city')?.touched && form.get('city')?.hasError('required')">City is required.</p>
+          </div>
+        </div>
+
+        <div class="form-feedback" *ngIf="formMessage" [class.form-feedback--error]="formMessage.type === 'error'">
+          {{ formMessage.text }}
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" (click)="clearForm()" [disabled]="saving">Clear</button>
+          <button type="submit" class="btn" [disabled]="saving">
+            <span *ngIf="!saving">{{ isEdit ? 'Save changes' : 'Add area' }}</span>
+            <span *ngIf="saving">Saving…</span>
+          </button>
+        </div>
+      </form>
+    </article>
+
+    <!-- Area List Panel -->
+    <article class="panel">
+      <header class="panel__header">
+        <div>
+          <p class="panel__eyebrow">Area directory</p>
+          <h2>Existing areas</h2>
+        </div>
+        <p class="panel__hint">{{ filteredAreas.length }} of {{ areas.length }} shown</p>
+      </header>
+
+      <div class="list-state" *ngIf="listError">
+        <p class="state-text">{{ listError }}</p>
+        <button type="button" class="btn btn--ghost" (click)="loadAreas()">Try again</button>
+      </div>
+
+      <div class="list-state" *ngIf="!listError && !loading && !filteredAreas.length">
+        <span class="material-symbol">location_off</span>
+        <p class="state-title">No areas match your filters.</p>
+        <p class="state-text">Adjust the filters or add a new area.</p>
+      </div>
+
+      <div class="area-list" *ngIf="filteredAreas.length">
+        <article class="area-card" *ngFor="let area of filteredAreas; trackBy: trackById">
+          <div class="area-card__icon"></div>
+          <div class="area-card__body">
+            <p class="area-card__region">{{ area.region }}</p>
+            <h3 class="area-card__city">{{ area.city }}</h3>
+          </div>
+          <div class="area-card__actions">
+            <button type="button" class="btn btn--text" (click)="startEdit(area)">Edit</button>
+            <button type="button" class="btn btn--text btn--danger" (click)="deleteArea(area)" [disabled]="deletingId === area.id">
+              <span *ngIf="deletingId !== area.id">Delete</span>
+              <span *ngIf="deletingId === area.id">Deleting…</span>
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading areas…</p>
+      </div>
+    </article>
+  </section>
+</div>

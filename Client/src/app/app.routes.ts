@@ -76,7 +76,15 @@ export const routes: Routes = [
       {
         path:'dashboard',
         loadComponent: () => import('./pages/admin/dashboard/dashboard').then(c => c.Dashboard),
-      }
+      },
+      {
+        path:'crafts',
+        loadComponent: () => import('./pages/admin/craft/craft').then(c => c.Craft),
+      },
+      {
+        path:'areas',
+        loadComponent: () => import('./pages/admin/area/area').then(c => c.Area),
+      },
     ]
   }
 ];

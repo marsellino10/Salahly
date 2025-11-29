@@ -146,6 +146,7 @@ namespace SalahlyProject
             // Auth & User Services
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICustomerService, CustomerServicecs>();
+            builder.Services.AddScoped<IAdminService, AdminService>();
 
             // Business Services
             builder.Services.AddScoped<IServiceRequestService, ServiceRequestService>();

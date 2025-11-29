@@ -890,6 +890,93 @@
   "AdminNavBar":{
     "Dashboard": "Dashboard",
     "Craft": "Craft",
-    "Approve Craftsman":"Approve Craftsman"
+    "Approve Craftsman":"Approve Craftsman",
+    "Area":"Area"
+  },
+  "AdminDashboard": {
+    "Header": {
+      "Overview": "Overview",
+      "Title": "Admin Dashboard",
+      "Subtitle": "Track platform activity, technician performance, and service health.",
+      "Refresh": "Refresh",
+      "Refreshing": "Refreshing…"
+    },
+
+    "CraftPerformance": {
+      "Eyebrow": "Craft performance",
+      "Title": "Average Reviews by Craft",
+      "Hint": "Top {{count}} crafts",
+      "Empty": "No craft review data available yet."
+    },
+
+    "Engagement": {
+      "Eyebrow": "Engagement",
+      "Title": "Service Insights",
+      "MostActiveArea": "Most Active Area",
+      "NoActiveArea": "No active area data",
+      "AverageOffers": "Average Offers per Request",
+      "TotalOffersMeta": "{{count}} offers submitted"
+    },
+
+    "TopCraftsmen": {
+      "Eyebrow": "Top performers",
+      "Title": "Top Rated Craftsmen",
+      "Table": {
+        "Name": "Name",
+        "Craft": "Craft",
+        "Rating": "Rating"
+      },
+      "Empty": "Top craftsmen data will appear once reviews are available."
+    },
+    "Status": {
+      "Completed": "Completed",
+      "InProgress": "In progress",
+      "Pending": "Pending",
+      "HasOffers": "Has offers",
+      "OfferAccepted": "Offer accepted",
+      "Cancelled": "Cancelled",
+      "Expired": "Expired"
+    },
+
+    "RecentRequests": {
+      "Eyebrow": "Recent activity",
+      "Title": "Latest Service Requests",
+      "Table": {
+        "Title": "Title",
+        "Craft": "Craft",
+        "Status": "Status",
+        "Date": "Date"
+      },
+      "Empty": "No service requests to display yet."
+    },
+    "Errors": {
+    "LoadFailed": "Failed to load admin statistics."
+    },
+    "Summary": {
+      "ServiceRequests": {
+        "Title": "Service Requests",
+        "Subtitle": "Total requests"
+      },
+      "Craftsmen": {
+        "Title": "Craftsmen",
+        "Subtitle": "Active professionals"
+      },
+      "Crafts": {
+        "Title": "Crafts",
+        "Subtitle": "Available categories"
+      },
+      "TotalExperience": {
+        "Title": "Total Experience",
+        "Subtitle": "Years combined"
+      },
+      "TotalOffers": {
+        "Title": "Total Offers",
+        "Subtitle": "Submitted proposals"
+      },
+      "AverageOffers": {
+        "Title": "Avg Offers / Request",
+        "Subtitle": "Engagement level"
+      }
+    }
   }
 }

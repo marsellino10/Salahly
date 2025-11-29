@@ -111,6 +111,14 @@ namespace Salahly.DSL.DTOs
         public DateTime CreatedAt { get; set; }
     }
 
+    public class CraftsmanShortDto
+    {
+        public int Id { get; set; }
+        public string? FullName { get; set; }
+        public string? CraftName { get; set; }
+        public double RatingAverage { get; set; }
+    }
+
     //public class PortfolioItemDto
     //{
     //    public int Id { get; set; }
