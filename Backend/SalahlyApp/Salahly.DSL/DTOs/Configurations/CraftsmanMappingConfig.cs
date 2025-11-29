@@ -55,6 +55,13 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.FullName, src => src.User.FullName)
                 .Map(dest => dest.IsVerified, src => src.IsVerified);
+
+            config.NewConfig<Craftsman, CraftsmanShortDto>()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.FullName, src => src.User.FullName)
+                .Map(dest => dest.CraftName, src => src.Craft != null ? src.Craft.Name : null)
+                .Map(dest => dest.RatingAverage, src => src.User.RatingAverage)
+                .IgnoreNullValues(true);
         }
     }
 }
