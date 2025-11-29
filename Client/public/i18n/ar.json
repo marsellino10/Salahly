@@ -761,6 +761,94 @@
   "AdminNavBar":{
     "Dashboard": "لوحة التحكم",
     "Craft": "الحرف",
-    "Approve Craftsman": "ادارة الحرفين"
+    "Approve Craftsman": "ادارة الحرفين",
+    "Area": "المناطق"
+  },
+  "AdminDashboard": {
+    "Header": {
+      "Overview": "نظرة عامة",
+      "Title": "لوحة التحكم",
+      "Subtitle": "تتبع نشاط المنصة، أداء الفنيين، وصحة الخدمات.",
+      "Refresh": "تحديث",
+      "Refreshing": "تحديث..."
+    },
+
+    "CraftPerformance": {
+      "Eyebrow": "أداء الحرف",
+      "Title": "المراجعات المتوسطة حسب الحرف",
+      "Hint": "أعلى {{count}} حرف",
+      "Empty": "لا توجد بيانات مراجعات حرف حتى الآن."
+    },
+
+    "Engagement": {
+      "Eyebrow": "الانضباط",
+      "Title": "تحليل الخدمات",
+      "MostActiveArea": "المنطقة الأكثر نشاطا",
+      "NoActiveArea": "لا توجد بيانات منطقة نشطة",
+      "AverageOffers": "المتاجدف العرضات لكل طلب",
+      "TotalOffersMeta": "{{count}} عرضات تم تقديمها"
+    },
+
+    "TopCraftsmen": {
+      "Eyebrow": "الأفضلاء",
+      "Title": "الأفضلاء المدربون",
+      "Table": {
+        "Name": "الاسم",
+        "Craft": "الحرف",
+        "Rating": "التقييم"
+      },
+      "Empty": "سيظهر بيانات أفضلاء الفنيين بمجرد توفر المراجعات."
+    },
+
+    "RecentRequests": {
+      "Eyebrow": "النشاط الأخير",
+      "Title": "طلبات الخدمة الأخيرة",
+      "Table": {
+        "Title": "العنوان",
+        "Craft": "الحرف",
+        "Status": "الحالة",
+        "Date": "التاريخ"
+      },
+      "Empty": "لا توجد طلبات الخدمة لعرضها حتى الآن."
+    },
+    "Status": {
+      "Completed": "مكتمل",
+      "InProgress": "قيد التنفيذ",
+      "Pending": "قيد الانتظار",
+      "HasOffers": "يحتوي على عروض",
+      "OfferAccepted": "تم قبول العرض",
+      "Cancelled": "ملغي",
+      "Expired": "منتهي"
+    },
+    "Errors": {
+      "LoadFailed": "فشل تحميل إحصائيات لوحة التحكم."
+    },
+    "Summary": {
+      "ServiceRequests": {
+        "Title": "طلبات الخدمة",
+        "Subtitle": "إجمالي الطلبات"
+      },
+      "Craftsmen": {
+        "Title": "الحرفيون",
+        "Subtitle": "المتخصصون النشطون"
+      },
+      "Crafts": {
+        "Title": "الحرف",
+        "Subtitle": "الفئات المتاحة"
+      },
+      "TotalExperience": {
+        "Title": "إجمالي الخبرة",
+        "Subtitle": "سنوات الخبرة",
+        "Suffix": "سنة"
+      },
+      "TotalOffers": {
+        "Title": "إجمالي العروض",
+        "Subtitle": "العروض المقدمة"
+      },
+      "AverageOffers": {
+        "Title": "متوسط العروض / طلب",
+        "Subtitle": "مستوى التفاعل"
+      }
+    }
   }
 }
