@@ -73,6 +73,10 @@ export const routes: Routes = [
         path:'crafts',
         loadComponent: () => import('./pages/admin/craft/craft').then(c => c.Craft),
       },
+      {
+        path:'areas',
+        loadComponent: () => import('./pages/admin/area/area').then(c => c.Area),
+      },
     ]
   }
 ];
