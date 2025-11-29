@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Salahly.DSL.DTOs;
 using Salahly.DSL.DTOs.Booking;
+using Salahly.DSL.DTOs.PortfolioDtos;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
 using SalahlyProject.Response;
@@ -159,6 +160,19 @@ namespace SalahlyProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<IEnumerable<object>>(500, ex.Message));
             }
         }
+        [HttpGet("portfolio/inactive")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<PortfolioItemResponseDto>>>> GetInactivePortfolioItems()
+        {
+            try
+            {
+                var list = await _adminService.GetInactivePortfolioItemsAsync();
+                return Ok(new ApiResponse<IEnumerable<PortfolioItemResponseDto>>(200, "Inactive portfolio items retrieved", list));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<IEnumerable<PortfolioItemResponseDto>>(500, ex.Message));
+            }
+        }
 
         [HttpPost("portfolio/{id}/approve")]
         public async Task<ActionResult<ApiResponse<object>>> ApprovePortfolioItem(int id)
@@ -174,5 +188,6 @@ namespace SalahlyProject.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<object>(500, ex.Message));
             }
         }
+
     }
 }

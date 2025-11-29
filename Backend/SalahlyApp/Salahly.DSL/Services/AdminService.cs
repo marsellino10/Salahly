@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs;
+using Salahly.DSL.DTOs.PortfolioDtos;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
 using System;
@@ -152,10 +153,32 @@ namespace Salahly.DSL.Services
         {
             var item = await _unitOfWork.PortfolioItems.GetByIdAsync(portfolioItemId);
             if (item == null) return false;
+            // Get Craftsman
+            var craftsman = await _unitOfWork.Craftsmen.GetByIdAsync(item.CraftsmanId);
+            if (craftsman == null) return false;
             item.IsActive = true;
+            // make the craftsman verified if have 3 portolio items approved
             await _unitOfWork.PortfolioItems.UpdateAsync(item);
+            var approvedItemsCount = await _unitOfWork.PortfolioItems.GetAll()
+                .Where(pi => pi.CraftsmanId == craftsman.Id && pi.IsActive)
+                .CountAsync();
+            if (approvedItemsCount >= 3 && !craftsman.IsVerified)
+            {
+                craftsman.IsVerified = true;
+                await _unitOfWork.Craftsmen.UpdateAsync(craftsman);
+            }
             await _unitOfWork.SaveAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<PortfolioItemResponseDto>> GetInactivePortfolioItemsAsync()
+        {
+            var items = await _unitOfWork.PortfolioItems.GetAll()
+                .Where(pi => !pi.IsActive)
+                .Include(pi => pi.Craftsman)
+                    .ThenInclude(c => c.User)
+                .ToListAsync();
+            return items.Select(pi => pi.Adapt<PortfolioItemResponseDto>());
         }
     }
 }

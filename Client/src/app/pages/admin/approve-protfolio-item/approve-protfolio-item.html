@@ -1,0 +1,165 @@
+<section class="approve-portfolio-page">
+  <header class="page-hero">
+    <div>
+      <p class="eyebrow">Craftsmen portfolio moderation</p>
+      <h1>Approve inactive portfolio items</h1>
+      <p class="subtitle">
+        Review the latest submissions from craftsmen, highlight risky delays, and activate the best work to keep
+        the marketplace fresh.
+      </p>
+    </div>
+    <button class="action ghost" type="button" (click)="loadInactivePortfolios()" [disabled]="loading">
+      <span class="material-symbols-outlined"><i class="fa-solid fa-rotate"></i></span>
+      Refresh list
+    </button>
+  </header>
+
+  <section class="stats-panel">
+    <article class="stat-card">
+      <p class="label">Pending items</p>
+      <p class="value">{{ summary.total }}</p>
+      <p class="hint">Awaiting approval</p>
+    </article>
+    <article class="stat-card">
+      <p class="label">Impacted craftsmen</p>
+      <p class="value">{{ summary.craftsmanCount }}</p>
+      <p class="hint">Unique submitters</p>
+    </article>
+    <article class="stat-card">
+      <p class="label">Longest wait</p>
+      <p class="value">{{ summary.longestWaitingDays }}d</p>
+      <p class="hint">Since upload</p>
+    </article>
+  </section>
+
+  <section class="filters-panel">
+    <div class="field search">
+      <label for="portfolio-search">Search</label>
+      <div class="input-wrapper">
+        <span class="material-symbols-outlined"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input
+          id="portfolio-search"
+          type="text"
+          placeholder="Search title, description, or ID"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+        />
+        <button
+          class="clear"
+          type="button"
+          *ngIf="searchTerm"
+          (click)="searchTerm=''; applyFilters()"
+          aria-label="Clear search"
+        >
+          <span class="material-symbols-outlined"><i class="fa-solid fa-xmark"></i></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="field select">
+      <label for="craftsman-filter">Craftsman</label>
+      <select
+        id="craftsman-filter"
+        [(ngModel)]="selectedCraftsmanId"
+        (ngModelChange)="applyFilters()"
+      >
+        <option value="all">All ({{ summary.craftsmanCount }})</option>
+        <option *ngFor="let craftsmanId of craftsmanOptions" [value]="craftsmanId">
+          #{{ craftsmanId }}
+        </option>
+      </select>
+    </div>
+
+    <div class="field select">
+      <label for="sort-mode">Sort by</label>
+      <select id="sort-mode" [(ngModel)]="sortMode" (ngModelChange)="applyFilters()">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="title">Title A-Z</option>
+      </select>
+    </div>
+
+    <button class="action tertiary" type="button" (click)="clearFilters()" [disabled]="!searchTerm && selectedCraftsmanId==='all' && sortMode==='newest'">
+      Reset filters
+    </button>
+  </section>
+
+  <div class="feedback" *ngIf="errorMessage || successMessage">
+    <p class="alert error" *ngIf="errorMessage">
+      <span class="material-symbols-outlined"><i class="fa-solid fa-circle-exclamation"></i></span>
+      {{ errorMessage }}
+    </p>
+    <p class="alert success" *ngIf="successMessage">
+      <span class="material-symbols-outlined"><i class="fa-solid fa-circle-check"></i></span>
+      {{ successMessage }}
+    </p>
+  </div>
+
+  <section class="portfolio-grid" *ngIf="!loading && filteredItems.length">
+    <article class="portfolio-card" *ngFor="let item of filteredItems; trackBy: trackById">
+      <header class="card-header">
+        <div>
+          <p class="card-title">{{ item.title }}</p>
+          <p class="card-meta">#{{ item.id }} • Uploaded {{ formatFullDate(item.createdAt) }}</p>
+        </div>
+        <span class="chip waiting">{{ formatRelativeDate(item.createdAt) }}</span>
+      </header>
+
+      <div class="card-body">
+        <figure class="preview">
+          <img [src]="item.imageUrl || 'assets/images/portfolio-placeholder.svg'" [alt]="item.title" loading="lazy" />
+        </figure>
+        <div class="details">
+          <p class="description">{{ item.description || 'No description provided.' }}</p>
+          <div class="meta-grid">
+            <div>
+              <p class="meta-label">Craftsman</p>
+              <p class="meta-value">#{{ item.craftsmanId }}</p>
+            </div>
+            <div>
+              <p class="meta-label">Display order</p>
+              <p class="meta-value">{{ item.displayOrder }}</p>
+            </div>
+            <div>
+              <p class="meta-label">Status</p>
+              <p class="meta-value warning">Inactive</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="card-actions">
+        <button
+          type="button"
+          class="action primary"
+          (click)="approveItem(item)"
+          [disabled]="approvingId === item.id"
+        >
+          <i class="bi bi-check2-all"></i>
+          {{ approvingId === item.id ? 'Approving…' : 'Approve item' }}
+        </button>
+        <button type="button" class="action ghost" [routerLink]="['/technicians', item.craftsmanId, 'profile']" [disabled]="approvingId === item.id">
+          <i class="bi bi-eye-fill"></i>
+          Preview full portfolio
+        </button>
+      </footer>
+    </article>
+  </section>
+
+  <section class="skeleton-grid" *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let _ of skeletonPlaceholders">
+      <div class="skeleton title"></div>
+      <div class="skeleton meta"></div>
+      <div class="skeleton image"></div>
+      <div class="skeleton text"></div>
+      <div class="skeleton text short"></div>
+    </div>
+  </section>
+
+  <section class="empty-state" *ngIf="!loading && !filteredItems.length">
+    <span class="material-symbols-outlined"><i class="fa-solid fa-face-smile"></i></span>
+    <h2>No pending portfolio items</h2>
+    <p>Every inactive submission has been reviewed. Great job!</p>
+    <button class="action ghost" type="button" (click)="loadInactivePortfolios()">Refresh to double-check</button>
+  </section>
+</section>

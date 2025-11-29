@@ -1,3 +1,4 @@
+import { PortfolioItemsService } from './portfolio-items.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -62,6 +63,17 @@ export interface AdminServiceRequestFilters {
 export interface AdminCraftsmanFilters {
   craftId?: number | null;
   areaId?: number | null;
+}
+
+export interface PortfolioItemResponseDto {
+  id: number;
+  craftsmanId: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt: Date;
 }
 
 @Injectable({
@@ -145,6 +157,13 @@ export class AdminService {
     );
   }
 
+  public getInactivePortfolio(): Observable<PortfolioItemResponseDto[]> {
+    return this.unwrapResponse(
+      this._httpClient.get<ApiResponse<PortfolioItemResponseDto[]>>(
+        `${this.baseUrl}/portfolio/inactive`,
+      ),
+    );
+  }
   public approvePortfolioItem(id: number): Observable<{ id: number }> {
     return this.unwrapResponse(
       this._httpClient.post<ApiResponse<{ id: number }>>(

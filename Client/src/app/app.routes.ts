@@ -85,6 +85,10 @@ export const routes: Routes = [
         path:'areas',
         loadComponent: () => import('./pages/admin/area/area').then(c => c.Area),
       },
+      {
+        path:'approve-portfolio-item',
+        loadComponent: () => import('./pages/admin/approve-protfolio-item/approve-protfolio-item').then(c => c.ApproveProtfolioItem),
+      },
     ]
   }
 ];

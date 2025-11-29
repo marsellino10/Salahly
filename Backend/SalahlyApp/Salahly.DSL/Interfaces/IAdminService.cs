@@ -1,4 +1,6 @@
+using Salahly.DAL.Entities;
 using Salahly.DSL.DTOs;
+using Salahly.DSL.DTOs.PortfolioDtos;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using System;
 using System.Collections.Generic;
@@ -48,5 +50,6 @@ namespace Salahly.DSL.Interfaces
 
         // Portfolio
         Task<bool> ApprovePortfolioItemAsync(int portfolioItemId);
+        Task<IEnumerable<PortfolioItemResponseDto>> GetInactivePortfolioItemsAsync();
     }
 }

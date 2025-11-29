@@ -124,7 +124,7 @@ namespace Salahly.DSL.Services
                     Description = dto.Description,
                     ImageUrl = imageUrl,
                     DisplayOrder = dto.DisplayOrder,
-                    IsActive = true,
+                    IsActive = false,
                     CreatedAt = DateTime.UtcNow
                 };
 

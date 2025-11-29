@@ -61,7 +61,7 @@ export class AdminNavBar {
   }
 
   navigateToRequests(): void {
-    this.router.navigate(['/show-services-requested']);
+    this.router.navigate(['/approve-portfolio-item']);
   }
 
   logout(): void {
