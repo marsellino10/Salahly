@@ -1,0 +1,223 @@
+<section class="portfolio-details" *ngIf="!isLoading(); else loadingState">
+  <div *ngIf="actionBanner() as banner" class="banner" [ngClass]="banner.type">
+    <div>
+      <p class="eyebrow">{{ 'TechnicianPortfolio.Banner.Title' | translate }}</p>
+      <p>{{ banner.text }}</p>
+    </div>
+    <button type="button" class="ghost-btn" (click)="dismissBanner()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage()" class="banner error">
+    <div>
+      <i class="bi bi-exclamation-triangle"></i>
+      {{ errorMessage() }}
+    </div>
+    <button type="button" class="icon-btn" (click)="loadItem()">
+      <i class="bi bi-arrow-clockwise"></i>
+      {{ 'TechnicianPortfolioDetails.Buttons.Retry' | translate }}
+    </button>
+  </div>
+
+  <ng-container *ngIf="item() as portfolio">
+    <header class="details-hero glass-panel">
+      <button type="button" class="ghost-btn" (click)="goBack()">
+        <i class="bi bi-arrow-left"></i>
+        {{ 'TechnicianPortfolioDetails.Hero.Back' | translate }}
+      </button>
+
+      <div class="hero-content">
+        <div>
+          <p class="eyebrow">{{ 'TechnicianPortfolioDetails.Hero.Eyebrow' | translate }}</p>
+          <h1>{{ portfolio.title }}</h1>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="ghost-btn" (click)="openEdit()">
+            <i class="bi bi-pencil-square"></i>
+            {{ 'TechnicianPortfolioDetails.Hero.Edit' | translate }}
+          </button>
+          <button type="button" class="ghost-btn danger" (click)="promptDelete()">
+            <i class="bi bi-trash"></i>
+            {{ 'TechnicianPortfolioDetails.Hero.Delete' | translate }}
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <section class="details-grid">
+      <article class="preview-card glass-panel">
+        <header>
+          <h2>{{ 'TechnicianPortfolioDetails.Gallery.Title' | translate }}</h2>
+        </header>
+        <div class="preview">
+          <img [src]="getImageUrl(portfolio)" [alt]="portfolio.title" />
+        </div>
+      </article>
+
+      <article class="meta-card glass-panel">
+        <header>
+          <h2>{{ 'TechnicianPortfolioDetails.Meta.Description' | translate }}</h2>
+        </header>
+        <p class="description">{{ portfolio.description || ('TechnicianPortfolio.Empty.Description' | translate) }}</p>
+
+        <dl class="meta-list">
+          <div>
+            <dt>{{ 'TechnicianPortfolioDetails.Meta.DisplayOrder' | translate }}</dt>
+            <dd>{{ portfolio.displayOrder ?? 0 }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'TechnicianPortfolioDetails.Meta.Created' | translate }}</dt>
+            <dd>{{ formatDate(portfolio.createdAt) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'TechnicianPortfolioDetails.Meta.Status' | translate }}</dt>
+            <dd>
+              <span class="status-chip" [class.active]="portfolio.isActive" [class.inactive]="!portfolio.isActive">
+                {{ portfolio.isActive ? ('TechnicianPortfolio.Status.Active' | translate) : ('TechnicianPortfolio.Status.Inactive' | translate) }}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="reviews-panel glass-panel">
+      <header class="section-head">
+        <div>
+          <p class="eyebrow">{{ 'TechnicianPortfolio.Reviews.Eyebrow' | translate }}</p>
+          <h2>{{ 'TechnicianPortfolioDetails.Reviews.Title' | translate }}</h2>
+        </div>
+        <button type="button" class="ghost-btn" (click)="loadReviews(portfolio)">
+          <i class="bi bi-arrow-clockwise"></i>
+          {{ 'TechnicianPortfolio.Buttons.Refresh' | translate }}
+        </button>
+      </header>
+
+      <ng-container *ngIf="reviews().length; else noReviews">
+        <div class="reviews-list">
+          <article class="review-card" *ngFor="let review of reviews(); trackBy: trackReview">
+            <div class="avatar-circle">{{ review.reviewerName?.slice(0,2) || '--' }}</div>
+            <div class="review-content">
+              <div class="review-head">
+                <div>
+                  <h3>{{ review.reviewerName }}</h3>
+                  <p class="muted">{{ formatDate(review.createdAt) }}</p>
+                </div>
+                <div class="rating" [attr.aria-label]="('TechnicianPortfolio.Reviews.RatingLabel' | translate:{ value: review.rating })">
+                  <i class="bi bi-star-fill" *ngFor="let _ of getRatingArray(review.rating); trackBy: trackRating"></i>
+                </div>
+              </div>
+              <p class="comment">{{ review.comment }}</p>
+            </div>
+          </article>
+        </div>
+      </ng-container>
+
+      <ng-template #noReviews>
+        <div class="empty-panel bordered">
+          <div class="empty-icon">
+            <i class="bi bi-chat-square-text"></i>
+          </div>
+          <h3>{{ 'TechnicianPortfolioDetails.Reviews.Empty' | translate }}</h3>
+        </div>
+      </ng-template>
+    </section>
+  </ng-container>
+</section>
+
+<ng-template #loadingState>
+  <div class="loading-panel glass-panel">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-container *ngIf="showEditModal()">
+  <div class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">{{ 'TechnicianPortfolioDetails.Edit.Title' | translate }}</p>
+            <h2 class="modal-title">{{ item()?.title }}</h2>
+          </div>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeEdit()"></button>
+        </div>
+
+        <form class="modal-body modal-form" [formGroup]="editForm" (ngSubmit)="submitEdit()">
+          <div class="form-grid">
+            <label class="input-shell" [class.invalid]="editForm.get('title')?.invalid && (editForm.get('title')?.dirty || editForm.get('title')?.touched)">
+              <span>{{ 'TechnicianPortfolio.Form.Fields.Title' | translate }}</span>
+              <input type="text" formControlName="title" maxlength="80" />
+            </label>
+
+            <label class="input-shell">
+              <span>{{ 'TechnicianPortfolio.Form.Fields.DisplayOrder' | translate }}</span>
+              <input type="number" min="0" formControlName="displayOrder" />
+            </label>
+
+            <label class="input-shell switch">
+              <span>{{ 'TechnicianPortfolio.Edit.ActiveLabel' | translate }}</span>
+              <input type="checkbox" formControlName="isActive" />
+            </label>
+
+            <label class="input-shell full">
+              <span>{{ 'TechnicianPortfolio.Form.Fields.Description' | translate }}</span>
+              <textarea rows="4" formControlName="description" maxlength="800"></textarea>
+            </label>
+
+            <label class="input-shell file full">
+              <span>{{ 'TechnicianPortfolio.Edit.ImageLabel' | translate }}</span>
+              <input #editImageInput type="file" accept="image/*" (change)="onEditImageSelected($event)" />
+            </label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" (click)="closeEdit()" [disabled]="isSaving()">
+              {{ 'TechnicianPortfolio.Buttons.Cancel' | translate }}
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+              <ng-container *ngIf="isSaving(); else saveDetail">
+                {{ 'TechnicianPortfolioDetails.Buttons.Saving' | translate }}
+              </ng-container>
+              <ng-template #saveDetail>{{ 'TechnicianPortfolioDetails.Buttons.Save' | translate }}</ng-template>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+</ng-container>
+
+<ng-container *ngIf="showDeleteModal()">
+  <div class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">{{ 'TechnicianPortfolioDetails.Delete.Title' | translate }}</p>
+            <h2 class="modal-title">{{ item()?.title }}</h2>
+          </div>
+        </div>
+        <div class="modal-body">
+          <p>{{ 'TechnicianPortfolioDetails.Delete.Description' | translate }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" (click)="cancelDelete()" [disabled]="isDeleting()">
+            {{ 'TechnicianPortfolio.Buttons.Cancel' | translate }}
+          </button>
+          <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting()">
+            <ng-container *ngIf="isDeleting(); else deleteDetail">
+              {{ 'TechnicianPortfolioDetails.Buttons.Deleting' | translate }}
+            </ng-container>
+            <ng-template #deleteDetail>{{ 'TechnicianPortfolioDetails.Delete.Confirm' | translate }}</ng-template>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+</ng-container>

@@ -355,6 +355,136 @@
       "Expired": "منتهية"
     }
   },
+  "TechnicianPortfolio": {
+    "Hero": {
+      "Eyebrow": "عرض مهاراتك",
+      "Title": "مدير المحفظة",
+      "Description": "أضف أعمال جديدة، احتفظ بجميع الأعمال المحفوظة، وبرز ما أحب العملاء.",
+      "TotalLabel": "{{ count }} العناصر",
+      "Stats": {
+        "Active": "نشط",
+        "ActiveSubtitle": "مرئي للعملاء",
+        "Inactive": "غير نشط",
+        "InactiveSubtitle": "غير مرئي للعملاء",
+        "Reviews": "المراجعات",
+        "ReviewsSubtitle": "تعليقات العملاء"
+      }
+    },
+    "Banner": {
+      "Title": "تحديث المحفظة"
+    },
+    "Form": {
+      "Eyebrow": "إضافة معلومات جديدة",
+      "Title": "إضافة معلومات جديدة",
+      "Description": "أضف معلومات جديدة لملفك الشخصي.",
+      "Fields": {
+        "Title": "العنوان",
+        "DisplayOrder": "ترتيب العرض",
+        "Description": "الوصف",
+        "Image": "الصورة"
+      }
+    },
+    "Buttons": {
+      "Submitting": "جارٍ الإرسال...",
+      "Submit": "إرسال",
+      "Retry": "إعادة المحاولة",
+      "Create": "نشر العنصر",
+      "Creating": "نشر العنصر...",
+      "AddNew": "إضافة عنصر جديد",
+      "HideForm": "إخفاء النموذج",
+      "Reset": "إعادة تعيين",
+      "Edit": "تعديل",
+      "Delete": "حذف",
+      "ViewDetails": "عرض التفاصيل",
+      "Refresh": "تحديث",
+      "Cancel": "إلغاء",
+      "Saving": "حفظ...",
+      "Save": "حفظ التغييرات",
+      "Deleting": "حذف..."
+    },
+    "Empty": {
+      "Title": "لا يوجد عناصر",
+      "Description": "لا يوجد عناصر في المحفظة."
+    },
+    "Cards": {
+      "Meta": {
+        "OrderLabel": "ترتيب العرض #{{ value }}",
+        "Created": "تم إنشاء"
+      }
+    },
+    "Status": {
+      "Active": "نشط",
+      "Inactive": "غير نشط"
+    },
+    "Reviews": {
+      "Eyebrow": "الشهادات",
+      "Title": "تعليقات العملاء ({{ count }})",
+      "RatingLabel": "تقييم {{ value }} من 5",
+      "EmptyTitle": "لا يوجد تعليقات بعد",
+      "EmptyDescription": "بمجرد أن يترك العملاء تعليقات، سيتم عرضها هنا."
+    },
+    "Edit": {
+      "Title": "تحديث عنصر المحفظة",
+      "ActiveLabel": "مرئي للعملاء",
+      "ImageLabel": "تغيير الصورة"
+    },
+    "Delete": {
+      "Title": "إزالة العنصر",
+      "Confirm": "هل أنت متأكد؟",
+      "Description": "هذا يزيل العنصر بشكل دائم وصورة العنصر."
+    },
+    "Messages": {
+      "CreateSuccess": "تم إنشاء العنصر بنجاح.",
+      "UpdateSuccess": "تم تحديث العنصر بنجاح.",
+      "DeleteSuccess": "تم حذف العنصر بنجاح.",
+      "MissingCraftsman": "لم نتمكن من تحديد ملفك الفني. يرجى تسجيل الدخول مرة أخرى.",
+      "GenericError": "حدث خطأ أثناء الاتصال بالخادم."
+    }
+  },
+  "TechnicianPortfolioDetails": {
+    "Hero": {
+      "Back": "العودة إلى المحفظة",
+      "Eyebrow": "عنصر المحفظة",
+      "Edit": "تعديل العنصر",
+      "Delete": "إزالة العنصر"
+    },
+    "Meta": {
+      "DisplayOrder": "ترتيب العرض",
+      "Created": "تم إنشاء",
+      "Status": "الحالة",
+      "Active": "نشط",
+      "Inactive": "غير نشط"
+    },
+    "Gallery": {
+      "Title": "معاينة",
+      "Fallback": "لا صورة"
+    },
+    "Reviews": {
+      "Title": "التعليقات المرتبطة بهذا العمل",
+      "Empty": "لا يوجد تعليقات تذكر هذا العنصر بعد."
+    },
+    "Edit": {
+      "Title": "تعديل العنصر"
+    },
+    "Delete": {
+      "Title": "إزالة العنصر",
+      "Confirm": "هل أنت متأكد؟",
+      "Description": "هذا يزيل العنصر بشكل دائم وصورة العنصر."
+    },
+    "Buttons": {
+      "Retry": "إعادة المحاولة",
+      "Saving": "حفظ...",
+      "Save": "حفظ التغييرات",
+      "Deleting": "حذف...",
+      "Cancel": "إلغاء"
+    },
+    "Messages": {
+      "LoadError": "Unable to load portfolio item.",
+      "UpdateSuccess": "Portfolio item updated successfully.",
+      "DeleteSuccess": "Portfolio item deleted successfully.",
+      "GenericError": "Something went wrong."
+    }
+  },
   "CustomerProfile": {
     "Hero": {
       "Eyebrow": "أكمل عملية الانضمام",
@@ -372,6 +502,7 @@
       "ProgressStrength": "قوة الملف",
       "ProgressHint": "أكمل كل قسم لتحصل على أفضل تجربة حجز."
     },
+    
     "Avatar": {
       "ProfilePreviewAlt": "معاينة الصورة",
       "CurrentProfileAlt": "الصورة الحالية",

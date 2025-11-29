@@ -35,6 +35,14 @@ export const routes: Routes = [
         path: 'history',
         loadComponent: () => import('./pages/technician/history/history').then(c => c.History),
       },
+      {
+        path: 'portfolio',
+        loadComponent: () => import('./pages/technician/portfolio/technician-portfolio').then(c => c.TechnicianPortfolio),
+      },
+      {
+        path: 'portfolio-details/:id',
+        loadComponent: () => import('./pages/technician/portfolio-details/technician-portfolio-details').then(c => c.TechnicianPortfolioDetails),
+      },
     ],
   },
   {

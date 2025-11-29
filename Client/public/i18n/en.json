@@ -356,6 +356,133 @@
       "Expired": "Expired"
     }
   },
+  "TechnicianPortfolio": {
+    "Hero": {
+      "Eyebrow": "Showcase your craftsmanship",
+      "Title": "Portfolio manager",
+      "Description": "Add new work, keep everything organized, and highlight what customers loved most.",
+      "TotalLabel": "{{ count }} items",
+      "Stats": {
+        "Active": "Active",
+        "ActiveSubtitle": "Visible to customers",
+        "Inactive": "Inactive",
+        "InactiveSubtitle": "Hidden from view",
+        "Reviews": "Reviews",
+        "ReviewsSubtitle": "Customer comments"
+      }
+    },
+    "Banner": {
+      "Title": "Portfolio updates"
+    },
+    "Form": {
+      "Eyebrow": "Create new entry",
+      "Title": "Add portfolio item",
+      "Description": "High quality photos (JPG/PNG up to 5MB) deliver the best impression.",
+      "Fields": {
+        "Title": "Title",
+        "DisplayOrder": "Display order",
+        "Description": "Description",
+        "Image": "Cover image"
+      }
+    },
+    "Buttons": {
+      "Retry": "Retry",
+      "Create": "Publish item",
+      "Creating": "Publishing...",
+      "AddNew": "Add new item",
+      "HideForm": "Hide form",
+      "Reset": "Reset",
+      "Edit": "Edit",
+      "Delete": "Delete",
+      "ViewDetails": "View details",
+      "Refresh": "Refresh",
+      "Cancel": "Cancel",
+      "Saving": "Saving...",
+      "Save": "Save changes",
+      "Deleting": "Deleting..."
+    },
+    "Status": {
+      "Active": "Active",
+      "Inactive": "Inactive"
+    },
+    "Cards": {
+      "Meta": {
+        "OrderLabel": "Display order #{{ value }}",
+        "Created": "Created"
+      }
+    },
+    "Empty": {
+      "Title": "No portfolio items yet",
+      "Description": "Share photos of your best work to build trust with customers."
+    },
+    "Reviews": {
+      "Eyebrow": "Testimonials",
+      "Title": "Customer comments ({{ count }})",
+      "RatingLabel": "Rating {{ value }} out of 5",
+      "EmptyTitle": "No reviews yet",
+      "EmptyDescription": "Once customers leave feedback, it will appear here."
+    },
+    "Edit": {
+      "Title": "Update portfolio item",
+      "ActiveLabel": "Visible to customers",
+      "ImageLabel": "Replace image"
+    },
+    "Delete": {
+      "Title": "Remove item",
+      "Confirm": "Are you sure?",
+      "Description": "This permanently removes the portfolio item and its image."
+    },
+    "Messages": {
+      "CreateSuccess": "Portfolio item created successfully.",
+      "UpdateSuccess": "Portfolio item updated successfully.",
+      "DeleteSuccess": "Portfolio item deleted successfully.",
+      "MissingCraftsman": "We could not determine your technician profile. Please sign in again.",
+      "GenericError": "Something went wrong. Please try again."
+    }
+  },
+  "TechnicianPortfolioDetails": {
+    "Hero": {
+      "Back": "Back to portfolio",
+      "Eyebrow": "Portfolio item",
+      "Edit": "Edit item",
+      "Delete": "Delete item"
+    },
+    "Meta": {
+      "DisplayOrder": "Display order",
+      "Created": "Created",
+      "Status": "Status",
+      "Description": "Full description"
+    },
+    "Gallery": {
+      "Title": "Preview",
+      "Fallback": "No image provided"
+    },
+    "Reviews": {
+      "Title": "Reviews linked to this work",
+      "Empty": "No reviews mention this item yet."
+    },
+    "Edit": {
+      "Title": "Edit portfolio item"
+    },
+    "Delete": {
+      "Title": "Delete portfolio item",
+      "Confirm": "Delete",
+      "Description": "This action cannot be undone."
+    },
+    "Buttons": {
+      "Retry": "Retry",
+      "Saving": "Saving...",
+      "Save": "Save changes",
+      "Deleting": "Deleting...",
+      "Cancel": "Cancel"
+    },
+    "Messages": {
+      "LoadError": "Unable to load portfolio item.",
+      "UpdateSuccess": "Portfolio item updated successfully.",
+      "DeleteSuccess": "Portfolio item deleted successfully.",
+      "GenericError": "Something went wrong."
+    }
+  },
   "CustomerProfile": {
     "Hero": {
       "Eyebrow": "Complete your onboarding",

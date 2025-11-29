@@ -1,0 +1,322 @@
+<section class="portfolio-page">
+  <header class="page-hero glass-panel">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ 'TechnicianPortfolio.Hero.Eyebrow' | translate }}</p>
+      <div class="hero-title">
+        <h1>{{ 'TechnicianPortfolio.Hero.Title' | translate }}</h1>
+        <span class="status-pill">
+          <i class="bi bi-lightning-charge-fill"></i>
+          {{ 'TechnicianPortfolio.Hero.TotalLabel' | translate:{ count: stats().total } }}
+        </span>
+      </div>
+      <p>{{ 'TechnicianPortfolio.Hero.Description' | translate }}</p>
+      <div class="stat-grid">
+        <article class="stat-card">
+          <p class="label">{{ 'TechnicianPortfolio.Hero.Stats.Active' | translate }}</p>
+          <p class="value">{{ stats().active }}</p>
+          <small>{{ 'TechnicianPortfolio.Hero.Stats.ActiveSubtitle' | translate }}</small>
+        </article>
+        <article class="stat-card">
+          <p class="label">{{ 'TechnicianPortfolio.Hero.Stats.Inactive' | translate }}</p>
+          <p class="value">{{ stats().inactive }}</p>
+          <small>{{ 'TechnicianPortfolio.Hero.Stats.InactiveSubtitle' | translate }}</small>
+        </article>
+        <article class="stat-card">
+          <p class="label">{{ 'TechnicianPortfolio.Hero.Stats.Reviews' | translate }}</p>
+          <p class="value">{{ reviews().length }}</p>
+          <small>{{ 'TechnicianPortfolio.Hero.Stats.ReviewsSubtitle' | translate }}</small>
+        </article>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner" *ngIf="actionBanner() as banner" [ngClass]="banner.type">
+    <div>
+      <p class="eyebrow">{{ 'TechnicianPortfolio.Banner.Title' | translate }}</p>
+      <p>{{ banner.text }}</p>
+    </div>
+    <button type="button" class="ghost-btn" (click)="dismissBanner()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage()" class="banner error">
+    <div>
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ errorMessage() }}</span>
+    </div>
+    <button type="button" class="icon-btn" (click)="loadPortfolio()">
+      <i class="bi bi-arrow-clockwise"></i>
+      {{ 'TechnicianPortfolio.Buttons.Retry' | translate }}
+    </button>
+  </div>
+
+  <div class="cta-panel glass-panel">
+    <div>
+      <p class="eyebrow">{{ 'TechnicianPortfolio.Form.Eyebrow' | translate }}</p>
+      <h2>{{ 'TechnicianPortfolio.Form.Title' | translate }}</h2>
+      <p>{{ 'TechnicianPortfolio.Form.Description' | translate }}</p>
+    </div>
+    <button
+      type="button"
+      class="primary-btn toggle-form-btn"
+      (click)="toggleCreateForm()"
+      [attr.aria-expanded]="showCreateForm()"
+    >
+      {{
+        showCreateForm()
+          ? ('TechnicianPortfolio.Buttons.Cancel' | translate)
+          : ('TechnicianPortfolio.Buttons.AddNew' | translate)
+      }}
+    </button>
+  </div>
+
+  <section
+    *ngIf="showCreateForm()"
+    class="panel glass-panel create-panel"
+    [class.disabled]="isSubmitting()"
+    [@slideFade]
+  >
+    <header class="panel-head">
+      <div>
+        <p class="eyebrow">{{ 'TechnicianPortfolio.Form.Eyebrow' | translate }}</p>
+        <h2>{{ 'TechnicianPortfolio.Form.Title' | translate }}</h2>
+      </div>
+      <small>
+        <i class="bi bi-info-circle"></i>
+        {{ 'TechnicianPortfolio.Form.Description' | translate }}
+      </small>
+    </header>
+
+    <form class="form-grid" [formGroup]="createForm" (ngSubmit)="submitNewItem()">
+      <label class="input-shell" [class.invalid]="createForm.get('title')?.invalid && (createForm.get('title')?.dirty || createForm.get('title')?.touched)">
+        <span>{{ 'TechnicianPortfolio.Form.Fields.Title' | translate }}</span>
+        <input type="text" formControlName="title" maxlength="80" />
+      </label>
+
+      <label class="input-shell">
+        <span>{{ 'TechnicianPortfolio.Form.Fields.DisplayOrder' | translate }}</span>
+        <input type="number" formControlName="displayOrder" min="0" />
+      </label>
+
+      <label class="input-shell full" [class.invalid]="createForm.get('description')?.invalid && (createForm.get('description')?.dirty || createForm.get('description')?.touched)">
+        <span>{{ 'TechnicianPortfolio.Form.Fields.Description' | translate }}</span>
+        <textarea rows="3" formControlName="description" maxlength="800"></textarea>
+      </label>
+
+      <label class="input-shell file" [class.invalid]="createForm.get('image')?.invalid && (createForm.get('image')?.dirty || createForm.get('image')?.touched)">
+        <span>{{ 'TechnicianPortfolio.Form.Fields.Image' | translate }}</span>
+        <input #createImageInput type="file" accept="image/*" (change)="onCreateImageSelected($event)" />
+      </label>
+
+      <div class="form-actions full">
+        <button type="submit" class="primary-btn" [disabled]="isSubmitting()">
+          <ng-container *ngIf="isSubmitting(); else createLabel">
+            {{ 'TechnicianPortfolio.Buttons.Creating' | translate }}
+          </ng-container>
+          <ng-template #createLabel>{{ 'TechnicianPortfolio.Buttons.Create' | translate }}</ng-template>
+        </button>
+        <button type="button" class="ghost-btn" (click)="resetCreateForm()" [disabled]="isSubmitting()">
+          {{ 'TechnicianPortfolio.Buttons.Reset' | translate }}
+        </button>
+        <button type="button" class="ghost-btn" (click)="closeCreateForm()" [disabled]="isSubmitting()">
+          {{ 'TechnicianPortfolio.Buttons.Cancel' | translate }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="portfolio-grid">
+    <div *ngIf="isLoading()" class="skeleton-grid">
+      <article class="portfolio-card skeleton" *ngFor="let _ of [0,1,2,3]">
+        <div class="skeleton-media"></div>
+        <div class="skeleton-line w-80"></div>
+        <div class="skeleton-line w-60"></div>
+        <div class="skeleton-line w-40"></div>
+      </article>
+    </div>
+
+    <ng-container *ngIf="!isLoading()">
+      <div *ngIf="items().length; else emptyState" class="cards-grid">
+        <article class="portfolio-card" *ngFor="let item of items(); trackBy: trackByPortfolioId">
+          <div class="media">
+            <img [src]="getImageUrl(item)" [alt]="item.title" loading="lazy" />
+            <span class="status-chip" [class]="getStatusChipClass(item)">
+              {{ item.isActive ? ('TechnicianPortfolio.Status.Active' | translate) : ('TechnicianPortfolio.Status.Inactive' | translate) }}
+            </span>
+          </div>
+
+          <div class="card-body">
+            <p class="eyebrow">{{ 'TechnicianPortfolio.Cards.Meta.OrderLabel' | translate:{ value: item.displayOrder || 0 } }}</p>
+            <h3>{{ item.title }}</h3>
+            <p class="description">{{ shortDescription(item.description) }}</p>
+
+            <div class="card-footer">
+              <small>{{ 'TechnicianPortfolio.Cards.Meta.Created' | translate }} {{ formatDate(item.createdAt) }}</small>
+              <div class="card-actions">
+                <button type="button" class="ghost-btn action-btn" (click)="openEditModal(item)">
+                  <i class="bi bi-pencil-square"></i>
+                  {{ 'TechnicianPortfolio.Buttons.Edit' | translate }}
+                </button>
+                <button type="button" class="ghost-btn action-btn text-danger" (click)="promptDelete(item.id)">
+                  <i class="bi bi-trash"></i>
+                  {{ 'TechnicianPortfolio.Buttons.Delete' | translate }}
+                </button>
+                <a class="ghost-btn secondary-link" [routerLink]="['/portfolio-details', item.id]">
+                  {{ 'TechnicianPortfolio.Buttons.ViewDetails' | translate }}
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </ng-container>
+  </section>
+
+  <ng-template #emptyState>
+    <div class="empty-panel glass-panel">
+      <div class="empty-icon">
+        <i class="bi bi-images"></i>
+      </div>
+      <h3>{{ 'TechnicianPortfolio.Empty.Title' | translate }}</h3>
+      <p>{{ 'TechnicianPortfolio.Empty.Description' | translate }}</p>
+      <button type="button" class="primary-btn" (click)="loadPortfolio()">
+        {{ 'TechnicianPortfolio.Buttons.Refresh' | translate }}
+      </button>
+    </div>
+  </ng-template>
+
+  <section class="reviews-panel glass-panel">
+    <header class="section-head">
+      <div>
+        <p class="eyebrow">{{ 'TechnicianPortfolio.Reviews.Eyebrow' | translate }}</p>
+        <h2>{{ 'TechnicianPortfolio.Reviews.Title' | translate:{ count: reviews().length } }}</h2>
+      </div>
+      <button type="button" class="ghost-btn" (click)="loadReviews()">
+        <i class="bi bi-arrow-clockwise"></i>
+        {{ 'TechnicianPortfolio.Buttons.Refresh' | translate }}
+      </button>
+    </header>
+
+    <ng-container *ngIf="reviews().length; else noReviews">
+      <div class="reviews-list">
+        <article class="review-card" *ngFor="let review of reviews() | slice:0:6">
+          <div class="avatar">
+            <div class="avatar-circle">{{ reviewInitials(review.reviewerName) }}</div>
+          </div>
+          <div>
+            <div class="review-head">
+              <div>
+                <h3>{{ review.reviewerName }}</h3>
+                <p class="muted">{{ formatDate(review.createdAt) }}</p>
+              </div>
+              <div class="rating" [attr.aria-label]="('TechnicianPortfolio.Reviews.RatingLabel' | translate:{ value: review.rating })">
+                <i class="bi" *ngFor="let _ of getRatingArray(review.rating); trackBy: trackByRating" class="bi-star-fill"></i>
+              </div>
+            </div>
+            <p class="comment">{{ review.comment }}</p>
+          </div>
+        </article>
+      </div>
+    </ng-container>
+
+    <ng-template #noReviews>
+      <div class="empty-panel bordered">
+        <div class="empty-icon">
+          <i class="bi bi-chat-square-text"></i>
+        </div>
+        <h3>{{ 'TechnicianPortfolio.Reviews.EmptyTitle' | translate }}</h3>
+        <p>{{ 'TechnicianPortfolio.Reviews.EmptyDescription' | translate }}</p>
+      </div>
+    </ng-template>
+  </section>
+
+  <ng-container *ngIf="editingItem() as editing">
+    <div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">{{ 'TechnicianPortfolio.Edit.Title' | translate }}</p>
+              <h2 class="modal-title">{{ editing.title }}</h2>
+            </div>
+            <button type="button" class="btn-close" aria-label="Close" (click)="closeEditModal()"></button>
+          </div>
+
+          <form class="modal-body modal-form" [formGroup]="editForm" (ngSubmit)="submitEdit()">
+            <div class="form-grid">
+              <label class="input-shell" [class.invalid]="editForm.get('title')?.invalid && (editForm.get('title')?.dirty || editForm.get('title')?.touched)">
+                <span>{{ 'TechnicianPortfolio.Form.Fields.Title' | translate }}</span>
+                <input type="text" formControlName="title" maxlength="80" />
+              </label>
+
+              <label class="input-shell">
+                <span>{{ 'TechnicianPortfolio.Form.Fields.DisplayOrder' | translate }}</span>
+                <input type="number" min="0" formControlName="displayOrder" />
+              </label>
+
+              <label class="input-shell switch">
+                <span>{{ 'TechnicianPortfolio.Edit.ActiveLabel' | translate }}</span>
+                <input type="checkbox" formControlName="isActive" />
+              </label>
+
+              <label class="input-shell full">
+                <span>{{ 'TechnicianPortfolio.Form.Fields.Description' | translate }}</span>
+                <textarea rows="4" formControlName="description" maxlength="800"></textarea>
+              </label>
+
+              <label class="input-shell file full">
+                <span>{{ 'TechnicianPortfolio.Edit.ImageLabel' | translate }}</span>
+                <input #editImageInput type="file" accept="image/*" (change)="onEditImageSelected($event)" />
+              </label>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost" (click)="closeEditModal()" [disabled]="isUpdating()">
+                {{ 'TechnicianPortfolio.Buttons.Cancel' | translate }}
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="isUpdating()">
+                <ng-container *ngIf="isUpdating(); else saveLabel">
+                  {{ 'TechnicianPortfolio.Buttons.Saving' | translate }}
+                </ng-container>
+                <ng-template #saveLabel>{{ 'TechnicianPortfolio.Buttons.Save' | translate }}</ng-template>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+  </ng-container>
+
+  <ng-container *ngIf="deleteTargetId() as deleteId">
+    <div class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">{{ 'TechnicianPortfolio.Delete.Title' | translate }}</p>
+              <h2 class="modal-title">{{ 'TechnicianPortfolio.Delete.Confirm' | translate }}</h2>
+            </div>
+          </div>
+          <div class="modal-body">
+            <p>{{ 'TechnicianPortfolio.Delete.Description' | translate }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" (click)="cancelDelete()" [disabled]="isDeleting()">
+              {{ 'TechnicianPortfolio.Buttons.Cancel' | translate }}
+            </button>
+            <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting()">
+              <ng-container *ngIf="isDeleting(); else deleteLabel">
+                {{ 'TechnicianPortfolio.Buttons.Deleting' | translate }}
+              </ng-container>
+              <ng-template #deleteLabel>{{ 'TechnicianPortfolio.Delete.Confirm' | translate }}</ng-template>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+  </ng-container>
+</section>
