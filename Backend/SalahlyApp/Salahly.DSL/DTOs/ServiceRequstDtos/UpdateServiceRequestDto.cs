@@ -14,6 +14,7 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
         //public string? City { get; set; }
         //public string? Area { get; set; }
         public int AreaId { get; set; }
+        public string? PaymentMethod { get; set; }
 
         public DateTime AvailableFromDate { get; set; }
         public DateTime AvailableToDate { get; set; }

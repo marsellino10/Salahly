@@ -24,6 +24,7 @@ namespace Salahly.DSL.DTOs
         public VerificationStatus VerificationStatus { get; set; }
         public string? ProfileImageUrl { get; set; }
         public string? FullName { get; set; }
+        public bool? IsVerified { get; set; }
 
         public IEnumerable<PortfolioItemResponseDto> Portfolio { get; set; } = new List<PortfolioItemResponseDto>();
         // Changed to use simplified ServiceAreaDto instead of CraftsmanServiceAreaDto

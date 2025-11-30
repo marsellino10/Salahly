@@ -25,6 +25,7 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.AvailableToDate, src => src.AvailableToDate)
                 .Map(dest => dest.CustomerBudget, src => src.CustomerBudget)
                 .Map(dest => dest.ImagesJson, src => src.ImagesJson)
+                .Map(dest => dest.PaymentMethod, src => src.PaymentMethod)
                 .Map(dest => dest.MaxOffers, src => src.MaxOffers)
                 .Map(dest => dest.CraftId, src => src.CraftId);
 

@@ -37,6 +37,7 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
 
         public decimal? CustomerBudget { get; set; }
         public string? ImagesJson { get; set; }
+        public string PaymentMethod { get; set; } = "Card";
 
         public int MaxOffers { get; set; } = 10;
     }

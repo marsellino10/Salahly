@@ -124,7 +124,11 @@
           <div class="card-head">
             <div>
               <p class="eyebrow">{{ request.craftName || ('ShowRequests.Cards.Meta.CraftFallback' | translate) }}</p>
-              <h3>{{ request.title }}</h3>
+              <h3 data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                [attr.title]="request.title">
+                {{ request.title.length > 22 ? request.title.substring(0, 22)+'...' : request.title }}
+              </h3>
             </div>
             <span
               class="status-chip"
@@ -268,6 +272,12 @@
               <label class="input-shell">
                 <span>{{ 'ShowRequests.Edit.Fields.Budget' | translate }}</span>
                 <input type="number" min="0" step="10" formControlName="customerBudget" />
+              </label>
+              <label class="input-shell">
+                <span>{{ 'ShowRequests.Edit.Fields.paymentMethod' | translate }}</span>
+                <select formControlName="paymentMethod">
+                  <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+                </select>
               </label>
             </div>
 

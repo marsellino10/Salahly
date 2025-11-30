@@ -44,6 +44,7 @@ export class ServiceRequestForm implements OnInit {
 
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
+  readonly paymentMethods = ["Card","Wallet","Cash"]
 
   requestForm = this._fb.group({
     craftId: [null as number | null, Validators.required],
@@ -57,6 +58,7 @@ export class ServiceRequestForm implements OnInit {
     maxOffers: [3, [Validators.min(1), Validators.max(10)]],
     latitude: [null as number | null, [Validators.min(-90), Validators.max(90)]],
     longitude: [null as number | null, [Validators.min(-180), Validators.max(180)]],
+    paymentMethod: ['', Validators.required],
   });
 
   ngOnInit(): void {
@@ -212,6 +214,7 @@ export class ServiceRequestForm implements OnInit {
       longitude:
         raw.longitude !== null && raw.longitude !== undefined ? Number(raw.longitude) : null,
       maxOffers: raw.maxOffers ? Number(raw.maxOffers) : undefined,
+      paymentMethod: raw.paymentMethod
     } as CreateServiceRequestPayload;
   }
 

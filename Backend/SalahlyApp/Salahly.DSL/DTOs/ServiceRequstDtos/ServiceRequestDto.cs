@@ -25,5 +25,6 @@ namespace Salahly.DSL.DTOs.ServiceRequstDtos
         public string CraftName { get; set; }
         public string CustomerName { get; set; }
         public List<string> Images { get; set; }
+        public string PaymentMethod { get; set; }
     }
 }

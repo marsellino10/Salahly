@@ -27,6 +27,7 @@ export interface Craftsman {
   verifiedAt?: string | null;
   profileImageUrl?: string | null;
   portfolio: Portfolio[];
+  isVerified?: boolean;
   serviceAreas: ServiceArea[];
   reviews?: CraftsmanReview[];
 }

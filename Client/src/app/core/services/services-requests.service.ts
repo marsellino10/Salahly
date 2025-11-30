@@ -36,6 +36,7 @@ export interface ServiceRequestDto {
   craftName?: string | null;
   customerName?: string | null;
   images?: string[] | null;
+  paymentMethod?: string | null;
 }
 
 export interface ServiceRequestResponseDto extends ServiceRequestDto {
@@ -58,6 +59,7 @@ export interface CreateServiceRequestPayload {
   latitude?: number | null;
   longitude?: number | null;
   maxOffers?: number;
+  paymentMethod?: string | null;
 }
 
 export interface UpdateServiceRequestPayload {
@@ -68,6 +70,7 @@ export interface UpdateServiceRequestPayload {
   availableFromDate?: Date | string | null;
   availableToDate?: Date | string | null;
   customerBudget?: number | null;
+  paymentMethod?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -113,6 +116,7 @@ export class ServicesRequestsService {
     formData.append('AreaId', payload.areaId.toString());
     formData.append('AvailableFromDate', this.normalizeDate(payload.availableFromDate));
     formData.append('AvailableToDate', this.normalizeDate(payload.availableToDate));
+    formData.append('PaymentMethod', payload.paymentMethod ?? '');
 
     if (payload.customerBudget !== undefined && payload.customerBudget !== null) {
       formData.append('CustomerBudget', payload.customerBudget.toString());
@@ -166,6 +170,9 @@ export class ServicesRequestsService {
 
     if (payload.customerBudget !== undefined && payload.customerBudget !== null) {
       formData.append('CustomerBudget', payload.customerBudget.toString());
+    }
+    if (payload.paymentMethod) {
+      formData.append('PaymentMethod', payload.paymentMethod);
     }
 
     return formData;

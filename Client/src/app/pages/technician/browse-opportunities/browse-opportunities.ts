@@ -11,6 +11,8 @@ import { CraftsmanServiceRequestService, ServiceResponse } from '../../../core/s
 import { ServiceRequestDto, ServiceRequestStatus } from '../../../core/services/services-requests.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
+import { Craftsman } from '../../../core/models/Craftman';
+import { ApiResponse, TechnicianService } from '../../../core/services/technician-service';
 
 type OpportunitySort = 'latest' | 'budget' | 'closingSoon';
 
@@ -24,6 +26,7 @@ type OpportunitySort = 'latest' | 'budget' | 'closingSoon';
 export class BrowseOpportunities implements OnInit {
   private readonly _service = inject(CraftsmanServiceRequestService);
   private readonly _offersService = inject(CraftsmanOffersService);
+  private readonly _craftsmanService = inject(TechnicianService)
   private readonly _fb = inject(FormBuilder);
   private readonly _translate = inject(TranslateService);
 
@@ -44,6 +47,7 @@ export class BrowseOpportunities implements OnInit {
   readonly offerLookup = signal<Map<number, CraftsmanOfferDto>>(new Map());
   readonly withdrawingOfferId = signal<number | null>(null);
   readonly actionBanner = signal<{ type: 'success' | 'error'; text: string } | null>(null);
+  readonly craftsman = signal<Craftsman | null>(null); 
   offerForm!: FormGroup;
   minDate = new Date().toISOString().split('T')[0];
 
@@ -133,6 +137,7 @@ export class BrowseOpportunities implements OnInit {
     });
     this.loadOpportunities();
     this.loadExistingOffers();
+    this.loadTechnician();
   }
 
   private setActionBanner(type: 'success' | 'error', text: string): void {
@@ -146,6 +151,28 @@ export class BrowseOpportunities implements OnInit {
     this._service.getAvailableOpportunities().subscribe({
       next: (response: ServiceResponse<ServiceRequestDto[]>) => {
         this.opportunities.set(response.data ?? []);
+        this.isLoading.set(false);
+        this.hasLoadedOnce.set(true);
+      },
+      error: (error) => {
+        this.errorMessage.set(this.extractErrorMessage(error));
+        this.isLoading.set(false);
+        this.hasLoadedOnce.set(true);
+      },
+    });
+  }
+  loadTechnician(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    const technicianId = this._craftsmanService.getTechnicianTokenClaims()?.nameIdentifier;
+    if (!technicianId) {
+      this.isLoading.set(false);
+      this.hasLoadedOnce.set(true);
+      return;
+    }
+    this._craftsmanService.getTechnicianById(Number(technicianId)).subscribe({
+      next: (response: ApiResponse<Craftsman>) => {
+        this.craftsman.set(response.data);
         this.isLoading.set(false);
         this.hasLoadedOnce.set(true);
       },

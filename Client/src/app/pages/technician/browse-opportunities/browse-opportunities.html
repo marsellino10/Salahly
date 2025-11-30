@@ -190,15 +190,18 @@
                 </div>
 
                 @if(!hasSubmittedOffer(opportunity)){
-                  <div class="card-actions">
+                  <div class="d-flex flex-column">
+                    <div class="card-actions">
                     <button class="btn btn-ghost" type="button">
                       <i class="fa-regular fa-heart"></i>
                       {{ 'BrowseOpportunities.Cards.Actions.Save' | translate }}
                     </button>
-                    <button class="btn btn-primary" type="button" (click)="openOfferModal(opportunity)">
+                    <button class="btn btn-primary" type="button" [disabled]="!craftsman()?.isVerified" (click)="openOfferModal(opportunity)">
                       <i class="fa-solid fa-circle-plus"></i>
                       {{ 'BrowseOpportunities.Cards.Actions.AddOffer' | translate }}
                     </button>
+                  </div>
+                  <span class="text-danger">{{'BrowseOpportunities.Cards.Actions.Verify' | translate}}</span>
                   </div>
                 }@else{
                   <div class="card-actions submitted" *ngIf="getMyOffer(opportunity.serviceRequestId) as myOffer">

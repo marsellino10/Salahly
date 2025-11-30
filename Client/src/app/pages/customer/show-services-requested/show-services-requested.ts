@@ -48,8 +48,10 @@ export class ShowServicesRequested implements OnInit {
     availableFromDate: ['', Validators.required],
     availableToDate: ['', Validators.required],
     address: ['', [Validators.required, Validators.maxLength(160)]],
+    paymentMethod: ['', Validators.required],
     customerBudget: [null as number | null, [Validators.min(0)]],
   });
+  readonly paymentMethods = ["Card","Wallet","Cash"]
 
   readonly uniqueAreas = computed(() => {
     const areas = new Set<string>();
@@ -217,6 +219,7 @@ export class ShowServicesRequested implements OnInit {
   }
 
   openEditModal(request: ServiceRequestDto): void {
+    console.log(request);
     this.editingRequest.set(request);
     this.editError.set(null);
     this.editForm.reset({
@@ -226,6 +229,7 @@ export class ShowServicesRequested implements OnInit {
       availableToDate: this.toDateInputValue(request.availableToDate),
       address: request.address,
       customerBudget: request.customerBudget ?? null,
+      paymentMethod: request.paymentMethod?? "",
     });
   }
 
@@ -324,6 +328,7 @@ export class ShowServicesRequested implements OnInit {
       address: raw.address?.trim(),
       availableFromDate: raw.availableFromDate ? new Date(raw.availableFromDate).toISOString() : undefined,
       availableToDate: raw.availableToDate ? new Date(raw.availableToDate).toISOString() : undefined,
+      paymentMethod: raw.paymentMethod?.trim(),
     };
 
     if (raw.customerBudget !== null && raw.customerBudget !== undefined) {

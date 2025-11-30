@@ -300,7 +300,8 @@
       },
       "Actions": {
         "Save": "Save",
-        "AddOffer": "Add offer"
+        "AddOffer": "Add offer",
+        "Verify": "Verify your account to send offers"
       },
       "Submitted": {
         "YourOffer": "Your offer",
@@ -624,7 +625,8 @@
         "AvailableFrom": "Available from",
         "AvailableTo": "Available to",
         "Address": "Address",
-        "Budget": "Budget"
+        "Budget": "Budget",
+        "paymentMethod":"Payment method"
       },
       "Messages": {
         "Success": "Service request updated successfully."
@@ -833,7 +835,9 @@
       "BudgetPlaceholder": "e.g. 150",
       "BudgetHint": "Optional but helps craftsmen quote better.",
       "MaxOffersLabel": "Max offers",
-      "MaxOffersHint": "How many proposals you want to review."
+      "MaxOffersHint": "How many proposals you want to review.",
+      "PaymentMethodLabel": "Payment method",
+      "PaymentMethodPlaceholder": "Select payment method"
     },
     "Loading": {
       "Crafts": "Loading crafts…",
@@ -847,7 +851,8 @@
       "AvailableFromRequired": "Available from date is required.",
       "AvailableToRequired": "Available to date is required.",
       "DateRequired": "Pick when you'd like the visit.",
-      "AddressRequired": "Address is required."
+      "AddressRequired": "Address is required.",
+      "PaymentMethodRequired": "Payment method is required."
     },
     "TimeSlots": {
       "Morning": "Morning (8 am – 12 pm)",

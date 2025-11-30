@@ -300,7 +300,8 @@
       },
       "Actions": {
         "Save": "حفظ",
-        "AddOffer": "إضافة عرض"
+        "AddOffer": "إضافة عرض",
+        "Verify": "قم بالتحقق من حسابك لإرسال العروض"
       },
       "Submitted": {
         "YourOffer": "عرضك",
@@ -626,7 +627,8 @@
         "AvailableFrom": "الإمكاني من",
         "AvailableTo": "الإمكاني حتى",
         "Address": "العنوان",
-        "Budget": "الميزانية"
+        "Budget": "الميزانية",
+        "paymentMethod":"طريقة الدفع"
       },
       "Messages": {
         "Success": "تم تحديث طلب الخدمة بنجاح."
@@ -835,7 +837,9 @@
       "BudgetPlaceholder": "مثال: 150",
       "BudgetHint": "اختياري لكنه يساعد الفنيين على التسعير بدقة.",
       "MaxOffersLabel": "أقصى عدد من العروض",
-      "MaxOffersHint": "عدد المقترحات التي ترغب بمراجعتها."
+      "MaxOffersHint": "عدد المقترحات التي ترغب بمراجعتها.",
+      "PaymentMethodLabel": "طريقة الدفع",
+      "PaymentMethodPlaceholder": "اختر طريقة الدفع"
     },
     "Loading": {
       "Crafts": "جارٍ تحميل الحرف...",
@@ -849,7 +853,8 @@
       "AvailableFromRequired": "تاريخ البداية مطلوب.",
       "AvailableToRequired": "تاريخ النهاية مطلوب.",
       "DateRequired": "حدد التاريخ الذي تفضله للزيارة.",
-      "AddressRequired": "العنوان مطلوب."
+      "AddressRequired": "العنوان مطلوب.",
+      "PaymentMethodRequired": "طريقة الدفع مطلوبة."
     },
     "TimeSlots": {
       "Morning": "الصباح (8 صباحاً – 12 ظهراً)",

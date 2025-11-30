@@ -175,6 +175,14 @@
           <input type="number" min="1" max="10" step="1" formControlName="maxOffers" />
           <small class="muted">{{ 'ServiceRequestForm.Fields.MaxOffersHint' | translate }}</small>
         </label>
+        <label class="input-shell" [class.invalid]="fieldInvalid('paymentMethod')">
+          <span>{{ 'ServiceRequestForm.Fields.PaymentMethodLabel' | translate }}</span>
+          <select formControlName="paymentMethod">
+            <option value="" disabled selected>{{ 'ServiceRequestForm.Fields.PaymentMethodPlaceholder' | translate }}</option>
+            <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod">{{ paymentMethod }}</option>
+          </select>
+          <small class="error-text" *ngIf="fieldInvalid('paymentMethod')">{{ 'ServiceRequestForm.Errors.PaymentMethodRequired' | translate }}</small>
+        </label>
       </div>
     </section>
 
