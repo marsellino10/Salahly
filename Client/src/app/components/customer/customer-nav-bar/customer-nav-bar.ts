@@ -70,6 +70,7 @@ toggleNotifications() {
 }
 
 openNotification(n: any) {
+  //console.log('Navigating to:', n.actionUrl);
   this.router.navigateByUrl(n.actionUrl);
 }
 

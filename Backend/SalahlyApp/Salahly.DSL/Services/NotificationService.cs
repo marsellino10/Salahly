@@ -95,13 +95,24 @@ namespace Salahly.DSL.Services
             var booking = await _unitOfWork.Bookings.GetByIdAsync(bookingId);
             await NotifyAsync(new CreateNotificationDto
             {
-                UserIds = new[] { booking.CustomerId, booking.CraftsmanId },
+                UserIds = new[] { booking.CustomerId },
                 Type = NotificationType.BookingConfirmed,
                 Title = "Your Booking is Confirmed",
                 Message = $"This is a confirmation that the booking for {booking.ServiceRequest.Title} on {booking.BookingDate} " +
                 $"has been successfully scheduled for {booking.Customer.User.FullName} at {booking.Customer.Address}." +
                 $"\r\n\r\nWe look forward to a successful service.",
-                ActionUrl = $"/booking/{bookingId}",
+                ActionUrl = $"/history",
+                BookingId = bookingId
+            });
+            await NotifyAsync(new CreateNotificationDto
+            {
+                UserIds = new[] {  booking.CraftsmanId },
+                Type = NotificationType.BookingConfirmed,
+                Title = "Your Booking is Confirmed",
+                Message = $"This is a confirmation that the booking for {booking.ServiceRequest.Title} on {booking.BookingDate} " +
+                $"has been successfully scheduled for {booking.Customer.User.FullName} at {booking.Customer.Address}." +
+                $"\r\n\r\nWe look forward to a successful service.",
+                ActionUrl = $"/service-request-details/{booking.ServiceRequestId}",
                 BookingId = bookingId
             });
         }

@@ -158,7 +158,7 @@ namespace Salahly.DSL.Services
                     Type = NotificationType.OfferRejected,
                     Title = "Your Offer has been Rejected",
                     Message = $" Your Offer for {request.Title} request has been rejected by Customer due to {dto.RejectionReason}",
-                    ActionUrl = $"/service-requests/{request.ServiceRequestId}",
+                    ActionUrl = $"/browse-opportunities",
                     CraftsmanOfferId = offer.CraftsmanOfferId,
                     ServiceRequestId = request.ServiceRequestId
                 });
@@ -239,7 +239,7 @@ namespace Salahly.DSL.Services
                     Type = NotificationType.NewOffer,
                     Title = "New Offer Received",
                     Message = $"{craftsman.User?.FullName ?? "A craftsman"} submitted an offer for your request.",
-                    ActionUrl = $"/service-requests/{request.ServiceRequestId}",
+                    ActionUrl = $"service-request-details/{request.ServiceRequestId}",
                     CraftsmanOfferId = offer.CraftsmanOfferId,
                     ServiceRequestId = request.ServiceRequestId
                 });

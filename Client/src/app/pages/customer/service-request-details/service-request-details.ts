@@ -115,8 +115,9 @@ export class ServiceRequestDetails implements OnInit {
   });
 
   ngOnInit(): void {
-    const idParam = Number(this._route.snapshot.paramMap.get('id'));
-    if (!idParam) {
+    this._route.params.subscribe((params) => {
+      const idParam = Number(params['id']);
+      if (!idParam) {
       this.requestError.set(this._translate.instant('ServiceRequestDetails.Messages.MissingRequest'));
       this.isRequestLoading.set(false);
       this.isOffersLoading.set(false);
@@ -126,6 +127,8 @@ export class ServiceRequestDetails implements OnInit {
     this.requestId = idParam;
     this.loadRequest();
     this.loadOffers();
+    });
+
   }
 
   loadRequest(): void {
