@@ -69,7 +69,7 @@ namespace Salahly.DSL.Services
                 TotalAmount = amount,
                 RefundableAmount = 0,
                 Status = BookingStatus.InProgress, 
-                PaymentDeadline = DateTime.UtcNow.AddHours(24),
+                PaymentDeadline = DateTime.UtcNow.AddHours(1),
                 CreatedAt = DateTime.UtcNow
             };
 

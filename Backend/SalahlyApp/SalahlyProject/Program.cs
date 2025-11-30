@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Salahly.API.BackgroundJobs;
 using Salahly.DAL.Data;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
@@ -156,6 +157,8 @@ namespace SalahlyProject
             builder.Services.AddScoped<IPortfolioService, PortfolioService>();
             builder.Services.AddScoped<IOfferService, OfferService>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
+            builder.Services.AddHostedService<BookingCleanupHostedService>();
+            builder.Services.AddScoped<IBookingCleanupService, BookingCleanupService>();
 
             // ✅ Payment Services
             builder.Services.AddScoped<IBookingService, BookingService>();

@@ -20,5 +20,21 @@ namespace Salahly.DAL.Repositories
             return await _context.Bookings
                 .FirstOrDefaultAsync(b => b.AcceptedOfferId == offerId);
         }
+
+        public async Task<int> CleanupUnpaidBookingsAsync()
+        {
+            try
+            {
+                var result = await _context.Database
+                    .SqlQueryRaw<int>("EXEC SP_CleanupUnpaidBookings")
+                    .ToListAsync();
+
+                return result.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error executing cleanup stored procedure: {ex.Message}", ex);
+            }
+        }
     }
 }

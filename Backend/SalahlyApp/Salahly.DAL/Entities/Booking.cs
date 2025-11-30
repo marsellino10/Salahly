@@ -51,5 +51,6 @@ namespace Salahly.DAL.Entities
         Completed = 2,
         Cancelled = 3,
         failed = 4,
+        unpaid = 5
     }
 }
