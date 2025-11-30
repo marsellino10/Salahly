@@ -59,15 +59,19 @@ toggleNotifications() {
   this.showNotifications = !this.showNotifications;
 
   if (this.showNotifications) {
-    this.notificationService.loadUserNotifications(); // refresh from backend
 
+    // 🔥 smart fetch (cached if no updates)
+    this.notificationService.loadUserNotifications();
+
+    // If unread exists, mark as read
     if (this.unread > 0) {
       this.notificationService.markAllRead().subscribe(() => {
-        this.notificationService.markAllAsRead(); // remove red dot instantly
+        this.notificationService.markAllAsRead(); // UI instantly updated
       });
     }
   }
 }
+
 
 openNotification(n: any) {
   //console.log('Navigating to:', n.actionUrl);

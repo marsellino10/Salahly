@@ -40,15 +40,25 @@ this.hubConnection.on("ReceiveNotification", () => {
   }
 
   /** Load from backend */
-  loadUserNotifications() {
-  return this.http.get<any[]>(`${this.baseUrl}/user`).subscribe(data => {
+/** Load notifications only if needed */
+loadUserNotifications() {
+  const current = this.notificationsSubject.value;
+  const unread = this.unreadCountSubject.value;
+
+  // 🚀 If we already have notifications AND unread=0, nothing changed → DO NOT call API
+  if (current.length > 0 && unread === 0) {
+    return; // use cached data
+  }
+
+  // Otherwise, call API
+  this.http.get<any[]>(`${this.baseUrl}/user`).subscribe(data => {
     this.notificationsSubject.next(data);
-
+    console.log('Notifications loaded:', data);
     const unread = data.filter(n => !n.isRead).length;
-
     this.unreadCountSubject.next(unread);
   });
 }
+
 
   markRead(id: number) {
   return this.http.post(`${this.baseUrl}/mark-read/${id}`, {});
