@@ -1,5 +1,4 @@
 ﻿using Mapster;
-using Microsoft.Extensions.Logging;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
@@ -12,15 +11,13 @@ namespace Salahly.DSL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly INotificationService _notificationService;
-        private readonly ILogger<ServiceRequestService> _logger;
+        private readonly ICraftsManService _craftsManService;
 
-        public ServiceRequestService(IUnitOfWork unitOfWork, INotificationService notificationService,ILogger<ServiceRequestService> logger)
+        public ServiceRequestService(IUnitOfWork unitOfWork, INotificationService notificationService,ICraftsManService craftsManService)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
-            _logger = logger;
-
-
+            _craftsManService = craftsManService;
         }
 
         public async Task<ServiceRequestResponseDto> CreateAsync(CreateServiceRequestDto dto, int customerId)
@@ -98,16 +95,13 @@ namespace Salahly.DSL.Services
             var request = await _unitOfWork.ServiceRequests.GetByIdAsync(id);
             if (request == null || request.CustomerId != customerId)
                 return null;
-            _logger.LogInformation("Updating service request with ID {RequestId} for customer {CustomerId}", id, customerId);
+
             if (request.Status != ServiceRequestStatus.Open)
                 throw new Exception("Cannot update a request that is not open.");
-            _logger.LogInformation("Current request status: {PaymentMethod}", dto.PaymentMethod);
 
             if (!string.IsNullOrEmpty(dto.Title)) request.Title = dto.Title;
             if (!string.IsNullOrEmpty(dto.Description)) request.Description = dto.Description;
             if (!string.IsNullOrEmpty(dto.Address)) request.Address = dto.Address;
-            if (!string.IsNullOrEmpty(dto.PaymentMethod)) request.PaymentMethod = dto.PaymentMethod;
-            _logger.LogInformation("Current request status: {PaymentMethod}", dto.PaymentMethod);
 
             var area = await _unitOfWork.Areas.GetByIdAsync(dto.AreaId);
             if (area is not null) request.AreaId = dto.AreaId;
@@ -197,10 +191,25 @@ namespace Salahly.DSL.Services
                 );
             }
         }
-        
-        public async Task ChangeStatusAsync(int id, ServiceRequestStatus status)
+
+        public async Task<bool> ChangeStatusAsync(int id, ServiceRequestStatus status)
         {
-             await _unitOfWork.ServiceRequests.ChangeStatusAsync(id, status);
+            try
+            {
+                
+                await _unitOfWork.ServiceRequests.ChangeStatusAsync(id, status);
+                if(status == ServiceRequestStatus.Completed)
+                {
+                    var serviceRequest =  await _unitOfWork.ServiceRequests.GetServiceRequestByIdWithIncludesAsync(id);
+                    await _craftsManService.AddBalance(serviceRequest.Booking.CraftsmanId, serviceRequest.Booking.TotalAmount);
+                }
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error changing service request status: {ex.Message}");
+            }
         }
 
 

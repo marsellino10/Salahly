@@ -308,5 +308,19 @@ namespace Salahly.DSL.Services
             return craftsman;
         }
 
+        public async Task AddBalance(int craftsmanId, decimal amount)
+        {
+            if (craftsmanId <= 0)
+                throw new ArgumentException("Invalid craftsman ID", nameof(craftsmanId));
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be positive", nameof(amount));
+            var craftsman = await _unitOfWork.Craftsmen.GetByIdAsync(craftsmanId);
+            if (craftsman == null)
+                throw new KeyNotFoundException($"Craftsman with ID {craftsmanId} not found.");
+            craftsman.Balance += amount;
+            await _unitOfWork.Craftsmen.UpdateAsync(craftsman);
+            await _unitOfWork.SaveAsync();
+        }
+
     }
 }

@@ -16,7 +16,6 @@ namespace Salahly.DAL.Entities
         public decimal OfferedPrice { get; set; }
         public string Description { get; set; }
         public int EstimatedDurationMinutes { get; set; }
-
         // Availability
         public DateTime PreferredDate { get; set; }
         public string? PreferredTimeSlot { get; set; }

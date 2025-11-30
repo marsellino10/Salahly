@@ -11,7 +11,7 @@ namespace Salahly.DAL.Entities
         public int Id { get; set; } 
         public int CraftId { get; set; }
         public int TotalCompletedBookings { get; set; }
-
+        public decimal Balance { get; set; } = 0;
         public bool IsAvailable { get; set; } = true; 
         public decimal? HourlyRate { get; set; }  
         public string? Bio { get; set; }  

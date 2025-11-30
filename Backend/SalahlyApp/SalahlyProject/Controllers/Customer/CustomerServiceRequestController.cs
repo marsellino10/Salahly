@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Salahly.DAL.Entities;
 using Salahly.DSL.DTOs.ServiceRequstDtos;
 using Salahly.DSL.Interfaces;
 using SalahlyProject.Response;
@@ -18,16 +19,17 @@ namespace SalahlyProject.Controllers.Customer
         private readonly IServiceRequestService _service;
         private readonly IFileUploadService _fileUploadService;
         private readonly ILogger<CustomerServiceRequestController> _logger;
-
-        public CustomerServiceRequestController(IServiceRequestService service, IFileUploadService fileUploadService, ILogger<CustomerServiceRequestController> logger)
+        private readonly ICraftsManService _craftsManService;
+        public CustomerServiceRequestController(IServiceRequestService service, IFileUploadService fileUploadService, ILogger<CustomerServiceRequestController> logger,ICraftsManService CraftsManService)
         {
             _service = service;
             _fileUploadService = fileUploadService;
             _logger = logger;
+            _craftsManService = CraftsManService;
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<ServiceRequestResponseDto>>> Create([FromForm] CreateServiceRequestDto dto,IFormFileCollection ImageFiles)
+        public async Task<ActionResult<ApiResponse<ServiceRequestResponseDto>>> Create([FromForm] CreateServiceRequestDto dto, IFormFileCollection ImageFiles)
         {
             try
             {
@@ -35,14 +37,14 @@ namespace SalahlyProject.Controllers.Customer
                 var customerClaim = User.FindFirst("NameIdentifier")?.Value;
                 if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
                     return Unauthorized(new ApiResponse<ServiceRequestResponseDto>(401, "Customer ID not found in token"));
-                if(ImageFiles != null)
+                if (ImageFiles != null)
                 {
                     try
                     {
                         List<string> imageUrls = new List<string>();
                         foreach (var file in ImageFiles)
                         {
-                            imageUrls.Add( await _fileUploadService.UploadFileAsync(file, "serviceRequest"));
+                            imageUrls.Add(await _fileUploadService.UploadFileAsync(file, "serviceRequest"));
                         }
                         dto.ImagesJson = JsonSerializer.Serialize(imageUrls);
                     }
@@ -84,7 +86,7 @@ namespace SalahlyProject.Controllers.Customer
             {
                 var customerClaim = User.FindFirst("NameIdentifier")?.Value;
                 if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
-                    return Unauthorized(new ApiResponse<ServiceRequestDto>(401, "Customer ID not found in token",null));
+                    return Unauthorized(new ApiResponse<ServiceRequestDto>(401, "Customer ID not found in token", null));
 
                 var result = await _service.GetByIdAsync(id, customerId);
 
@@ -128,7 +130,26 @@ namespace SalahlyProject.Controllers.Customer
                     return Unauthorized(new { message = "Customer ID not found in token" });
                 var request = await _service.UpdateAsync(id, dto, customerId);
                 var result = await _service.GetByIdAsync(request.ServiceRequestId, customerId);
-                return Ok(new ApiResponse<ServiceRequestDto>(200,"Updated Successfully", result));
+                return Ok(new ApiResponse<ServiceRequestDto>(200, "Updated Successfully", result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/complete")]
+        public async Task<IActionResult> MarkAsCompleted(int id)
+        {
+            try
+            {
+                var customerClaim = User.FindFirst("NameIdentifier")?.Value;
+                if (string.IsNullOrEmpty(customerClaim) || !int.TryParse(customerClaim, out var customerId))
+                    return Unauthorized(new { message = "Customer ID not found in token" });
+                var success = await _service.ChangeStatusAsync(id, ServiceRequestStatus.Completed);
+                if (!success)
+                    return NotFound(new { message = "Service request not found or could not be marked as completed" });
+                return NoContent();
             }
             catch (Exception ex)
             {

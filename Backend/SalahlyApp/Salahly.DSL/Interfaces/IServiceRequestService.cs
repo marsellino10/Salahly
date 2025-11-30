@@ -14,7 +14,7 @@ namespace Salahly.DSL.Interfaces
         Task<ServiceRequestDto?> GetByIdAsync(int id, int customerId);
         Task<IEnumerable<ServiceRequestDto>> GetAllByCustomerAsync(int customerId);
         Task<bool> DeleteAsync(int id, int customerId);
-        Task ChangeStatusAsync(int id, ServiceRequestStatus status);
+        Task<bool> ChangeStatusAsync(int id, ServiceRequestStatus status);
 
         Task<ServiceRequestResponseDto> UpdateAsync(int id, UpdateServiceRequestDto dto, int customerId);
         Task<ServiceResponse<IEnumerable<ServiceRequestDto>>> GetAvailableOpportunitiesAsync(int craftsmanId);

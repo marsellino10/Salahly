@@ -8,6 +8,7 @@ namespace Salahly.DSL.Interfaces
 {
     public interface ICraftsManService
     {
+        Task AddBalance(int craftsmanId, decimal amount);
         Task<IEnumerable<CraftsmanDto>> GetAllAsync();
         Task<CraftsmanDto?> GetByIdAsync(int id);
         Task<CraftsmanDto> CreateAsync(CreateCraftsmanDto dto);
