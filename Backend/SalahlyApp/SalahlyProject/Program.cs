@@ -316,7 +316,7 @@ namespace SalahlyProject
             // ========================================
             var app = builder.Build();
 
-            // ✅ SEED DATABASE (Commented out - uncomment when needed)
+            // ✅ SEED DATABASE (SQL Seeder)
             //using (var scope = app.Services.CreateScope())
             //{
             //    var services = scope.ServiceProvider;
@@ -326,9 +326,16 @@ namespace SalahlyProject
             //        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             //        var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-            //        Console.WriteLine("🌱 Starting database seeding...");
-            //        await DbSeeder.SeedAsync(context, userManager, roleManager);
-            //        Console.WriteLine("✅ Database seeding completed!");
+            //        Console.WriteLine("🌱 Starting SQL data seeding...");
+
+            //        var strategy = context.Database.CreateExecutionStrategy();
+            //        await strategy.ExecuteAsync(async () =>
+            //        {
+            //            // DON'T start a transaction here if SqlDataSeeder already uses one internally
+            //            await Salahly.DAL.Data.SqlDataSeeder.SeedAsync(context, userManager, roleManager);
+            //        });
+
+            //        Console.WriteLine("✅ SQL data seeding completed!");
             //    }
             //    catch (Exception ex)
             //    {

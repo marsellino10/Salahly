@@ -9,7 +9,7 @@
 
     <div class="modal-body">
       <div class="modal-image">
-        <img [src]="item?.imageUrl || 'https://via.placeholder.com/900x600?text=Portfolio+Item'" [alt]="item?.title || 'Portfolio item'" />
+        <img  [src]="item?.imageUrl || 'https://via.placeholder.com/900x600?text=Portfolio+Item'" [alt]="item?.title || 'Portfolio item'"  width="400px" height="300px"/>
       </div>
       <div class="modal-description">
         <h3>Project Description</h3>
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <section class="modal-reviews">
+    <!-- <section class="modal-reviews">
       <div class="section-header">
         <h3>Reviews referencing this technician</h3>
         <span class="badge">{{ reviews.length }}</span>
@@ -43,6 +43,6 @@
       <ng-template #noProjectReviews>
         <p class="reviews-empty">No reviews mention this project yet.</p>
       </ng-template>
-    </section>
+    </section> -->
   </div>
 </div>

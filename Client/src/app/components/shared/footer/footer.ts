@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-footer',
@@ -9,6 +9,8 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './footer.css',
 })
 export class Footer {
+  private readonly translate: TranslateService = inject(TranslateService);
+logoSrc: string = './assets/images/logoEN.jpeg';
 quickLinks = [
     { label: 'Footer.Home', path: '/' },
     { label: 'Footer.Browse Technicals', path: '/browse' },
@@ -30,4 +32,15 @@ quickLinks = [
     { icon: 'bi bi-envelope', text: 'info@salahly.org' },
     { icon: 'bi bi-geo-alt', text: 'Footer.Cairo, Egypt' },
   ];
+ngOnInit(): void {
+    this.setLogo(this.translate.currentLang);
+    this.translate.onLangChange.subscribe(event => {
+      this.setLogo(event.lang);
+    });
+  }
+  setLogo(lang: string) {
+    this.logoSrc = lang === 'ar' 
+      ? './assets/images/logoAR.png' 
+      : './assets/images/logoEN.jpeg';
+  }
 }

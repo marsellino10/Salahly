@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateSelect } from '../../shared/translate-select/translate-select';
 import { TechnicianService } from '../../../core/services/technician-service';
 import { AuthService } from '../../../core/services/auth-service';
@@ -14,6 +14,7 @@ import { NotificationService } from '../../../core/services/notification-service
   styleUrl: './technician-nav-bar.css',
 })
 export class TechnicianNavBar implements OnInit {
+  logoSrc: string = './assets/images/logoEN.jpeg';
   mobileMenuOpen = false;
   userMenuOpen = false;
   notifications: any[] = [];
@@ -29,10 +30,15 @@ export class TechnicianNavBar implements OnInit {
     private elementRef: ElementRef<HTMLElement>,
     private technicianService: TechnicianService,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.setLogo(this.translate.currentLang);
+    this.translate.onLangChange.subscribe(event => {
+      this.setLogo(event.lang);
+    });
     this.loadUserProfile();
     const token = this.authService.getToken();
         // Start SignalR
@@ -147,5 +153,10 @@ openNotification(n: any) {
         this.user.name = fallbackName;
       },
     });
+  }
+  setLogo(lang: string) {
+    this.logoSrc = lang === 'ar' 
+      ? './assets/images/logoAR.png' 
+      : './assets/images/logoEN.jpeg';
   }
 }

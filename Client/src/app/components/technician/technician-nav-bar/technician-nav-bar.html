@@ -3,8 +3,9 @@
     <div class="d-flex justify-content-between align-items-center w-100">
       <!-- Logo -->
       <a [routerLink]="['/home']" class="d-flex align-items-center gap-2 text-decoration-none">
-        <img src="./favicon.png" width="48" height="48" alt="Salahly logo">
-        <span class="text-secondary fs-3 fst-italic">{{ 'BlankNavBar.Salahly' | translate }}</span>
+        <!-- <img src="./favicon.png" width="48" height="48" alt="Salahly logo"> -->
+        <img [src]="logoSrc"  height="50" alt="Salahly logo" />
+        <!-- <span class="text-secondary fs-3 fst-italic">{{ 'BlankNavBar.Salahly' | translate }}</span> -->
       </a>
 
       <!-- Desktop Navigation -->
