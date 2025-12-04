@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
 import {
   CraftsmanOffersService,
   CreateCraftsmanOfferPayload,
@@ -19,7 +21,7 @@ type OpportunitySort = 'latest' | 'budget' | 'closingSoon';
 @Component({
   selector: 'app-browse-opportunities',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, CarouselModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, CarouselModule],
   templateUrl: './browse-opportunities.html',
   styleUrl: './browse-opportunities.css',
 })

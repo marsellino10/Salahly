@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { technicianAuthGuard } from './core/guards/technician-auth.guard';
 import { customerAuthGuard } from './core/guards/customer-auth.guard';
 import { adminAuthGuard } from './core/guards/admin-auth-guard';
+import { customerOrTechnicianGuard } from './core/guards/customer-or-technician.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'index', pathMatch: 'full' },
@@ -60,14 +61,15 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/customer/show-services-requested/show-services-requested').then(c => c.ShowServicesRequested),
       },
       {
-        path: 'service-request-details/:id',
-        loadComponent: () => import('./pages/customer/service-request-details/service-request-details').then(c => c.ServiceRequestDetails),
-      },
-      {
         path: 'service-request-form',
         loadComponent: () => import('./pages/customer/service-request-form/service-request-form').then(c => c.ServiceRequestForm),
       }
     ],
+  },
+  {
+    path: 'service-request-details/:id',
+    loadComponent: () => import('./pages/customer/service-request-details/service-request-details').then(c => c.ServiceRequestDetails),
+    canActivate: [customerOrTechnicianGuard],
   },
   {
     path:'',

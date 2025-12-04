@@ -190,18 +190,30 @@
                 </div>
 
                 @if(!hasSubmittedOffer(opportunity)){
-                  <div class="d-flex flex-column">
-                    <div class="card-actions">
-                    <button class="btn btn-ghost" type="button">
-                      <i class="fa-regular fa-heart"></i>
-                      {{ 'BrowseOpportunities.Cards.Actions.Save' | translate }}
-                    </button>
-                    <button class="btn btn-primary" type="button" [disabled]="!craftsman()?.isVerified" (click)="openOfferModal(opportunity)">
-                      <i class="fa-solid fa-circle-plus"></i>
-                      {{ 'BrowseOpportunities.Cards.Actions.AddOffer' | translate }}
-                    </button>
-                  </div>
-                  <span class="text-danger">{{'BrowseOpportunities.Cards.Actions.Verify' | translate}}</span>
+                  <div class="card-cta-group">
+                    <div class="card-actions primary-actions">
+                      <button class="btn btn-ghost" type="button">
+                        <i class="fa-regular fa-heart"></i>
+                        {{ 'BrowseOpportunities.Cards.Actions.Save' | translate }}
+                      </button>
+                      <button class="btn btn-primary" type="button" [disabled]="!craftsman()?.isVerified" (click)="openOfferModal(opportunity)">
+                        <i class="fa-solid fa-circle-plus"></i>
+                        {{ 'BrowseOpportunities.Cards.Actions.AddOffer' | translate }}
+                      </button>
+                    </div>
+                    <div class="cta-links">
+                      <button
+                        type="button"
+                        [routerLink]="['/service-request-details', opportunity.serviceRequestId]"
+                        class="ghost-btn secondary-link view-details-btn"
+                      >
+                        <i class="bi bi-arrow-up-right"></i>
+                        {{ 'BrowseOpportunities.ViewDetails' | translate }}
+                      </button>
+                      <small class="verify-hint text-danger" *ngIf="!craftsman()?.isVerified">
+                        {{'BrowseOpportunities.Cards.Actions.Verify' | translate}}
+                      </small>
+                    </div>
                   </div>
                 }@else{
                   <div class="card-actions submitted" *ngIf="getMyOffer(opportunity.serviceRequestId) as myOffer">
