@@ -25,7 +25,8 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.City, src => src.City)
                 .Map(dest => dest.Area, src => src.Area)
                 .Map(dest => dest.DateOfBirth, src => src.DateOfBirth)
-                .Map(dest => dest.ProfileImageUrl, src => src.User.ProfileImageUrl);
+                .Map(dest => dest.ProfileImageUrl, src => src.User.ProfileImageUrl)
+                .IgnoreNullValues(true);
         }
     }
 }

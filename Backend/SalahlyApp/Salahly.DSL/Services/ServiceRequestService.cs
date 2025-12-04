@@ -111,6 +111,7 @@ namespace Salahly.DSL.Services
             if (dto.AvailableToDate != default(DateTime))
                 request.AvailableToDate = dto.AvailableToDate;
             if (dto.CustomerBudget.HasValue) request.CustomerBudget = dto.CustomerBudget.Value;
+            if(!string.IsNullOrEmpty(dto.PaymentMethod)) request.PaymentMethod = dto.PaymentMethod;
 
             request.UpdatedAt = DateTime.UtcNow;
 

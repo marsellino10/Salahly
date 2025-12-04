@@ -65,7 +65,7 @@ export class ServiceRequestDetails implements OnInit {
   isTechnician = false;
   canCompleteRequest = false;
   showAddress = false;
-
+  readonly paymentMethods = ["Card","Wallet","Cash"]
   readonly editForm = this._fb.nonNullable.group({
     title: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(80)]],
     description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(800)]],
@@ -73,6 +73,7 @@ export class ServiceRequestDetails implements OnInit {
     availableToDate: ['', Validators.required],
     address: ['', [Validators.required, Validators.maxLength(160)]],
     customerBudget: [null as number | null, [Validators.min(0)]],
+    paymentMethod: ['', Validators.required],
   });
 
   readonly lifecycleSteps: TimelineStep[] = [
@@ -103,9 +104,7 @@ export class ServiceRequestDetails implements OnInit {
       {
         icon: 'bi-geo-alt',
         labelKey: 'ServiceRequestDetails.Meta.Location',
-        value: this.showAddress && current.address
-          ? current.address
-          : `${current.city || this._translate.instant('ServiceRequestDetails.Meta.CityFallback')}, ${
+        value: `${current.city || this._translate.instant('ServiceRequestDetails.Meta.CityFallback')}, ${
               current.area || this._translate.instant('ServiceRequestDetails.Meta.AreaFallback')
             }`,
       },
@@ -225,9 +224,10 @@ export class ServiceRequestDetails implements OnInit {
 
     this._offersService.acceptOffer(offer.craftsmanOfferId).subscribe({
       next: (response: any) => {
-        window.open(response.data.paymentLink, '_blank');
+        window.open(response.data.paymentLink, '_target');
         this.setActionBanner('success', response.message ?? this._translate.instant('ServiceRequestDetails.Messages.AcceptSuccess'));
         this.resetOfferActionState();
+        this.canCompleteRequest = true;
       },
       error: (error) => {
         this.setActionBanner('error', this.extractErrorMessage(error));
@@ -515,23 +515,20 @@ export class ServiceRequestDetails implements OnInit {
       this.showAddress = false;
       return;
     }
-
-    this._httpClient.get<any>('/api/craftsman/service-requests/offers').subscribe({
-      next: (response) => {
-        const payload = response?.data ?? response ?? [];
-        const offers = Array.isArray(payload) ? payload : [];
-        const acceptedOffer = offers.find(
+    
+    const acceptedOffer = this.offers().find(
           (offer: any) =>
             offer?.serviceRequestId === current.serviceRequestId &&
-            (offer?.status === 'OfferAccepted' || offer?.status === 2 || offer?.status === 'Accepted'),
+            (offer?.status === 'OfferAccepted' || offer?.status === 1 || offer?.status === 'Accepted'),
         );
-
-        this.showAddress = !!acceptedOffer;
-      },
-      error: () => {
-        this.showAddress = false;
-      },
-    });
+    console.log(acceptedOffer);
+    console.log("Offers",this.offers());
+    if(acceptedOffer){
+      this.showAddress = true;
+    }else{
+      this.showAddress = false;
+    }
+    
   }
 
   private setActionBanner(type: 'success' | 'error', message: string): void {
@@ -582,6 +579,7 @@ export class ServiceRequestDetails implements OnInit {
       availableToDate: this.toDateInputValue(request.availableToDate),
       address: request.address,
       customerBudget: request.customerBudget ?? null,
+      paymentMethod: request.paymentMethod?? "",
     });
   }
 
@@ -593,6 +591,7 @@ export class ServiceRequestDetails implements OnInit {
       address: raw.address?.trim(),
       availableFromDate: raw.availableFromDate ? new Date(raw.availableFromDate).toISOString() : undefined,
       availableToDate: raw.availableToDate ? new Date(raw.availableToDate).toISOString() : undefined,
+      paymentMethod: raw.paymentMethod?.trim(),
     };
 
     if (raw.customerBudget !== null && raw.customerBudget !== undefined) {

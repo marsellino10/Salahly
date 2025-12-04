@@ -106,7 +106,8 @@
                             await _offerService.ReserveOfferAsync(offer.CraftsmanOfferId);
                             await _offerService.RejectOtherOffersAsync(
                                 offer.ServiceRequestId, offerId, customerId);
-
+                            serviceRequest.Status = ServiceRequestStatus.OfferAccepted;
+                            //await _unitOfWork.ServiceRequests.UpdateAsync(serviceRequest);
                             // ========== Step 6: Create Payment Record ==========
                             var strategy = _paymentStrategyFactory.GetStrategy(paymentMethod);
                             var payment = await _paymentService.CreatePaymentRecordAsync(

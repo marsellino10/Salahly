@@ -98,7 +98,10 @@
                 <span class="chip" [class]="getRequestStatusClass(record.request?.status)">
                   {{ getRequestStatusLabel(record.request?.status) }}
                 </span>
-                <h3>{{ getRequestTitle(record.request) }}</h3>
+                <a class="text-black" [routerLink]="['/service-request-details', record.request?.serviceRequestId]">
+                  <h3>{{ getRequestTitle(record.request) }} </h3>
+                  <!-- <i class="fa-solid fa-arrow-right"></i> -->
+                </a>
                 <p>{{ record.request?.description ?? 'The service request details are no longer available.' }}</p>
               </div>
               <div class="offer-status-block">

@@ -18,7 +18,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule],
   templateUrl: './service-request-form.html',
   styleUrl: './service-request-form.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class ServiceRequestForm implements OnInit {
   private readonly _fb = inject(FormBuilder);
@@ -61,7 +61,11 @@ export class ServiceRequestForm implements OnInit {
     paymentMethod: ['', Validators.required],
   });
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.loadBaseData();
+  }
+
+  loadBaseData() {
     this.loadCrafts();
     this.loadAreas();
   }
@@ -108,19 +112,19 @@ export class ServiceRequestForm implements OnInit {
   }
 
   loadCrafts(): void {
-    this.isLoadingCrafts = true;
-    this.craftsError = null;
+    if (this.crafts.length > 0) return;
 
-    this._craftService.GetAllCrafts().subscribe({
-      next: (response) => {
-        this.crafts = response?.data ?? [];
-        this.isLoadingCrafts = false;
-      },
-      error: (error) => {
-        this.isLoadingCrafts = false;
-        this.craftsError = this.extractErrorMessage(error);
-      },
-    });
+  this.isLoadingCrafts = true;
+
+  this._craftService.GetAllCrafts().subscribe({
+    next: res => {
+      this.crafts = res.data ?? [];
+      this.isLoadingCrafts = false;
+    },
+    error: err => {
+      this.isLoadingCrafts = false;
+    }
+  });
   }
 
   loadAreas(): void {

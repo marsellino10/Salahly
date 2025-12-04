@@ -64,9 +64,13 @@
       <div class="field-grid two-col">
         <label class="input-shell" [class.invalid]="fieldInvalid('craftId')">
           <span>{{ 'ServiceRequestForm.Fields.CraftLabel' | translate }}</span>
-          <select formControlName="craftId" [disabled]="isLoadingCrafts">
-            <option value="" disabled selected>{{ 'ServiceRequestForm.Fields.CraftPlaceholder' | translate }}</option>
-            <option *ngFor="let craft of crafts" [value]="craft.id">{{ craft.name }}</option>
+          <select formControlName="craftId">
+            <option [ngValue]="null" disabled>
+              {{ 'ServiceRequestForm.Fields.AreaPlaceholder' | translate }} 
+            </option>
+            @for (craft of crafts; track $index) {
+              <option [value]="craft.id">{{ craft.name }}</option>
+            }
           </select>
           <small class="muted" *ngIf="isLoadingCrafts">{{ 'ServiceRequestForm.Loading.Crafts' | translate }}</small>
           <small class="error-text" *ngIf="craftsError">{{ craftsError }}</small>
@@ -112,7 +116,7 @@
         <label class="input-shell" [class.invalid]="fieldInvalid('areaId')">
           <span>{{ 'ServiceRequestForm.Fields.AreaLabel' | translate }}</span>
           <select formControlName="areaId" [disabled]="isLoadingAreas">
-            <option value="" disabled selected>{{ 'ServiceRequestForm.Fields.AreaPlaceholder' | translate }}</option>
+            <option [ngValue]="null" disabled>{{ 'ServiceRequestForm.Fields.AreaPlaceholder' | translate }}</option>
             <option *ngFor="let area of areas" [value]="area.id">
               {{ area.city }} • {{ area.region }}
             </option>
@@ -143,7 +147,7 @@
         <small class="error-text" *ngIf="fieldInvalid('address')">{{ 'ServiceRequestForm.Errors.AddressRequired' | translate }}</small>
       </label>
 
-      <div class="field-grid two-col">
+      <!-- <div class="field-grid two-col">
         <label class="input-shell">
           <span>{{ 'ServiceRequestForm.Fields.LatitudeLabel' | translate }}</span>
           <input type="number" step="0.0001" formControlName="latitude" [placeholder]="'ServiceRequestForm.Fields.LatitudePlaceholder' | translate" />
@@ -152,7 +156,7 @@
           <span>{{ 'ServiceRequestForm.Fields.LongitudeLabel' | translate }}</span>
           <input type="number" step="0.0001" formControlName="longitude" [placeholder]="'ServiceRequestForm.Fields.LongitudePlaceholder' | translate" />
         </label>
-      </div>
+      </div> -->
     </section>
 
     <section class="form-section">

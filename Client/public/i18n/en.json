@@ -24,6 +24,7 @@
   "TechnicianNav": {
     "Profile": "Profile",
     "Portfolio": "Portfolio",
+    "OffersHistory": "Offers History",
     "Logout": "Logout"
   },
   "CustomerNav": {
@@ -692,7 +693,8 @@
       "BudgetUnknown": "—",
       "Offers": "Offers",
       "CreatedLabel": "Created",
-      "ExpiresLabel": "Expires"
+      "ExpiresLabel": "Expires",
+      "AddressLabel": "Address"
     },
     "Buttons": {
       "Retry": "Try again",

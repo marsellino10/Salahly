@@ -24,6 +24,7 @@
   "TechnicianNav":{
     "Profile": "الملف الشخصي",
     "Portfolio": "معرض الأعمال",
+    "OffersHistory": "تاريخ العروض",
     "Logout": "تسجيل الخروج"
   },
   "CustomerNav":{
@@ -694,7 +695,8 @@
       "BudgetUnknown": "—",
       "Offers": "العروض",
       "CreatedLabel": "تم الإنشاء",
-      "ExpiresLabel": "ينتهي"
+      "ExpiresLabel": "ينتهي",
+      "AddressLabel": "العنوان"
     },
     "Buttons": {
       "Retry": "أعد المحاولة",

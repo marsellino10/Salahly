@@ -36,7 +36,8 @@ namespace Salahly.DSL.Services
             if (id != currentCustomerId)
                 return null;
 
-            var customer = await _unitOfWork.Customers.GetByIdAsync(id);
+            var customer = await _unitOfWork.Customers.GetAll()
+                .Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
             if (customer == null)
                 return null;
 

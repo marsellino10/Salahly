@@ -4,6 +4,7 @@ import { forkJoin } from 'rxjs';
 import { CraftsmanOfferDto, CraftsmanOffersService, CraftsmanOfferStatus } from '../../../core/services/craftsman-offers.service';
 import { CraftsmanServiceRequestService } from '../../../core/services/craftsman-service-request.service';
 import { ServiceRequestDto, ServiceRequestStatus } from '../../../core/services/services-requests.service';
+import { RouterLink } from "@angular/router";
 
 type OfferHistoryRecord = {
   offer: CraftsmanOfferDto;
@@ -13,7 +14,7 @@ type OfferHistoryRecord = {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './history.html',
   styleUrl: './history.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

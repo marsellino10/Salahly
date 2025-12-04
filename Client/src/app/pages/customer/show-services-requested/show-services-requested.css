@@ -306,7 +306,7 @@
   .skeleton-grid {
     color: #fff;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 0.32fr));
     gap: 1.25rem;
   }
 

@@ -77,11 +77,16 @@
                 </div>
               </article>
             </div>
-
-            <div class="address-section" *ngIf="showAddress">
-              <label>{{ 'ServiceRequestDetails.Meta.AddressLabel' | translate }}</label>
-              <p>{{ request()?.address }}</p>
+            <div class="meta-grid mt-3">
+              <article class="meta-card" >
+                <i class="bi bi-geo-alt"></i>
+                <div class="" *ngIf="showAddress">
+                  <p class="label">{{ 'ServiceRequestDetails.Meta.AddressLabel' | translate }}</p>
+                  <p class="value">{{ request()?.address }}</p>
+                </div>
+              </article>
             </div>
+            
 
             <div class="timestamp-row">
               <span>
@@ -312,6 +317,12 @@
               <label class="input-shell">
                 <span>{{ 'ServiceRequestDetails.Edit.Fields.Budget' | translate }}</span>
                 <input type="number" min="0" step="10" formControlName="customerBudget" />
+              </label>
+              <label class="input-shell">
+                <span>{{ 'ShowRequests.Edit.Fields.paymentMethod' | translate }}</span>
+                <select formControlName="paymentMethod">
+                  <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+                </select>
               </label>
             </div>
 

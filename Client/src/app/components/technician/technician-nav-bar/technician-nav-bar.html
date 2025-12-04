@@ -81,6 +81,11 @@
                 <i class="fa-solid fa-briefcase"></i>
                 <span>{{ 'TechnicianNav.Portfolio' | translate }}</span>
               </button>
+              <button class="dropdown-item" (click)="navigate('/history')">
+                <!-- <i class="fa-regular fa-briefcase"></i> -->
+                <i class="fa-solid fa-list-check"></i>
+                <span>{{ 'TechnicianNav.OffersHistory' | translate }}</span>
+              </button>
               <button class="dropdown-item text-danger" (click)="logout()">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 <span>{{ 'TechnicianNav.Logout' | translate }}</span>
@@ -133,6 +138,10 @@
           <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigate('/portfolio')">
             <i class="fa-solid fa-briefcase"></i>
             <span>{{ 'TechnicianNav.Portfolio' | translate }}</span>
+          </button>
+          <button class="btn btn-light w-100 text-start d-flex align-items-center gap-2 mb-2" (click)="navigate('/history')">
+            <i class="fa-solid fa-list-check"></i>
+            <span>{{ 'TechnicianNav.OffersHistory' | translate }}</span>
           </button>
           <button class="btn btn-outline-danger w-100 d-flex align-items-center gap-2" (click)="logout()">
             <i class="fa-solid fa-arrow-right-from-bracket"></i>
