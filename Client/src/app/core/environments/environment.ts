@@ -11,7 +11,7 @@ interface SalahlyEnvironment {
 }
 
 export const environment: SalahlyEnvironment = {
-  baseApi: "http://localhost:5049/api/",
+  baseApi: "http://salahly.runasp.net/api/",
   production: false,
   fireworks: {
     baseUrl: 'https://api.fireworks.ai/inference/v1',
