@@ -65,16 +65,19 @@ namespace Salahly.DSL.Interfaces
             int bookingId,
             int userId);
 
-        /// <summary>
-        /// Get all bookings for customer
-        /// </summary>
-        Task<ServiceResponse<IEnumerable<BookingDto>>> GetCustomerBookingsAsync(
-            int customerId);
 
         /// <summary>
-        /// Get all bookings for craftsman
+        /// Get all bookings for user (craftsman, customer)
         /// </summary>
-        Task<ServiceResponse<IEnumerable<BookingDto>>> GetCraftsmanBookingsAsync(
-            int craftsmanId);
+        Task<ServiceResponse<IEnumerable<BookingWithServiceRequestDto>>> GetBookingsAsync(
+            int Id);
+
+        /// <summary>
+        /// Get booking details together with the linked service request and customer contact
+        /// Only returns data when the service request status is OfferAccepted
+        /// </summary>
+        Task<ServiceResponse<BookingWithServiceRequestDto>> GetBookingWithServiceRequestDetailsAsync(
+            int bookingId,
+            int userId);
     }
 }

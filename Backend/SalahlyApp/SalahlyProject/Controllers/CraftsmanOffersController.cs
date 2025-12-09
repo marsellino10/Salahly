@@ -62,5 +62,14 @@ namespace Salahly.API.Controllers.Craftsman
             var result = await _offerService.WithdrawOfferAsync(craftsmanId, offerId);
             return result.Success ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("{serviceRequestId:int}/offer")]
+        public async Task<ActionResult<ServiceResponse<OfferDto>>> GetOfferForServiceRequest(int serviceRequestId)
+        {
+            var craftsmanId = GetCraftsmanIdFromToken();
+            if (craftsmanId == 0)
+                return Unauthorized(new { Success = false, Message = "Invalid craftsman credentials ." });
+            var result = await _offerService.GetOfferForServiceRequestAsync(craftsmanId, serviceRequestId);
+            return result.Success ? Ok(result) : NotFound(result);
+        }
     }
 }

@@ -77,15 +77,16 @@
                 </div>
               </article>
             </div>
-            <div class="meta-grid mt-3">
+            <div class="meta-grid mt-3" *ngIf="showAddressAndPhoneNumber">
               <article class="meta-card" >
                 <i class="bi bi-geo-alt"></i>
-                <div class="" *ngIf="showAddress">
+                <div class="">
                   <p class="label">{{ 'ServiceRequestDetails.Meta.AddressLabel' | translate }}</p>
                   <p class="value">{{ request()?.address }}</p>
                 </div>
               </article>
             </div>
+            
             
 
             <div class="timestamp-row">
@@ -132,6 +133,17 @@
                 </div>
               }
             </div>
+            
+            <div class="meta-grid " style="margin-top: 2.3rem;" *ngIf="showAddressAndPhoneNumber">
+              <article class="meta-card" >
+                <i class="bi bi-telephone"></i>
+                <div class="" >
+                  <p class="label">{{ 'ServiceRequestDetails.Meta.PhoneNumberLabel' | translate }}</p>
+                  <a href="https://wa.me/{{ request()?.customerPhoneNumber }}" class="value" >{{ request()?.customerPhoneNumber }}</a>
+                </div>
+              </article>
+            </div>
+
           </div>
         </div>
       </ng-container>

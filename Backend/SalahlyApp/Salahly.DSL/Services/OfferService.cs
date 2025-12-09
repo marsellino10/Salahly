@@ -350,6 +350,30 @@ namespace Salahly.DSL.Services
                     .FailureResponse($"Error withdrawing offer: {ex.Message}");
             }
         }
+        public async Task<ServiceResponse<OfferDto>> GetOfferForServiceRequestAsync(int craftsmanId, int serviceRequestId)
+        {
+            try
+            {
+                var offer = await _unitOfWork.CraftsmanOffers
+                    .GetOfferForServiceRequestAsync(craftsmanId, serviceRequestId);
+
+                if (offer == null)
+                {
+                    _logger.LogWarning($"Service Request {serviceRequestId} not found for craftsman {craftsmanId}");
+                    return ServiceResponse<OfferDto>
+                        .FailureResponse("Offer not found or inaccessible.");
+                }
+
+                var dto = offer.Adapt<OfferDto>();
+                return ServiceResponse<OfferDto>.SuccessResponse(dto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving Service Request {serviceRequestId} for craftsman {craftsmanId}");
+                return ServiceResponse<OfferDto>
+                    .FailureResponse($"Error retrieving offer: {ex.Message}");
+            }
+        }
 
         // =====================================================================
         // ===== ORCHESTRATOR HELPER METHODS (Internal Use) =====

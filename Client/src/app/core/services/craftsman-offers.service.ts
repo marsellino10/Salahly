@@ -57,6 +57,10 @@ export class CraftsmanOffersService {
     const url = `${this.baseUrl}/${offerId}`;
     return this._httpClient.get<ServiceResponse<CraftsmanOfferDto>>(url);
   }
+  getOfferByServiceRequestId(serviceRequestId: number): Observable<ServiceResponse<CraftsmanOfferDto>> {
+    const url = `${this.baseUrl}/${serviceRequestId}/offer`;
+    return this._httpClient.get<ServiceResponse<CraftsmanOfferDto>>(url);
+  }
 
   withdrawOffer(offerId: number): Observable<ServiceResponse<boolean>> {
     const url = `${this.baseUrl}/${offerId}/withdraw`;

@@ -37,6 +37,7 @@ export interface ServiceRequestDto {
   customerName?: string | null;
   images?: string[] | null;
   paymentMethod?: string | null;
+  customerPhoneNumber?: string | null;
 }
 
 export interface ServiceRequestResponseDto extends ServiceRequestDto {

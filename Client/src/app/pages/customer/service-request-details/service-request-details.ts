@@ -14,6 +14,7 @@ import { AuthService } from '../../../core/services/auth-service';
 import { CraftsmanServiceRequestService } from '../../../core/services/craftsman-service-request.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
+import { CraftsmanOffersService } from '../../../core/services/craftsman-offers.service';
 
 type TimelineStep = {
   key: ServiceRequestStatus | 'HasOffers';
@@ -37,6 +38,7 @@ export class ServiceRequestDetails implements OnInit {
   private readonly _authService = inject(AuthService);
   private readonly _httpClient = inject(HttpClient);
   private readonly _craftsmanRequestService = inject(CraftsmanServiceRequestService);
+  private readonly _craftsmanOffers = inject(CraftsmanOffersService);
 
   private requestId: number | null = null;
   readonly OfferStatusEnum = OfferStatus;
@@ -64,7 +66,7 @@ export class ServiceRequestDetails implements OnInit {
   isCustomer = false;
   isTechnician = false;
   canCompleteRequest = false;
-  showAddress = false;
+  showAddressAndPhoneNumber = false;
   readonly paymentMethods = ["Card","Wallet","Cash"]
   readonly editForm = this._fb.nonNullable.group({
     title: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(80)]],
@@ -476,7 +478,7 @@ export class ServiceRequestDetails implements OnInit {
           const normalizedStatus = typeof status === 'string' ? status : undefined;
           const numericStatus = typeof status === 'number' ? status : undefined;
           this.canCompleteRequest = normalizedStatus === 'OfferAccepted' || numericStatus === 2;
-          this.showAddress = true;
+          this.showAddressAndPhoneNumber = true;
           if (this.editModalOpen()) {
             this.populateEditForm(current);
           }
@@ -512,23 +514,17 @@ export class ServiceRequestDetails implements OnInit {
   private checkTechnicianOfferStatus(): void {
     const current = this.request();
     if (!current?.serviceRequestId) {
-      this.showAddress = false;
+      this.showAddressAndPhoneNumber = false;
       return;
     }
-    
-    const acceptedOffer = this.offers().find(
-          (offer: any) =>
-            offer?.serviceRequestId === current.serviceRequestId &&
-            (offer?.status === 'OfferAccepted' || offer?.status === 1 || offer?.status === 'Accepted'),
-        );
-    console.log(acceptedOffer);
-    console.log("Offers",this.offers());
-    if(acceptedOffer){
-      this.showAddress = true;
+    this._craftsmanOffers.getOfferByServiceRequestId(current.serviceRequestId).subscribe((response) => {
+      console.log("accepted", response.data);
+      if(response.data.status === 'OfferAccepted' || response.data.status === 1 || response.data.status === 'Accepted'){
+      this.showAddressAndPhoneNumber = true;
     }else{
-      this.showAddress = false;
+      this.showAddressAndPhoneNumber = false;
     }
-    
+    });    
   }
 
   private setActionBanner(type: 'success' | 'error', message: string): void {

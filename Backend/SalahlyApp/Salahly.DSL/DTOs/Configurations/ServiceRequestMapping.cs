@@ -35,6 +35,7 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.City, src => src.AreaData != null ? src.AreaData.City : null)
                 .Map(dest => dest.Area, src => src.AreaData != null ? src.AreaData.Region : null)
                 .Map(dest => dest.CustomerName, src => src.Customer != null && src.Customer.User != null ? src.Customer.User.FullName : null)
+                .Map(dest => dest.CustomerPhoneNumber, src => src.Customer != null && src.Customer.User != null ? src.Customer.PhoneNumber : null)
                 .Map(dest => dest.Images, src => ParseImages(src.ImagesJson));
         }
 

@@ -696,7 +696,8 @@
       "Offers": "العروض",
       "CreatedLabel": "تم الإنشاء",
       "ExpiresLabel": "ينتهي",
-      "AddressLabel": "العنوان"
+      "AddressLabel": "العنوان",
+      "PhoneNumberLabel": "رقم الهاتف"
     },
     "Buttons": {
       "Retry": "أعد المحاولة",

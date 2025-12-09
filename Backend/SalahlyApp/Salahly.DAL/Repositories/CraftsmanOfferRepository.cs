@@ -81,6 +81,11 @@ namespace Salahly.DAL.Repositories
                 return null;
             }
         }
+        public async Task<CraftsmanOffer?> GetOfferForServiceRequestAsync(int craftsmanId, int serviceRequestId)
+        {
+            return await _context.CraftsmanOffers
+                .FirstOrDefaultAsync(o => o.CraftsmanId == craftsmanId && o.ServiceRequestId == serviceRequestId);
+        }
 
         public async Task<CraftsmanOffer?> GetByIdWithServiceRequestAsync(int id)
         {

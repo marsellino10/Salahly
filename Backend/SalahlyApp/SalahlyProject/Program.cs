@@ -183,6 +183,8 @@ namespace SalahlyProject
             // SignalR & Notifications
             builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
             builder.Services.AddSignalR();
+            // Booking chat hub
+            builder.Services.AddScoped<BookingChatHub>();
             builder.Services.AddScoped<INotificationHubSender, NotificationHubSender>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
 
@@ -379,6 +381,7 @@ namespace SalahlyProject
             // Map controllers and hubs
             app.MapControllers();
             app.MapHub<NotificationHub>("/notificationHub");
+            app.MapHub<BookingChatHub>("/bookingChatHub");
 
             app.Run();
         }

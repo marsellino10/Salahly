@@ -55,6 +55,13 @@ namespace Salahly.DSL.Interfaces
             int offerId);
 
         /// <summary>
+        /// Get specific offer by serviceRequestId for craftsman
+        /// </summary>
+        Task<ServiceResponse<OfferDto>> GetOfferForServiceRequestAsync(
+            int craftsmanId,
+            int serviceRequestId);
+
+        /// <summary>
         /// Withdraw an offer (by craftsman)
         /// </summary>
         Task<ServiceResponse<bool>> WithdrawOfferAsync(

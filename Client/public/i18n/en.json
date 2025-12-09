@@ -694,7 +694,8 @@
       "Offers": "Offers",
       "CreatedLabel": "Created",
       "ExpiresLabel": "Expires",
-      "AddressLabel": "Address"
+      "AddressLabel": "Address",
+      "PhoneNumberLabel": "Phone number"
     },
     "Buttons": {
       "Retry": "Try again",

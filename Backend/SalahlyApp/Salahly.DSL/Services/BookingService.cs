@@ -372,77 +372,162 @@ namespace Salahly.DSL.Services
         }
 
         /// <summary>
-        /// Get all bookings for customer
+        /// Get booking details together with linked service request and customer contact
+        /// Only returned when service request status is OfferAccepted
         /// </summary>
-        public async Task<ServiceResponse<IEnumerable<BookingDto>>> GetCustomerBookingsAsync(
-            int customerId)
+        public async Task<ServiceResponse<BookingWithServiceRequestDto>> GetBookingWithServiceRequestDetailsAsync(
+            int bookingId,
+            int userId)
         {
             try
             {
-                var allBookings = await _unitOfWork.Bookings.GetAllAsync();
-                var customerBookings = allBookings
-                    .Where(b => b.CustomerId == customerId)
-                    .OrderByDescending(b => b.CreatedAt)
-                    .ToList();
+                var query = _unitOfWork.Bookings.GetAll();
 
-                var dtos = customerBookings.Select(b => new BookingDto
+                var booking = await query
+                    .Include(b => b.ServiceRequest).ThenInclude(sr => sr.Customer).ThenInclude(c => c.User)
+                    .Include(b => b.Customer).ThenInclude(c => c.User)
+                    .Include(b => b.Craftsman).ThenInclude(cr => cr.User)
+                    .Include(b => b.Craft)
+                    .FirstOrDefaultAsync(b => b.BookingId == bookingId);
+
+                if (booking == null)
                 {
-                    BookingId = b.BookingId,
-                    CustomerId = b.CustomerId,
-                    CraftsmanId = b.CraftsmanId,
-                    CraftId = b.CraftId,
-                    BookingDate = b.BookingDate,
-                    TotalAmount = b.TotalAmount,
-                    Status = b.Status.ToString(),
-                    PaymentDeadline = b.PaymentDeadline,
-                    CreatedAt = b.CreatedAt,
-                    CancellationReason = b.CancellationReason
-                }).ToList();
+                    _logger.LogWarning($"Booking {bookingId} not found");
+                    return ServiceResponse<BookingWithServiceRequestDto>.FailureResponse("Booking not found.");
+                }
 
-                return ServiceResponse<IEnumerable<BookingDto>>.SuccessResponse(dtos);
+                // Verify access
+                if (booking.CustomerId != userId && booking.CraftsmanId != userId)
+                {
+                    _logger.LogWarning($"User {userId} attempted to access booking {bookingId} without permission");
+                    return ServiceResponse<BookingWithServiceRequestDto>.FailureResponse("You don't have access to this booking.");
+                }
+
+                var sr = booking.ServiceRequest;
+                if (sr == null)
+                {
+                    _logger.LogWarning($"Booking {bookingId} has no linked service request");
+                    return ServiceResponse<BookingWithServiceRequestDto>.FailureResponse("Linked service request not found.");
+                }
+
+                // Only return details when service request status is OfferAccepted
+                if (sr.Status != ServiceRequestStatus.OfferAccepted)
+                {
+                    _logger.LogWarning($"Service request {sr.ServiceRequestId} status is {sr.Status}; details allowed only for OfferAccepted");
+                    return ServiceResponse<BookingWithServiceRequestDto>.FailureResponse("Service request is not in accepted state.");
+                }
+
+                // Map booking DTO
+                var bookingDto = new BookingDto
+                {
+                    BookingId = booking.BookingId,
+                    BookingDate = booking.BookingDate,
+                    PaymentDeadline = booking.PaymentDeadline,
+                    Status = booking.Status.ToString(),
+                    CustomerId = booking.CustomerId,
+                    CustomerName = booking.Customer?.User?.FullName ?? booking.Customer?.User?.UserName ?? "Unknown",
+                    CustomerEmail = booking.Customer?.User?.Email,
+                    CustomerPhone = booking.Customer?.PhoneNumber ?? booking.Customer?.User?.PhoneNumber,
+                    CraftsmanId = booking.CraftsmanId,
+                    CraftsmanName = booking.Craftsman?.User?.FullName ?? booking.Craftsman?.User?.UserName ?? "Unknown",
+                    CraftsmanPhone = booking.Craftsman?.User?.PhoneNumber,
+                    CraftId = booking.CraftId,
+                    CraftName = booking.Craft?.Name,
+                    TotalAmount = booking.TotalAmount,
+                    Notes = booking.Notes,
+                    CancellationReason = booking.CancellationReason,
+                    CreatedAt = booking.CreatedAt
+                };
+
+                // Map service request DTO using Mapster
+                var serviceRequestDto = sr.Adapt<ServiceRequestDto>();
+
+                var result = new BookingWithServiceRequestDto
+                {
+                    Booking = bookingDto,
+                    ServiceRequest = serviceRequestDto,
+                    CustomerPhone = booking.Customer?.PhoneNumber ?? booking.Customer?.User?.PhoneNumber,
+                    CraftsmenCount = sr.OffersCount
+                };
+
+                return ServiceResponse<BookingWithServiceRequestDto>.SuccessResponse(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error retrieving bookings for customer {customerId}");
-                return ServiceResponse<IEnumerable<BookingDto>>
-                    .FailureResponse($"Error: {ex.Message}");
+                _logger.LogError(ex, $"Error retrieving booking details for {bookingId}");
+                return ServiceResponse<BookingWithServiceRequestDto>.FailureResponse($"Error: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Get all bookings for craftsman
+        /// Get all bookings for user (craftsman, customer)
         /// </summary>
-        public async Task<ServiceResponse<IEnumerable<BookingDto>>> GetCraftsmanBookingsAsync(
-            int craftsmanId)
+        public async Task<ServiceResponse<IEnumerable<BookingWithServiceRequestDto>>> GetBookingsAsync(int userId)
         {
             try
             {
-                var allBookings = await _unitOfWork.Bookings.GetAllAsync();
-                var craftsmanBookings = allBookings
-                    .Where(b => b.CraftsmanId == craftsmanId)
-                    .OrderByDescending(b => b.CreatedAt)
-                    .ToList();
+                var query = _unitOfWork.Bookings.GetAll();
 
-                var dtos = craftsmanBookings.Select(b => new BookingDto
+                var bookings = await query
+                    .Include(b => b.ServiceRequest).ThenInclude(sr => sr.Customer).ThenInclude(c => c.User)
+                    .Include(b => b.Customer).ThenInclude(c => c.User)
+                    .Include(b => b.Craftsman).ThenInclude(cr => cr.User)
+                    .Include(b => b.Craft)
+                    .Where(b => b.CustomerId == userId || b.CraftsmanId == userId)
+                    .OrderByDescending(b => b.CreatedAt)
+                    .ToListAsync();
+
+                if (!bookings.Any())
                 {
-                    BookingId = b.BookingId,
-                    CustomerId = b.CustomerId,
-                    CraftsmanId = b.CraftsmanId,
-                    CraftId = b.CraftId,
-                    BookingDate = b.BookingDate,
-                    TotalAmount = b.TotalAmount,
-                    Status = b.Status.ToString(),
-                    PaymentDeadline = b.PaymentDeadline,
-                    CreatedAt = b.CreatedAt,
-                    CancellationReason = b.CancellationReason
+                    _logger.LogWarning($"No bookings found for user {userId}");
+                    return ServiceResponse<IEnumerable<BookingWithServiceRequestDto>>
+                        .FailureResponse("No bookings found.");
+                }
+
+                var result = bookings.Select(b =>
+                {
+                    var sr = b.ServiceRequest;
+
+                    // Convert Booking to BookingDto
+                    var bookingDto = new BookingDto
+                    {
+                        BookingId = b.BookingId,
+                        BookingDate = b.BookingDate,
+                        PaymentDeadline = b.PaymentDeadline,
+                        Status = b.Status.ToString(),
+                        CustomerId = b.CustomerId,
+                        CustomerName = b.Customer?.User?.FullName ?? b.Customer?.User?.UserName ?? "Unknown",
+                        CustomerEmail = b.Customer?.User?.Email,
+                        CustomerPhone = b.Customer?.PhoneNumber ?? b.Customer?.User?.PhoneNumber,
+                        CraftsmanId = b.CraftsmanId,
+                        CraftsmanName = b.Craftsman?.User?.FullName ?? b.Craftsman?.User?.UserName ?? "Unknown",
+                        CraftsmanPhone = b.Craftsman?.User?.PhoneNumber,
+                        CraftId = b.CraftId,
+                        CraftName = b.Craft?.Name,
+                        TotalAmount = b.TotalAmount,
+                        Notes = b.Notes,
+                        CancellationReason = b.CancellationReason,
+                        CreatedAt = b.CreatedAt
+                    };
+
+                    // Map ServiceRequest to DTO (Mapster)
+                    var srDto = sr?.Adapt<ServiceRequestDto>();
+
+                    return new BookingWithServiceRequestDto
+                    {
+                        Booking = bookingDto,
+                        ServiceRequest = srDto,
+                        CustomerPhone = bookingDto.CustomerPhone,
+                        CraftsmenCount = sr?.OffersCount ?? 0
+                    };
                 }).ToList();
 
-                return ServiceResponse<IEnumerable<BookingDto>>.SuccessResponse(dtos);
+                return ServiceResponse<IEnumerable<BookingWithServiceRequestDto>>.SuccessResponse(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error retrieving bookings for craftsman {craftsmanId}");
-                return ServiceResponse<IEnumerable<BookingDto>>
+                _logger.LogError(ex, $"Error retrieving bookings for user {userId}");
+                return ServiceResponse<IEnumerable<BookingWithServiceRequestDto>>
                     .FailureResponse($"Error: {ex.Message}");
             }
         }
