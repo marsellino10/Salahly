@@ -13,6 +13,8 @@ export enum OfferStatus {
 
 export interface OfferDto {
   craftsmanOfferId: number;
+  craftsmanId:number | null;
+  craftsmanProfileImageUrl: string | null;
   offeredPrice: number;
   description: string;
   estimatedDurationMinutes: number;

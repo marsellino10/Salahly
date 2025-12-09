@@ -7,7 +7,11 @@
           class="provider-avatar"
           style="background-color: #6366f1"
         >
-          <span class="avatar-initials">{{ getInitials(craftsman.fullName) }}</span>
+          @if(craftsman.profileImageUrl !== null){
+            <img src="{{ craftsman.profileImageUrl }}" alt="{{ craftsman.fullName }}" class="avatar-image">
+          }@else {
+            <span class="avatar-initials">{{ getInitials(craftsman.fullName) }}</span>
+          }
         </div>
         <div class="provider-basic-info">
           <h3 class="provider-name">{{ craftsman.fullName }}</h3>

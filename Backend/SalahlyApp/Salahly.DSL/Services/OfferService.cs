@@ -48,6 +48,7 @@ namespace Salahly.DSL.Services
                 {
                     var dto = o.Adapt<OfferDto>();
                     dto.CraftsmanName = o.Craftsman?.User?.FullName ?? "Unknown";
+                    dto.craftsmanProfileImageUrl = o.Craftsman?.User?.ProfileImageUrl ?? string.Empty;
                     return dto;
                 }).ToList();
 

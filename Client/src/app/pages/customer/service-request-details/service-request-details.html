@@ -200,11 +200,25 @@
           <article class="offer-card" *ngFor="let offer of offers(); trackBy: trackByOfferId">
             <div class="offer-header">
               <div>
-                <p class="eyebrow">{{ offer.craftsmanName }}</p>
-                <h3>{{ formatBudget(offer.offeredPrice) }}</h3>
-                <p class="muted">
-                  {{ 'ServiceRequestDetails.Offers.Estimated' | translate:{ minutes: offer.estimatedDurationMinutes } }}
-                </p>
+                <div class="d-flex">
+                  @if (offer.craftsmanProfileImageUrl) {
+                    <img [src]="offer.craftsmanProfileImageUrl" alt="" class="offer-avatar">
+                  } 
+                  <!-- @else {
+                    <div class="offer-avatar">
+                      <i class="bi bi-person"></i>
+                    </div>
+                  } -->
+                  <div class="d-flex flex-column">
+                    <a class="eyebrow" style="text-decoration: none; color: var(--text-color); font-size: 1.5rem; font-weight: 500;" [routerLink]="['/technicians/', offer.craftsmanId,'profile']">{{ offer.craftsmanName }}</a>
+                    <div class="d-flex align-items-center">
+                      <h3 class="m-0">{{ formatBudget(offer.offeredPrice) }}</h3>
+                    <p class="muted my-0 mx-2">
+                      {{ 'ServiceRequestDetails.Offers.Estimated' | translate:{ minutes: offer.estimatedDurationMinutes } }}
+                    </p>
+                    </div>
+                  </div>
+                </div>
               </div>
               <span class="offer-status" [class]="getOfferStatusClass(offer.status)">
                 {{ getOfferStatusLabel(offer.status) }}

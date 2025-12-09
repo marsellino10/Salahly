@@ -404,25 +404,36 @@
 
   .offer-status.accepted {
     color: var(--chip-green-text);
+    padding: 8px;
   }
 
   .offer-status.rejected {
     background: rgba(254, 226, 226, 0.8);
     color: var(--chip-red-text);
     border-color: rgba(239, 68, 68, 0.4);
+    padding: 8px;
   }
 
   .offer-status.withdrawn,
   .offer-status.expired {
+    padding: 8px;
     background: rgba(226, 232, 240, 0.8);
     color: var(--chip-gray-text);
     border-color: rgba(148, 163, 184, 0.5);
   }
 
   .offer-status.pending {
+    padding: 8px;
     background: rgba(224, 231, 255, 0.8);
     color: var(--chip-purple-text);
     border-color: rgba(99, 102, 241, 0.4);
+  }
+  .offer-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 10%;
+    object-fit: cover;
+    margin-right: 0.75rem;
   }
 
   .offer-description {

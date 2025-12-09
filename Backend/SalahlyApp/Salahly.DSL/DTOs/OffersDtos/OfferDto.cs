@@ -20,5 +20,6 @@ namespace Salahly.DSL.DTOs.OffersDtos
         public string CraftsmanName { get; set; } = string.Empty;
         public OfferStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string craftsmanProfileImageUrl { get; set; } = string.Empty;
     }
 }
