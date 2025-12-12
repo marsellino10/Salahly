@@ -19,13 +19,11 @@ namespace SalahlyProject.Controllers.Customer
         private readonly IServiceRequestService _service;
         private readonly IFileUploadService _fileUploadService;
         private readonly ILogger<CustomerServiceRequestController> _logger;
-        private readonly ICraftsManService _craftsManService;
-        public CustomerServiceRequestController(IServiceRequestService service, IFileUploadService fileUploadService, ILogger<CustomerServiceRequestController> logger,ICraftsManService CraftsManService)
+        public CustomerServiceRequestController(IServiceRequestService service, IFileUploadService fileUploadService, ILogger<CustomerServiceRequestController> logger)
         {
             _service = service;
             _fileUploadService = fileUploadService;
             _logger = logger;
-            _craftsManService = CraftsManService;
         }
 
         [HttpPost]
