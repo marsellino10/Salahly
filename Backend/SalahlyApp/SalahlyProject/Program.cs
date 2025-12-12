@@ -226,8 +226,11 @@ namespace SalahlyProject
                 options.AddPolicy("AllowAngular", policy =>
                 {
                     policy.WithOrigins(
-                              "http://localhost:4200"
-                          )
+                              "http://localhost:4200",
+                              "https://salahlyapp.netlify.app"
+                          ).SetIsOriginAllowed(origin => 
+                            origin.Contains("netlify.app") || 
+                            origin.Contains("localhost"))
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials();
