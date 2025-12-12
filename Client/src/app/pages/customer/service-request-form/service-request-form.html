@@ -66,7 +66,7 @@
           <span>{{ 'ServiceRequestForm.Fields.CraftLabel' | translate }}</span>
           <select formControlName="craftId">
             <option [ngValue]="null" disabled>
-              {{ 'ServiceRequestForm.Fields.AreaPlaceholder' | translate }} 
+              {{ 'ServiceRequestForm.Fields.CraftPlaceholder' | translate }} 
             </option>
             @for (craft of crafts; track $index) {
               <option [value]="craft.id">{{ craft.name }}</option>

@@ -1,0 +1,6 @@
+{
+  "buildCommand": "ng build --configuration=production --no-prerender",
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
