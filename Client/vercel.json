@@ -1,7 +1,0 @@
-{
-  "buildCommand": "ng build --configuration=production",
-  "outputDirectory": "dist/Client/browser",
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
-}
