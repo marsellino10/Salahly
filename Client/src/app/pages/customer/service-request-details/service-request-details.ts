@@ -84,7 +84,7 @@ export class ServiceRequestDetails implements OnInit {
   canCompleteRequest = false;
   canAddReview = false;
   showAddressAndPhoneNumber = false;
-  readonly paymentMethods = ["Card","Wallet","Cash","Bank Transfer"]
+  readonly paymentMethods = ["Card","Wallet","Cash"]
   readonly editForm = this._fb.nonNullable.group({
     title: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(80)]],
     description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(800)]],
