@@ -23,6 +23,7 @@ namespace Salahly.DSL.DTOs.Configurations
                 .Map(dest => dest.VerificationStatus, src => src.VerificationStatus)
                 .Map(dest => dest.Portfolio, src => src.Portfolio)
                 .Map(dest => dest.IsVerified, src => src.IsVerified)
+                .Map(dest => dest.Balance, src => src.Balance)
                 // Map CraftsmanServiceAreas to simplified ServiceAreaDto
                 .Map(dest => dest.ServiceAreas, src => src.CraftsmanServiceAreas.Select(csa => csa.Adapt<ServiceAreaDto>()))
                 .AfterMapping((src, dest) =>

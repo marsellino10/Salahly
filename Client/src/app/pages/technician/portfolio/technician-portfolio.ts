@@ -51,6 +51,7 @@ export class TechnicianPortfolio implements OnInit {
   readonly actionBanner = signal<{ type: 'success' | 'error'; text: string } | null>(null);
   readonly items = signal<Portfolio[]>([]);
   readonly reviews = signal<CraftsmanReview[]>([]);
+  balance = signal<number>(0.0);
   readonly editingItem = signal<Portfolio | null>(null);
   readonly deleteTargetId = signal<number | null>(null);
   readonly showCreateForm = signal(false);
@@ -83,6 +84,13 @@ export class TechnicianPortfolio implements OnInit {
   ngOnInit(): void {
     const claims = this._technicianService.getTechnicianTokenClaims();
     this.craftsmanId = claims?.nameIdentifier ? Number(claims.nameIdentifier) : null;
+    if(this.craftsmanId != null){
+      this._technicianService.getTechnicianById(this.craftsmanId).subscribe({
+        next:(value) => {
+          this.balance.set(value.data.balance ? value.data.balance : 0);
+        },
+      })
+    }
 
     if (!this.craftsmanId) {
       this.errorMessage.set(this._translate.instant('TechnicianPortfolio.Messages.MissingCraftsman'));

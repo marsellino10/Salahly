@@ -370,7 +370,9 @@
         "Inactive": "Inactive",
         "InactiveSubtitle": "Hidden from view",
         "Reviews": "Reviews",
-        "ReviewsSubtitle": "Customer comments"
+        "ReviewsSubtitle": "Customer comments",
+        "Balance":"Balance",
+        "BalanceSubtitle": "Your Balance"
       }
     },
     "Banner": {
@@ -766,6 +768,26 @@
       "RejectSuccess": "Offer rejected successfully.",
       "GenericError": "Something went wrong. Please try again.",
       "ActionError": "Unable to complete the request right now. Please retry shortly."
+    },
+    "CancelBooking": {
+      "Title": "Cancel booking",
+      "ModalTitle": "Refund & cancellation",
+      "ModalDescription": "Cancelling after accepting an offer may reduce your refund depending on how close the visit is.",
+      "FeeNote": "We keep a small fee to cover transaction and scheduling costs.",
+      "ReasonLabel": "Reason (optional)",
+      "ReasonPlaceholder": "Share a short note about why you’re cancelling",
+      "CalloutTitle": "Need to cancel this booking?",
+      "CalloutWarning": "Refunds are subject to timing of the visit and may exclude platform fees.",
+      "Button": "Cancel booking",
+      "Buttons": {
+        "Dismiss": "Keep booking",
+        "Confirm": "Confirm cancellation",
+        "Processing": "Processing…"
+      },
+      "Messages": {
+        "NoBooking": "We couldn't find a booking for this request.",
+        "Success": "Booking cancelled successfully. Refund will be processed shortly."
+      }
     }
   },
   "ServiceRequestForm": {

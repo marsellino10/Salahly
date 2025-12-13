@@ -155,6 +155,7 @@ namespace Salahly.DAL.Repositories
                     .Include(sr => sr.Customer).ThenInclude(c => c.User)
                     .Include(sr => sr.Craft)
                     .Include(sr => sr.AreaData)
+                    .Include(sr => sr.Booking)
                     .FirstOrDefaultAsync(sr => sr.ServiceRequestId == id);
                 return serviceRequest;
             }

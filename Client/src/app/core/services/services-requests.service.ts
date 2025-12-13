@@ -106,6 +106,9 @@ export class ServicesRequestsService {
   deleteRequest(id: number): Observable<void> {
     return this._httpClient.delete<void>(`${this.baseUrl}/${id}`);
   }
+  completeRequest(id: number): Observable<void>{
+    return this._httpClient.post<void>(`${this.baseUrl}/${id}/complete`, {});
+  }
 
   private buildCreateFormData(payload: CreateServiceRequestPayload, imageFiles: File[]): FormData {
     const formData = new FormData();

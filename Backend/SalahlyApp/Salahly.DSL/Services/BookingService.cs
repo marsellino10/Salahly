@@ -270,7 +270,22 @@ namespace Salahly.DSL.Services
                 booking.RefundableAmount = refundAmount;
 
                 await _unitOfWork.SaveAsync(cancellationToken);
+                var craftsmanOffer = await _unitOfWork.CraftsmanOffers.GetByIdAsync(booking.AcceptedOfferId);
+                craftsmanOffer.Status = OfferStatus.Rejected;
 
+                var serviseRequestId = craftsmanOffer?.ServiceRequestId ?? 0;
+                if (serviseRequestId != 0)
+                {
+                    var serveceRequest = await _unitOfWork.ServiceRequests.GetByIdAsync(serviseRequestId);
+                    if (serveceRequest is not null)
+                    {
+                        if(serveceRequest.AvailableToDate>DateTime.UtcNow)
+                            serveceRequest.Status = ServiceRequestStatus.Open;
+                        else
+                            serveceRequest.Status = ServiceRequestStatus.Expired;
+                    }
+                }
+                await _unitOfWork.SaveAsync();
                 _logger.LogInformation(
                     $"Booking {bookingId} cancelled successfully. Refund amount: {refundAmount} EGP");
 

@@ -12,9 +12,12 @@ import {
 } from '../../../core/services/services-requests.service';
 import { AuthService } from '../../../core/services/auth-service';
 import { CraftsmanServiceRequestService } from '../../../core/services/craftsman-service-request.service';
+import { BookingService, BookingWithServiceRequestDto } from '../../../core/services/booking.service';
+import { ReviewsService, CreateReviewPayload } from '../../../core/services/reviews.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { CraftsmanOffersService } from '../../../core/services/craftsman-offers.service';
+import { CustomerService } from '../../../core/services/customer-service';
 
 type TimelineStep = {
   key: ServiceRequestStatus | 'HasOffers';
@@ -39,9 +42,14 @@ export class ServiceRequestDetails implements OnInit {
   private readonly _httpClient = inject(HttpClient);
   private readonly _craftsmanRequestService = inject(CraftsmanServiceRequestService);
   private readonly _craftsmanOffers = inject(CraftsmanOffersService);
+  private readonly _bookingService = inject(BookingService);
+  private readonly _reviewsService = inject(ReviewsService);
+  private readonly _customerService = inject(CustomerService);
 
   private requestId: number | null = null;
   readonly OfferStatusEnum = OfferStatus;
+  private readonly currentCustomerId = Number(this._customerService.getCustomerTokenClaims().nameIdentifier ?? 0);
+  private baseCanAddReview = false;
 
   readonly request = signal<ServiceRequestDto | null>(null);
   readonly requestImages = computed(() => {
@@ -62,12 +70,21 @@ export class ServiceRequestDetails implements OnInit {
   readonly editError = signal<string | null>(null);
   readonly isSaving = signal(false);
   readonly isDeletingRequest = signal(false);
+  readonly bookingForRequest = signal<BookingWithServiceRequestDto | null>(null);
+  readonly hasSubmittedReview = signal(false);
+  readonly reviewModalOpen = signal(false);
+  readonly isSubmittingReview = signal(false);
+  readonly reviewSubmissionError = signal<string | null>(null);
+  readonly cancelBookingModalOpen = signal(false);
+  readonly cancelBookingError = signal<string | null>(null);
+  readonly isCancellingBooking = signal(false);
   userType: string = '';
   isCustomer = false;
   isTechnician = false;
   canCompleteRequest = false;
+  canAddReview = false;
   showAddressAndPhoneNumber = false;
-  readonly paymentMethods = ["Card","Wallet","Cash"]
+  readonly paymentMethods = ["Card","Wallet","Cash","Bank Transfer"]
   readonly editForm = this._fb.nonNullable.group({
     title: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(80)]],
     description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(800)]],
@@ -77,6 +94,11 @@ export class ServiceRequestDetails implements OnInit {
     customerBudget: [null as number | null, [Validators.min(0)]],
     paymentMethod: ['', Validators.required],
   });
+  readonly reviewForm = this._fb.nonNullable.group({
+    rating: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
+    comment: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+  });
+  cancelReason: string = '';
 
   readonly lifecycleSteps: TimelineStep[] = [
     { key: 'Open', labelKey: 'ServiceRequestDetails.Timeline.Posted' },
@@ -287,6 +309,77 @@ export class ServiceRequestDetails implements OnInit {
     return offer.status === OfferStatus.Pending;
   }
 
+  canCancelAcceptedOffer(offer: OfferDto): boolean {
+    const booking = this.bookingForRequest();
+    const requestStatus = this.request()?.status;
+    return (
+      Boolean(booking?.booking?.bookingId) &&
+      offer.status === OfferStatus.Accepted &&
+      this.isOfferAcceptedState(requestStatus)
+    );
+  }
+
+  openCancelBookingModal(offer: OfferDto): void {
+    if (!this.canCancelAcceptedOffer(offer) || this.isCancellingBooking()) {
+      if (!this.bookingForRequest()?.booking?.bookingId) {
+        this.setActionBanner(
+          'error',
+          this._translate.instant('ServiceRequestDetails.CancelBooking.Messages.NoBooking'),
+        );
+      }
+      return;
+    }
+
+    this.cancelReason = '';
+    this.cancelBookingError.set(null);
+    this.cancelBookingModalOpen.set(true);
+  }
+
+  closeCancelBookingModal(): void {
+    if (this.isCancellingBooking()) {
+      return;
+    }
+    this.cancelBookingModalOpen.set(false);
+    this.cancelBookingError.set(null);
+    this.cancelReason = '';
+  }
+
+  confirmCancelBooking(): void {
+    if (this.isCancellingBooking()) {
+      return;
+    }
+
+    const bookingId = this.bookingForRequest()?.booking?.bookingId;
+    if (!bookingId) {
+      this.cancelBookingError.set(this._translate.instant('ServiceRequestDetails.CancelBooking.Messages.NoBooking'));
+      return;
+    }
+
+    this.isCancellingBooking.set(true);
+    this.cancelBookingError.set(null);
+    const reason = this.cancelReason.trim() || undefined;
+
+    this._bookingService.cancelBooking(bookingId, reason).subscribe({
+      next: (response) => {
+        const successMessage =
+          response?.message ?? this._translate.instant('ServiceRequestDetails.CancelBooking.Messages.Success');
+        this.setActionBanner('success', successMessage);
+      },
+      error: (error) => {
+        this.cancelBookingError.set(this.extractErrorMessage(error));
+        this.isCancellingBooking.set(false);
+      },
+      complete: () => {
+        this.isCancellingBooking.set(false);
+        this.cancelBookingModalOpen.set(false);
+        this.cancelReason = '';
+        this.loadRequest();
+        this.loadOffers();
+        this.loadBookingContext();
+      },
+    });
+  }
+
   dismissBanner(): void {
     this.actionBanner.set(null);
   }
@@ -297,13 +390,66 @@ export class ServiceRequestDetails implements OnInit {
       return;
     }
 
-    this._httpClient.post(`/api/customer/servicerequests/${current.serviceRequestId}/complete`, {}).subscribe({
+    this._requestsService.completeRequest(current.serviceRequestId).subscribe({
       next: () => {
         this.setActionBanner('success', 'Service request completed successfully!');
         this.loadRequest();
       },
       error: (error) => {
         this.setActionBanner('error', this.extractErrorMessage(error));
+      },
+    });
+  }
+  AddReview(): void{
+    if (!this.canAddReview || !this.bookingForRequest()) {
+      return;
+    }
+    this.reviewForm.reset({ rating: 5, comment: '' });
+    this.reviewSubmissionError.set(null);
+    this.reviewModalOpen.set(true);
+  }
+
+  closeReviewModal(): void {
+    this.reviewModalOpen.set(false);
+    this.reviewSubmissionError.set(null);
+    this.reviewForm.reset({ rating: 5, comment: '' });
+  }
+
+  submitReview(): void {
+    if (this.reviewForm.invalid || this.isSubmittingReview()) {
+      this.reviewForm.markAllAsTouched();
+      return;
+    }
+    const bookingContext = this.bookingForRequest();
+    const reviewerId = this.currentCustomerId;
+    if (!bookingContext || !bookingContext.booking?.bookingId || !bookingContext.booking?.craftsmanId || reviewerId <= 0) {
+      this.reviewSubmissionError.set('Reviews are not available right now.');
+      return;
+    }
+    const payload: CreateReviewPayload = {
+      reviewerUserId: reviewerId,
+      targetUserId: bookingContext.booking.craftsmanId,
+      bookingId: bookingContext.booking.bookingId,
+      rating: Number(this.reviewForm.controls.rating.value ?? 5),
+      comment: (this.reviewForm.controls.comment.value ?? '').trim(),
+    };
+    if (!payload.comment) {
+      this.reviewForm.controls.comment.setErrors({ required: true });
+      return;
+    }
+    this.isSubmittingReview.set(true);
+    this._reviewsService.createReview(payload).subscribe({
+      next: (response) => {
+        const message = response?.message ?? 'Review submitted successfully!';
+        this.setActionBanner('success', message);
+        this.hasSubmittedReview.set(true);
+        this.isSubmittingReview.set(false);
+        this.reviewModalOpen.set(false);
+        this.updateReviewAvailability();
+      },
+      error: (error) => {
+        this.reviewSubmissionError.set(this.extractErrorMessage(error));
+        this.isSubmittingReview.set(false);
       },
     });
   }
@@ -477,7 +623,19 @@ export class ServiceRequestDetails implements OnInit {
           const status = current.status;
           const normalizedStatus = typeof status === 'string' ? status : undefined;
           const numericStatus = typeof status === 'number' ? status : undefined;
-          this.canCompleteRequest = normalizedStatus === 'OfferAccepted' || numericStatus === 2;
+          const isOfferAcceptedState = this.isOfferAcceptedState(status);
+          this.canCompleteRequest = isOfferAcceptedState;
+          this.baseCanAddReview = normalizedStatus === 'Completed' || numericStatus === 4;
+          if (!this.baseCanAddReview) {
+            this.bookingForRequest.set(null);
+            this.hasSubmittedReview.set(false);
+            this.reviewModalOpen.set(false);
+          }
+          this.updateReviewAvailability();
+          const shouldLoadBookingContext = (this.baseCanAddReview || isOfferAcceptedState) && this.currentCustomerId > 0;
+          if (shouldLoadBookingContext) {
+            this.loadBookingContext();
+          }
           this.showAddressAndPhoneNumber = true;
           if (this.editModalOpen()) {
             this.populateEditForm(current);
@@ -529,6 +687,71 @@ export class ServiceRequestDetails implements OnInit {
 
   private setActionBanner(type: 'success' | 'error', message: string): void {
     this.actionBanner.set({ type, message });
+  }
+
+  private updateReviewAvailability(): void {
+    const booking = this.bookingForRequest();
+    const eligibleBooking = Boolean(booking?.booking?.bookingId);
+    const userCanReview = this.currentCustomerId > 0;
+    this.canAddReview = this.baseCanAddReview && eligibleBooking && userCanReview && !this.hasSubmittedReview();
+  }
+
+  private loadBookingContext(): void {
+    if (!this.requestId) {
+      this.bookingForRequest.set(null);
+      this.updateReviewAvailability();
+      return;
+    }
+    this._bookingService.getUserBookings().subscribe({
+      next: (response) => {
+        const bookings = response?.data ?? [];
+        const match = bookings.find((b) => b.serviceRequest?.serviceRequestId === this.requestId) ?? null;
+        this.bookingForRequest.set(match);
+        if (match?.booking?.bookingId && this.baseCanAddReview) {
+          this.loadBookingReviews(match.booking.bookingId);
+        } else {
+          this.hasSubmittedReview.set(false);
+          this.updateReviewAvailability();
+        }
+      },
+      error: () => {
+        this.bookingForRequest.set(null);
+        this.hasSubmittedReview.set(false);
+        this.updateReviewAvailability();
+      },
+    });
+  }
+
+  private loadBookingReviews(bookingId: number): void {
+    this._reviewsService.getReviewsForBooking(bookingId).subscribe({
+      next: (response) => {
+        const reviews = response?.data ?? [];
+        const alreadyReviewed = reviews.some((review) => review.reviewerUserId === this.currentCustomerId);
+        this.hasSubmittedReview.set(alreadyReviewed);
+        this.updateReviewAvailability();
+      },
+      error: (error) => {
+        if (error?.status === 404) {
+          this.hasSubmittedReview.set(false);
+        } else {
+          console.error('Failed to load booking reviews', error);
+        }
+        this.updateReviewAvailability();
+      },
+    });
+  }
+
+  private isOfferAcceptedState(status: ServiceRequestStatus | string | number | undefined): boolean {
+    if (!status) {
+      return false;
+    }
+    if (typeof status === 'string') {
+      return status === 'OfferAccepted';
+    }
+    if (typeof status === 'number') {
+      return status === 2;
+    }
+    return false;
   }
 
   getRequestStatusLabel(status: ServiceRequestStatus | string): string {

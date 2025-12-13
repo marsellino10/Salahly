@@ -12,12 +12,14 @@ namespace Salahly.DSL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly INotificationService _notificationService;
         private readonly ICraftsManService _craftsManService;
+        private readonly IBookingService _bookingService;
 
-        public ServiceRequestService(IUnitOfWork unitOfWork, INotificationService notificationService,ICraftsManService craftsManService)
+        public ServiceRequestService(IUnitOfWork unitOfWork, INotificationService notificationService,ICraftsManService craftsManService, IBookingService bookingService)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
             _craftsManService = craftsManService;
+            _bookingService = bookingService;
         }
 
         public async Task<ServiceRequestResponseDto> CreateAsync(CreateServiceRequestDto dto, int customerId)
@@ -203,6 +205,7 @@ namespace Salahly.DSL.Services
                 {
                     var serviceRequest =  await _unitOfWork.ServiceRequests.GetServiceRequestByIdWithIncludesAsync(id);
                     await _craftsManService.AddBalance(serviceRequest.Booking.CraftsmanId, serviceRequest.Booking.TotalAmount);
+                    await _bookingService.UpdateBookingStatusAsync(serviceRequest.Booking.BookingId, BookingStatus.Completed);
                 }
                 return true;
 

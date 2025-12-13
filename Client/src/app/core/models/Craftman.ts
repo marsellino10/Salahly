@@ -30,4 +30,5 @@ export interface Craftsman {
   isVerified?: boolean;
   serviceAreas: ServiceArea[];
   reviews?: CraftsmanReview[];
+  balance?: number;
 }
