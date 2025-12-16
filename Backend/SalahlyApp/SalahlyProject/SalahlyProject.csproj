@@ -27,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <None Include="wwwroot\Docs\customer-assistant-context.md" />
+    <None Include="wwwroot\Docs\customer-faq.md" />
+    <None Include="wwwroot\Docs\technician-faq.md" />
   </ItemGroup>
 
 </Project>

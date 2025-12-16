@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SalahlyProject.Services.Chat
 {
@@ -14,7 +15,7 @@ namespace SalahlyProject.Services.Chat
 
         private static readonly string[] AllowedExtensions =
         {
-            ".cs", ".ts", ".html", ".md"
+            ".cs", ".ts", ".html", ".md", ".txt"
         };
 
         private static readonly string[] BaseContextFiles =
@@ -41,9 +42,23 @@ namespace SalahlyProject.Services.Chat
 
         private const int MaxContextLength = 4000;
 
-        public ChatContextBuilder()
+        // Accept IWebHostEnvironment so we can prefer the application's web root (wwwroot).
+        public ChatContextBuilder(IWebHostEnvironment env)
         {
-            _rootPath = ResolveSolutionRoot();
+            // Prefer web root if available (this will point to the project's wwwroot at runtime).
+            if (env != null && !string.IsNullOrWhiteSpace(env.WebRootPath))
+            {
+                _rootPath = env.WebRootPath;
+            }
+            else
+            {
+                _rootPath = ResolveSolutionRoot();
+            }
+
+            if (string.IsNullOrWhiteSpace(_rootPath))
+            {
+                _rootPath = AppContext.BaseDirectory;
+            }
         }
 
         public Task<string> BuildContextAsync(string question, string? providedContext, CancellationToken cancellationToken = default)
@@ -108,6 +123,12 @@ namespace SalahlyProject.Services.Chat
                 return false;
             }
 
+            // If our root path is the application's wwwroot folder, allow all files under it.
+            if (string.Equals(Path.GetFileName(_rootPath), "wwwroot", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             var firstSegment = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).FirstOrDefault();
             return firstSegment != null && AllowedDirectories.Any(directory => string.Equals(directory, firstSegment, StringComparison.OrdinalIgnoreCase));
         }
@@ -127,7 +148,19 @@ namespace SalahlyProject.Services.Chat
         {
             foreach (var relativePath in BaseContextFiles)
             {
-                var fullPath = Path.Combine(_rootPath, relativePath);
+                string fullPath;
+
+                // If root refers to wwwroot, look for base context files directly in web root by filename.
+                if (string.Equals(Path.GetFileName(_rootPath), "wwwroot", StringComparison.OrdinalIgnoreCase))
+                {
+                    var fileName = Path.GetFileName(relativePath);
+                    fullPath = Path.Combine(_rootPath, fileName);
+                }
+                else
+                {
+                    fullPath = Path.Combine(_rootPath, relativePath);
+                }
+
                 if (!File.Exists(fullPath))
                 {
                     continue;
