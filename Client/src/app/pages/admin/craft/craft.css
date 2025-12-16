@@ -120,6 +120,20 @@
   gap: 1.5rem;
 }
 
+.form-field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  grid-column: 1 / -1;
+}
+
+.heading-supplement {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--craft-muted);
+  margin-left: 0.35rem;
+}
+
 /* FORM FIELD */
 .form-field {
   display: flex;
@@ -292,6 +306,13 @@
 
 .craft-name__title {
   font-weight: 600;
+}
+
+.craft-name__subtitle {
+  font-size: 0.85rem;
+  color: var(--craft-muted);
+  font-weight: 500;
+  margin-left: 0.35rem;
 }
 
 .craft-name__url {

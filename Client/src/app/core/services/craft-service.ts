@@ -13,6 +13,7 @@ export interface ApiResponse<T> {
 
 export interface CreateCraftPayload {
   name: string;
+  nameAr: string;
   description?: string | null;
   displayOrder: number;
   isActive: boolean;
@@ -68,6 +69,7 @@ export class CraftService {
   private buildCreateFormData(payload: CreateCraftPayload, iconFile: File | null): FormData {
     const formData = new FormData();
     formData.append('Name', payload.name.trim());
+    formData.append('NameAr', payload.nameAr.trim());
 
     if (payload.description && payload.description.trim()) {
       formData.append('Description', payload.description.trim());

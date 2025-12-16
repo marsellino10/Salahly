@@ -18,6 +18,9 @@ namespace Salahly.DAL.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
+            builder.Property(c => c.NameAr)
+                .HasMaxLength(100);
+
             builder.Property(c => c.Description)
                 .HasMaxLength(500);
 

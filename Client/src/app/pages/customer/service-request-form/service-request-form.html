@@ -69,7 +69,7 @@
               {{ 'ServiceRequestForm.Fields.CraftPlaceholder' | translate }} 
             </option>
             @for (craft of crafts; track $index) {
-              <option [value]="craft.id">{{ craft.name }}</option>
+              <option [value]="craft.id">{{ (this._translate.currentLang === 'ar') ? craft.nameAr : craft.name }}</option>
             }
           </select>
           <small class="muted" *ngIf="isLoadingCrafts">{{ 'ServiceRequestForm.Loading.Crafts' | translate }}</small>

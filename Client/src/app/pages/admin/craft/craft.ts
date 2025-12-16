@@ -32,6 +32,7 @@ export class Craft implements OnInit, OnDestroy {
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(60)]],
+    nameAr: ['', [Validators.required, Validators.maxLength(60)]],
     description: ['', [Validators.required, Validators.maxLength(500)]],
     displayOrder: [1, [Validators.required, Validators.min(0)]],
     isActive: [true],
@@ -112,6 +113,7 @@ export class Craft implements OnInit, OnDestroy {
     this.editingCraft = craft;
     this.form.patchValue({
       name: craft.name,
+      nameAr: craft.nameAr ?? '',
       description: craft.description,
       displayOrder: craft.displayOrder,
       isActive: craft.isActive,
@@ -213,6 +215,7 @@ export class Craft implements OnInit, OnDestroy {
     const raw = this.form.getRawValue();
     return {
       name: raw.name.trim(),
+      nameAr: raw.nameAr.trim(),
       description: raw.description.trim() || null,
       displayOrder: Number(raw.displayOrder ?? 0),
       isActive: raw.isActive,
@@ -223,6 +226,7 @@ export class Craft implements OnInit, OnDestroy {
     this.editingCraft = null;
     this.form.reset({
       name: '',
+      nameAr: '',
       description: '',
       displayOrder: this.getNextDisplayOrder(),
       isActive: true,

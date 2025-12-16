@@ -15,6 +15,7 @@ export class TechnicianCard {
 
 
   getInitials(fullName: string): string {
+    console.log(this.craftsman);
     return fullName.split(' ').map(name => name.charAt(0)).join('').toUpperCase();
   }
 

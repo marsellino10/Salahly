@@ -16,6 +16,10 @@ namespace Salahly.DSL.DTOs
         [MaxLength(100, ErrorMessage = "Craft name cannot exceed 100 characters")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "Craft arabic name is required")]
+        [MaxLength(100, ErrorMessage = "Arabic name cannot exceed 100 characters")]
+        public string NameAr { get; set; }
+
         [MaxLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
         public string? Description { get; set; }
 
@@ -36,6 +40,10 @@ namespace Salahly.DSL.DTOs
         [MaxLength(100, ErrorMessage = "Craft name cannot exceed 100 characters")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "Craft arabic name is required")]
+        [MaxLength(100, ErrorMessage = "Arabic name cannot exceed 100 characters")]
+        public string NameAr { get; set; }
+
         [MaxLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
         public string? Description { get; set; }
 
@@ -51,6 +59,7 @@ namespace Salahly.DSL.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string NameAr { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? IconUrl { get; set; }
         public int DisplayOrder { get; set; }

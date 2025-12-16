@@ -105,6 +105,7 @@ namespace Salahly.DAL.Services
             var craft = new Craft
             {
                 Name = createCraftDto.Name.Trim(),
+                NameAr = createCraftDto.NameAr?.Trim(),
                 Description = createCraftDto.Description?.Trim(),
                 IconUrl = null,
                 DisplayOrder = createCraftDto.DisplayOrder,
@@ -145,6 +146,7 @@ namespace Salahly.DAL.Services
 
             // Update craft properties
             craft.Name = updateCraftDto.Name.Trim();
+            craft.NameAr = updateCraftDto.NameAr?.Trim();
             craft.Description = updateCraftDto.Description?.Trim();
             craft.DisplayOrder = updateCraftDto.DisplayOrder;
             craft.IsActive = updateCraftDto.IsActive;

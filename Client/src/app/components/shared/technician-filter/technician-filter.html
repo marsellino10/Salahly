@@ -47,7 +47,9 @@
       >
         <option value="0">{{ 'Filter.All Services' | translate }}</option>
         @for (craft of crafts; track $index) {
-          <option [value]="craft.id">{{ craft.name }}</option>
+          <option [value]="craft.id">
+            {{ (this._translate.currentLang === 'ar') ? craft.nameAr : craft.name }}
+          </option>
         }
       </select>
       <i class="bi bi-chevron-down select-arrow"></i>

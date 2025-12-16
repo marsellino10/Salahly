@@ -12,6 +12,7 @@ namespace Salahly.DSL.DTOs.Configurations
             config.NewConfig<Craft, CraftDto>()
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Name, src => src.Name)
+                .Map(dest => dest.NameAr, src => src.NameAr ?? "")
                 .Map(dest => dest.Description, src => src.Description)
                 .Map(dest => dest.IconUrl, src => src.IconUrl)
                 .Map(dest => dest.DisplayOrder, src => src.DisplayOrder)
@@ -23,6 +24,7 @@ namespace Salahly.DSL.DTOs.Configurations
             // CreateCraftDto to Craft
             config.NewConfig<CreateCraftDto, Craft>()
                 .Map(dest => dest.Name, src => src.Name)
+                .Map(dest => dest.NameAr, src => src.NameAr)
                 .Map(dest => dest.Description, src => src.Description)
                 .Map(dest => dest.DisplayOrder, src => src.DisplayOrder)
                 .Map(dest => dest.IsActive, src => src.IsActive)
@@ -31,6 +33,7 @@ namespace Salahly.DSL.DTOs.Configurations
             // UpdateCraftDto to Craft
             config.NewConfig<UpdateCraftDto, Craft>()
                 .Map(dest => dest.Name, src => src.Name)
+                .Map(dest => dest.NameAr, src => src.NameAr)
                 .Map(dest => dest.Description, src => src.Description)
                 .Map(dest => dest.DisplayOrder, src => src.DisplayOrder)
                 .Map(dest => dest.IsActive, src => src.IsActive);

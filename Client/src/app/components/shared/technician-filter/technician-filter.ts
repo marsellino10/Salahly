@@ -6,7 +6,7 @@ import { Area } from '../../../core/models/Area';
 import { Craft } from '../../../core/models/Craft';
 import { CraftService } from '../../../core/services/craft-service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-technician-filter',
@@ -18,6 +18,7 @@ export class TechnicianFilter implements OnInit {
   private readonly _areaService: AreaService = inject(AreaService);
   private readonly _craftService: CraftService = inject(CraftService);
   private readonly _router: Router = inject(Router);
+  readonly _translate = inject(TranslateService);
   private readonly _activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   searchQuery: string = '';
   selectedCraftId: number = 0;

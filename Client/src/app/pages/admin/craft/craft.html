@@ -15,7 +15,10 @@
     <header class="panel__header">
       <div>
         <p class="panel__eyebrow">{{ isEditMode ? 'Editing craft' : 'Add new craft' }}</p>
-        <h2>{{ isEditMode ? editingCraft?.name : 'Craft details' }}</h2>
+        <h2>
+          {{ isEditMode ? editingCraft?.name : 'Craft details' }}
+          <span *ngIf="isEditMode && editingCraft?.nameAr" class="heading-supplement">({{ editingCraft?.nameAr }})</span>
+        </h2>
       </div>
       <button type="button" class="btn btn--text" *ngIf="isEditMode" (click)="cancelEdit()">
         Cancel edit
@@ -23,11 +26,20 @@
     </header>
 
     <form class="craft-form" [formGroup]="form" (ngSubmit)="submitForm()">
-      <div class="form-field" [class.form-field--error]="hasError('name', 'required')">
-        <label for="name">Craft name</label>
-        <input id="name" type="text" formControlName="name" placeholder="e.g., Electrician" />
-        <p class="field-hint">Max 60 characters.</p>
-        <p class="field-error" *ngIf="hasError('name', 'required')">Name is required.</p>
+      <div class="form-field-grid">
+        <div class="form-field" [class.form-field--error]="hasError('name', 'required')">
+          <label for="name">Craft name (English)</label>
+          <input id="name" type="text" formControlName="name" placeholder="e.g., Electrician" />
+          <p class="field-hint">Max 60 characters.</p>
+          <p class="field-error" *ngIf="hasError('name', 'required')">English name is required.</p>
+        </div>
+
+        <div class="form-field" [class.form-field--error]="hasError('nameAr', 'required')">
+          <label for="nameAr">Craft name (Arabic)</label>
+          <input id="nameAr" type="text" formControlName="nameAr" placeholder="مثلاً: كهربائي" dir="rtl" />
+          <p class="field-hint">Max 60 characters.</p>
+          <p class="field-error" *ngIf="hasError('nameAr', 'required')">Arabic name is required.</p>
+        </div>
       </div>
 
       <div class="form-field form-field--full" [class.form-field--error]="hasError('description', 'required')">
@@ -143,7 +155,10 @@
               <div class="craft-name">
                 <img *ngIf="craft.iconUrl" [src]="craft.iconUrl" [alt]="craft.name" />
                 <div>
-                  <p class="craft-name__title">{{ craft.name }}</p>
+                  <p class="craft-name__title">
+                    {{ craft.name }}
+                    <span class="craft-name__subtitle" *ngIf="craft.nameAr">({{ craft.nameAr }})</span>
+                  </p>
                   <p class="craft-name__url" *ngIf="craft.iconUrl">{{ craft.iconUrl }}</p>
                 </div>
               </div>
