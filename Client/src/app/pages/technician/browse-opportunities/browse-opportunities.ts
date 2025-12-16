@@ -425,6 +425,7 @@ export class BrowseOpportunities implements OnInit {
     responsive: {
       0: { items: 1 },
     },
+    rtl: true,
   };
 
   private sortItems(a: ServiceRequestDto, b: ServiceRequestDto, sort: OpportunitySort): number {

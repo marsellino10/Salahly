@@ -718,7 +718,7 @@
       "Title": "العروض المستلمة",
       "Count": "{{count}} عروض",
       "Estimated": "المدة المتوقعة {{minutes}} دقيقة",
-      "Availability": "متاح من {{from}} إلى {{to}}",
+      "Availability": "متاح من {{Day}} إلى {{Time}}",
       "Sent": "تم الإرسال {{value}}",
       "Status": {
         "Pending": "قيد المراجعة",

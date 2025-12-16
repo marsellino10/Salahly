@@ -122,6 +122,18 @@ export class TechnicianPortfolio implements OnInit {
     });
   }
 
+  private normalizeReview(review: Partial<CraftsmanReview>): CraftsmanReview {
+    return {
+      id: review?.id ?? 0,
+      reviewerUserId: review?.reviewerUserId ?? 0,
+      reviewerName: review?.reviewerName ?? `Reviewer #${review?.reviewerUserId ?? 'N/A'}`,
+      reviewerProfileImageUrl: review?.reviewerProfileImageUrl ?? null,
+      rating: review?.rating ?? 0,
+      comment: review?.comment ?? 'No comment provided.',
+      createdAt: review?.createdAt ?? new Date().toISOString(),
+      bookingId: review?.bookingId ?? 0,
+    };
+  }
   loadReviews(): void {
     if (!this.craftsmanId) {
       return;
@@ -130,7 +142,9 @@ export class TechnicianPortfolio implements OnInit {
     this._technicianService.getTechnicianReviews(this.craftsmanId).subscribe({
       next: (response) => {
         const list = response.data ?? [];
-        this.reviews.set(list.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        console.log(list);
+        const normalizedList = list.map((review) => this.normalizeReview(review));
+        this.reviews.set(normalizedList.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       },
       error: () => {
         this.reviews.set([]);

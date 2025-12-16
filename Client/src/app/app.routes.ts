@@ -18,6 +18,11 @@ export const routes: Routes = [
       { path: 'signup', loadComponent: () => import('./pages/shared/registration/registration').then(c => c.Registration) },
       { path: 'browse', loadComponent: () => import('./pages/shared/browse-technicians/browse-technicians').then(c => c.BrowseTechnicians) },
       { path: 'technicians/:id/profile', loadComponent: () => import('./pages/technician/technician-profile/technician-profile').then(c => c.TechnicianProfile) },
+      {
+        path: 'service-request-details/:id',
+        loadComponent: () => import('./pages/customer/service-request-details/service-request-details').then(c => c.ServiceRequestDetails),
+        canActivate: [customerOrTechnicianGuard],
+      },
     ],
   },
   {
@@ -65,11 +70,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/customer/service-request-form/service-request-form').then(c => c.ServiceRequestForm),
       }
     ],
-  },
-  {
-    path: 'service-request-details/:id',
-    loadComponent: () => import('./pages/customer/service-request-details/service-request-details').then(c => c.ServiceRequestDetails),
-    canActivate: [customerOrTechnicianGuard],
   },
   {
     path:'',

@@ -211,7 +211,11 @@ export class ServiceRequestDetails implements OnInit {
   }
 
   navigateBack(): void {
-    void this._router.navigate(['/show-services-requested']);
+    if (this.isCustomer) {
+      void this._router.navigate(['/show-services-requested']);
+    } else if (this.isTechnician) {
+      void this._router.navigate(['/browse-opportunities']);
+    }
   }
 
   getStatusStyle(status: ServiceRequestStatus | string) {
@@ -601,6 +605,7 @@ export class ServiceRequestDetails implements OnInit {
     responsive: {
       0: { items: 1 },
     },
+    rtl: true,
   };
 
   private resetOfferActionState(): void {
