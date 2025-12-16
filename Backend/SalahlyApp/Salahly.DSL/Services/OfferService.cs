@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Salahly.DAL.Entities;
 using Salahly.DAL.Interfaces;
@@ -175,7 +176,67 @@ namespace Salahly.DSL.Services
                     .FailureResponse($"Error rejecting offer: {ex.Message}");
             }
         }
+        public async Task<ServiceResponse<bool>> ResetOffersAsync(
+            int customerId,
+            int offerId)
+        {
+            try
+            {
+                var offer = await _unitOfWork.CraftsmanOffers
+                    .GetOfferForCustomerByIdAsync(offerId, customerId);
 
+                if (offer == null)
+                {
+                    _logger.LogWarning($"Offer {offerId} not found for customer {customerId}");
+                    return ServiceResponse<bool>
+                        .FailureResponse("Offer not found or inaccessible.");
+                }
+
+                var request = offer.ServiceRequest;
+
+                // Check ServiceRequest status
+                if (request.Status == ServiceRequestStatus.Completed ||
+                    request.Status == ServiceRequestStatus.Cancelled ||
+                    request.Status == ServiceRequestStatus.Expired)
+                {
+                    return ServiceResponse<bool>
+                        .FailureResponse("Cannot reset offer for a completed, cancelled, or expired request.");
+                }
+
+                // Check Offer status
+                if (offer.Status == OfferStatus.Accepted)
+                {
+                    return ServiceResponse<bool>
+                        .FailureResponse("Cannot reset an offer that has already been accepted.");
+                }
+
+                offer.Status = OfferStatus.Pending;
+                offer.RejectedAt = DateTime.UtcNow;
+
+                await _unitOfWork.SaveAsync();
+
+                //await _notificationService.NotifyAsync(new CreateNotificationDto
+                //{
+                //    UserIds = new[] { offer.CraftsmanId },
+                //    Type = NotificationType.OfferRejected,
+                //    Title = "Your Offer has been Rejected",
+                //    Message = $" Your Offer for {request.Title} request has been rejected by Customer due to {dto.RejectionReason}",
+                //    ActionUrl = $"/browse-opportunities",
+                //    CraftsmanOfferId = offer.CraftsmanOfferId,
+                //    ServiceRequestId = request.ServiceRequestId
+                //});
+
+                _logger.LogInformation($"Customer {customerId} reset offer {offerId}");
+
+                return ServiceResponse<bool>.SuccessResponse(true, "Offer reset successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error reset offer {offerId}");
+                return ServiceResponse<bool>
+                    .FailureResponse($"Error reset offer: {ex.Message}");
+            }
+        }
         /// <summary>
         /// Create a new offer (by craftsman)
         /// </summary>
@@ -321,6 +382,7 @@ namespace Salahly.DSL.Services
             {
                 var offer = await _unitOfWork.CraftsmanOffers
                     .GetOfferByIdForCraftsmanAsync(craftsmanId, offerId);
+                var request = await _unitOfWork.ServiceRequests.GetByIdAsync(offer.ServiceRequestId);
 
                 if (offer == null)
                 {
@@ -336,7 +398,15 @@ namespace Salahly.DSL.Services
                 }
 
                 offer.Status = OfferStatus.Withdrawn;
+                var notification = await _unitOfWork.Notifications.GetAll().FirstOrDefaultAsync(n => offer.CraftsmanOfferId == n!.CraftsmanOfferId);
+                //await _unitOfWork.Notifications.DeleteAsync(notification);
+                notification.CraftsmanOfferId = null;
+                notification.CraftsmanOffer = null;
+                await _unitOfWork.CraftsmanOffers.DeleteAsync(offer);
+                request.OffersCount -= 1;
+
                 offer.UpdatedAt = DateTime.UtcNow;
+
 
                 await _unitOfWork.SaveAsync();
 
@@ -447,6 +517,27 @@ namespace Salahly.DSL.Services
                 $"Set {otherOffers.Count} offers to Rejected for service request {serviceRequestId}");
 
             // No SaveAsync here - orchestrator manages the transaction
+        }
+
+        public async Task ResetOtherOffersAsync(
+            int serviceRequestId,
+            int customerId)
+        {
+            try
+            {
+                var allOffers = await _unitOfWork.CraftsmanOffers
+                .GetOffersByServiceRequestIdAsync(serviceRequestId);
+
+                foreach (var other in allOffers)
+                {
+                    other.Status = OfferStatus.Pending;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error resetting other offers for service request {serviceRequestId}");
+
+            }
         }
 
         /// <summary>

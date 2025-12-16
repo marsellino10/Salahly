@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,14 +16,14 @@ export class NotificationService {
   private unreadCountSubject = new BehaviorSubject<number>(0);
   unreadCount$ = this.unreadCountSubject.asObservable();
 
-  private baseUrl = "http://localhost:5049/api/notification";
-
+  private baseUrl = `${environment.baseApi}notification`;
+  private rootBaseUrl = `${environment.baseApi.slice(0, -5)}`;
   constructor(private http: HttpClient) {}
 
   /** Start SignalR connection */
   startConnection(token: string) {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5049/notificationHub", {
+      .withUrl(`${this.rootBaseUrl}/notificationHub`, {
         accessTokenFactory: () => token,
       })
       .withAutomaticReconnect()

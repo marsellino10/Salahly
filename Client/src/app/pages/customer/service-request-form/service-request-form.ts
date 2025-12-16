@@ -33,6 +33,8 @@ export class ServiceRequestForm implements OnInit {
 
   crafts: Craft[] = [];
   areas: Area[] = [];
+  groupedAreas: { region: string; areas: Area[] }[] = [];
+
   isLoadingCrafts = false;
   isLoadingAreas = false;
   craftsError: string | null = null;
@@ -134,6 +136,7 @@ export class ServiceRequestForm implements OnInit {
     this._areaService.GetAllAreas().subscribe({
       next: (response) => {
         this.areas = response?.data ?? [];
+        this.rebuildGroupedAreas();
         this.isLoadingAreas = false;
       },
       error: (error) => {
@@ -246,5 +249,22 @@ export class ServiceRequestForm implements OnInit {
     }
 
     return this._translate.instant('ServiceRequestForm.Messages.ActionError');
+  }
+
+  private rebuildGroupedAreas(): void {
+    const grouped = this.areas.reduce((acc, area) => {
+      if (!acc[area.region]) {
+        acc[area.region] = [];
+      }
+      acc[area.region].push(area);
+      return acc;
+    }, {} as Record<string, Area[]>);
+
+    this.groupedAreas = Object.keys(grouped)
+      .sort((a, b) => a.localeCompare(b))
+      .map((region) => ({
+        region,
+        areas: grouped[region].slice().sort((a, b) => a.city.localeCompare(b.city)),
+      }));
   }
 }

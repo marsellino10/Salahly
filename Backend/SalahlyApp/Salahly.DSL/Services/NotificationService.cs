@@ -85,7 +85,7 @@ namespace Salahly.DSL.Services
                 Type = NotificationType.NewServiceRequest,
                 Title = "New Service Request",
                 Message = $"A new request was posted in your area: {request.Title}",
-                ActionUrl = $"/craftsman/requests/{request.ServiceRequestId}",
+                ActionUrl = $"/browse-opportunities",
                 ServiceRequestId = request.ServiceRequestId
             });
         }

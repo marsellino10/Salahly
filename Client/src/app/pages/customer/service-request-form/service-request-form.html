@@ -116,10 +116,16 @@
         <label class="input-shell" [class.invalid]="fieldInvalid('areaId')">
           <span>{{ 'ServiceRequestForm.Fields.AreaLabel' | translate }}</span>
           <select formControlName="areaId" [disabled]="isLoadingAreas">
-            <option [ngValue]="null" disabled>{{ 'ServiceRequestForm.Fields.AreaPlaceholder' | translate }}</option>
-            <option *ngFor="let area of areas" [value]="area.id">
-              {{ area.city }} • {{ area.region }}
+            <option [ngValue]="null" disabled>
+              {{ 'ServiceRequestForm.Fields.AreaPlaceholder' | translate }}
             </option>
+            <ng-container *ngFor="let group of groupedAreas">
+              <optgroup [label]="group.region">
+                <option *ngFor="let area of group.areas" [value]="area.id">
+                  {{ area.city }}
+                </option>
+              </optgroup>
+            </ng-container>
           </select>
           <small class="muted" *ngIf="isLoadingAreas">{{ 'ServiceRequestForm.Loading.Areas' | translate }}</small>
           <small class="error-text" *ngIf="areasError">{{ areasError }}</small>

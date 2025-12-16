@@ -32,6 +32,12 @@ namespace Salahly.DSL.Interfaces
             int offerId,
             RejectOfferDto dto);
 
+        Task<ServiceResponse<bool>> ResetOffersAsync(
+            int customerId,
+            int offerId);
+        Task ResetOtherOffersAsync(
+            int serviceRequestId,
+            int customerId);
         // ===== For Craftsman =====
 
         /// <summary>

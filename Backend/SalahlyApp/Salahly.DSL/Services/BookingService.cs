@@ -20,15 +20,18 @@ namespace Salahly.DSL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPaymentStrategyFactory _paymentStrategyFactory;
         private readonly ILogger<BookingService> _logger;
+        private readonly IOfferService _offerService;
 
         public BookingService(
             IUnitOfWork unitOfWork,
             IPaymentStrategyFactory paymentStrategyFactory,
-            ILogger<BookingService> logger)
+            ILogger<BookingService> logger,
+            IOfferService offerService)
         {
             _unitOfWork = unitOfWork;
             _paymentStrategyFactory = paymentStrategyFactory;
             _logger = logger;
+            _offerService = offerService;
         }
         public async Task<List<BookingAdminViewDto>> GetAllBookingsAsync()
         {
@@ -271,7 +274,7 @@ namespace Salahly.DSL.Services
 
                 await _unitOfWork.SaveAsync(cancellationToken);
                 var craftsmanOffer = await _unitOfWork.CraftsmanOffers.GetByIdAsync(booking.AcceptedOfferId);
-                craftsmanOffer.Status = OfferStatus.Rejected;
+                craftsmanOffer.Status = OfferStatus.Pending;
 
                 var serviseRequestId = craftsmanOffer?.ServiceRequestId ?? 0;
                 if (serviseRequestId != 0)
@@ -284,6 +287,7 @@ namespace Salahly.DSL.Services
                         else
                             serveceRequest.Status = ServiceRequestStatus.Expired;
                     }
+                    await _offerService.ResetOtherOffersAsync(serviseRequestId, booking.CustomerId);
                 }
                 await _unitOfWork.SaveAsync();
                 _logger.LogInformation(

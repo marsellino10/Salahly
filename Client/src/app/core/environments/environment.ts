@@ -11,7 +11,7 @@ interface SalahlyEnvironment {
 }
 
 export const environment: SalahlyEnvironment = {
-  baseApi: "http://salahly.runasp.net/api/",
+  baseApi: "https://salahly.runasp.net/api/",
   // baseApi: "http://localhost:5049/api/",
   production: false,
   fireworks: {
