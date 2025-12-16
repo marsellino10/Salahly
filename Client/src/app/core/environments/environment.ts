@@ -17,6 +17,6 @@ export const environment: SalahlyEnvironment = {
   fireworks: {
     baseUrl: 'https://api.fireworks.ai/inference/v1',
     apiKey: 'fw_3ZbZueFQEaBhpmDWaWdLCNUc',
-    model: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
+    model: 'accounts/fireworks/models/llama4-maverick-instruct-basic',
   },
 };
