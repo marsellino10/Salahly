@@ -1132,5 +1132,73 @@
       "Description": "تمت مراجعة جميع العناصر غير النشطة. عمل رائع!",
       "Refresh": "تحديث للتحقق مرة أخرى"
     }
+  },
+  "History": {
+    "Eyebrow": "أرشيف العروض",
+    "Title": "السجل والإحصائيات",
+    "Subtitle": "راجع جميع العروض التي قدمتها مع معلومات فورية عن طلب العميل والميزانية والمواعيد النهائية.",
+
+    "Stats": {
+      "TotalOffers": "إجمالي العروض",
+      "AllTime": "منذ البداية",
+      "Pending": "قيد الانتظار",
+      "PendingHint": "بانتظار قرار العميل",
+      "Accepted": "مقبولة",
+      "AcceptedHint": "أعمال تم تأكيدها",
+      "Rejected": "مرفوضة",
+      "RejectedHint": "تحتاج متابعة",
+      "WithdrawnExpired": "ملغاة / منتهية",
+      "WithdrawnExpiredHint": "تحتاج انتباه"
+    },
+
+    "Actions": {
+      "Refresh": "تحديث"
+    },
+
+    "Filters": {
+      "OfferStatus": "حالة العرض",
+      "Matches": "سجل مطابق للتصفية الحالية.",
+      "ShowAll": "عرض كل العروض"
+    },
+
+    "Empty": {
+      "Title": "لا توجد عروض مطابقة",
+      "Description": "قم بتغيير حالة التصفية لعرض عروض أخرى أو أضف عرضًا جديدًا."
+    },
+
+    "Statuses": {
+      "All": "كل الحالات",
+      "Pending": "قيد المراجعة",
+      "Accepted": "مقبول",
+      "Rejected": "مرفوض",
+      "Withdrawn": "ملغى",
+      "Expired": "منتهي"
+    },
+
+    "Labels": {
+      "OfferStatus": "حالة العرض",
+      "Craft": "الحرفة",
+      "Customer": "العميل",
+      "Budget": "الميزانية",
+      "CityArea": "المدينة / المنطقة",
+      "Address": "العنوان",
+      "RequestCreated": "تاريخ الطلب",
+      "Expires": "ينتهي في",
+      "OfferSubmitted": "تاريخ تقديم العرض",
+      "OfferedPrice": "السعر المقترح",
+      "Availability": "موعد التوفر",
+      "Duration": "المدة المتوقعة",
+      "ReasonProvided": "سبب الرفض:"
+    },
+
+    "Fallbacks": {
+      "RequestUnavailable": "طلب الخدمة غير متاح",
+      "DetailsUnavailable": "تفاصيل الطلب لم تعد متوفرة.",
+      "HiddenCustomer": "مخفي للخصوصية",
+      "GeneralServices": "خدمات عامة",
+      "AddressNotShared": "العنوان غير متاح بعد",
+      "LocationUnavailable": "الموقع غير متوفر",
+      "Open": "مفتوح"
+    }
   }
 }

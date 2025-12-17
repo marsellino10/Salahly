@@ -1,77 +1,87 @@
 <section class="history-page">
   <header class="hero">
     <div class="hero-heading">
-      <p class="eyebrow">Offer archive</p>
-      <h1>History & insights</h1>
+      <p class="eyebrow">{{ 'History.Eyebrow' | translate }}</p>
+      <h1>{{ 'History.Title' | translate }}</h1>
       <p class="subtitle">
-        Review every offer you have submitted with instant context about the customer request, budget expectations, and deadlines.
+        {{ 'History.Subtitle' | translate }}
       </p>
     </div>
 
     <div class="hero-stats">
       <article class="stat-card primary">
-        <span>Total offers</span>
+        <span>{{ 'History.Stats.TotalOffers' | translate }}</span>
         <strong>{{ summaryStats().total }}</strong>
-        <small>All time</small>
+        <small>{{ 'History.Stats.AllTime' | translate }}</small>
       </article>
+
       <article class="stat-card">
-        <span>Pending decisions</span>
+        <span>{{ 'History.Stats.Pending' | translate }}</span>
         <strong>{{ summaryStats().pending }}</strong>
-        <small>Waiting for customers</small>
+        <small>{{ 'History.Stats.PendingHint' | translate }}</small>
       </article>
+
       <article class="stat-card">
-        <span>Accepted</span>
+        <span>{{ 'History.Stats.Accepted' | translate }}</span>
         <strong>{{ summaryStats().accepted }}</strong>
-        <small>Secured jobs</small>
+        <small>{{ 'History.Stats.AcceptedHint' | translate }}</small>
       </article>
+
       <article class="stat-card">
-        <span>Rejected</span>
+        <span>{{ 'History.Stats.Rejected' | translate }}</span>
         <strong>{{ summaryStats().rejected }}</strong>
-        <small>Follow up or archive</small>
+        <small>{{ 'History.Stats.RejectedHint' | translate }}</small>
       </article>
+
       <article class="stat-card">
-        <span>Withdrawn / Expired</span>
+        <span>{{ 'History.Stats.WithdrawnExpired' | translate }}</span>
         <strong>{{ summaryStats().withdrawn + summaryStats().expired }}</strong>
-        <small>Need attention</small>
+        <small>{{ 'History.Stats.WithdrawnExpiredHint' | translate }}</small>
       </article>
     </div>
 
     <div class="hero-actions">
-      <button class="btn btn-secondary" type="button" (click)="refresh()" [disabled]="isLoading()">
-        Refresh feed
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="refresh()"
+        [disabled]="isLoading()"
+      >
+        {{ 'History.Actions.Refresh' | translate }}
       </button>
     </div>
   </header>
 
+  <!-- Filters -->
   <section class="filters-card">
     <div class="filters-toolbar">
       <label class="filter-control">
-        <span>Offer status</span>
-        <select class="status-select" [value]="statusFilter()" (change)="onStatusChange($any($event.target).value)">
-          @for(option of statusOptions; track option.value){
-            <option [value]="option.value">{{ option.label }}</option>
+        <span>{{ 'History.Filters.OfferStatus' | translate }}</span>
+        <select
+          class="status-select"
+          [value]="statusFilter()"
+          (change)="onStatusChange($any($event.target).value)"
+        >
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">
+              {{ option.label | translate }}
+            </option>
           }
         </select>
       </label>
+
       <div class="filter-summary">
         <strong>{{ filteredRecords().length }}</strong>
-        <span>records match the current filter.</span>
+        <span>{{ 'History.Filters.Matches' | translate }}</span>
       </div>
     </div>
   </section>
 
+  <!-- Content -->
   <section class="content">
-    <!-- @if(errorMessage()){
-      <div class="state state-error">
-        <h3>Unable to load offer history</h3>
-        <p>{{ errorMessage() }}</p>
-        <button class="btn btn-primary" type="button" (click)="refresh()">Try again</button>
-      </div>
-    } -->
-
-    @if(isLoading()){
+    @if (isLoading()) {
       <div class="records-grid">
-        @for(_ of skeletonPlaceholders; track $index){
+        @for (_ of skeletonPlaceholders; track $index) {
           <article class="history-card skeleton">
             <div class="skeleton-line w-60"></div>
             <div class="skeleton-line w-90"></div>
@@ -83,29 +93,62 @@
           </article>
         }
       </div>
-    }@else if(!filteredRecords().length && hasLoaded()){
+    }
+
+    @else if (!filteredRecords().length && hasLoaded()) {
       <div class="state state-empty">
-        <h3>No offers match this filter</h3>
-        <p>Change the status filter to review other offers or submit a new one from the opportunities feed.</p>
-        <button class="btn btn-secondary" type="button" (click)="onStatusChange('all')">Show all offers</button>
+        <h3>{{ 'History.Empty.Title' | translate }}</h3>
+        <p>{{ 'History.Empty.Description' | translate }}</p>
+        <button
+          class="btn btn-secondary"
+          type="button"
+          (click)="onStatusChange('all')"
+        >
+          {{ 'History.Filters.ShowAll' | translate }}
+        </button>
       </div>
-    }@else{
+    }
+
+    @else {
       <div class="records-grid">
-        @for(record of filteredRecords(); track trackByOfferId($index, record)){
+        @for (record of filteredRecords(); track trackByOfferId($index, record)) {
           <article class="history-card">
             <div class="card-head">
               <div>
-                <span class="chip" [class]="getRequestStatusClass(record.request?.status)">
+                <span
+                  class="chip"
+                  [class]="getRequestStatusClass(record.request?.status)"
+                >
                   {{ getRequestStatusLabel(record.request?.status) }}
                 </span>
-                <a class="text-black" [routerLink]="['/service-request-details', record.request?.serviceRequestId]">
-                  <h3>{{ getRequestTitle(record.request) }} </h3>
-                  <!-- <i class="fa-solid fa-arrow-right"></i> -->
+
+                <a
+                  class="text-black"
+                  [routerLink]="[
+                    '/service-request-details',
+                    record.request?.serviceRequestId
+                  ]"
+                >
+                  <h3>
+                    {{
+                      record.request?.title
+                        ?? ('History.Fallbacks.RequestUnavailable' | translate)
+                    }}
+                  </h3>
                 </a>
-                <p>{{ record.request?.description ?? 'The service request details are no longer available.' }}</p>
+
+                <p>
+                  {{
+                    record.request?.description
+                      ?? ('History.Fallbacks.DetailsUnavailable' | translate)
+                  }}
+                </p>
               </div>
+
               <div class="offer-status-block">
-                <span class="pill-label">Offer status</span>
+                <span class="pill-label">
+                  {{ 'History.Labels.OfferStatus' | translate }}
+                </span>
                 <span [class]="getOfferStatusClass(record.offer.status)">
                   {{ getOfferStatusLabel(record.offer.status) }}
                 </span>
@@ -115,31 +158,52 @@
             <div class="card-body">
               <div class="details-grid">
                 <div class="detail">
-                  <span>Craft</span>
-                  <strong>{{ record.request?.craftName ?? 'General services' }}</strong>
+                  <span>{{ 'History.Labels.Craft' | translate }}</span>
+                  <strong>
+                    {{
+                      record.request?.craftName
+                        ?? ('History.Fallbacks.GeneralServices' | translate)
+                    }}
+                  </strong>
                 </div>
+
                 <div class="detail">
-                  <span>Customer</span>
-                  <strong>{{ record.request?.customerName ?? 'Hidden for privacy' }}</strong>
+                  <span>{{ 'History.Labels.Customer' | translate }}</span>
+                  <strong>
+                    {{
+                      record.request?.customerName
+                        ?? ('History.Fallbacks.HiddenCustomer' | translate)
+                    }}
+                  </strong>
                 </div>
+
                 <div class="detail">
-                  <span>Budget</span>
+                  <span>{{ 'History.Labels.Budget' | translate }}</span>
                   <strong>{{ formatCurrency(record.request?.customerBudget) }}</strong>
                 </div>
+
                 <div class="detail">
-                  <span>City / area</span>
+                  <span>{{ 'History.Labels.CityArea' | translate }}</span>
                   <strong>{{ getLocationLabel(record.request) }}</strong>
                 </div>
+
                 <div class="detail">
-                  <span>Address</span>
-                  <strong>{{ record.request?.address ?? 'Address not shared yet' }}</strong>
+                  <span>{{ 'History.Labels.Address' | translate }}</span>
+                  <strong>
+                    {{
+                      record.request?.address
+                        ?? ('History.Fallbacks.AddressNotShared' | translate)
+                    }}
+                  </strong>
                 </div>
+
                 <div class="detail">
-                  <span>Request created</span>
+                  <span>{{ 'History.Labels.RequestCreated' | translate }}</span>
                   <strong>{{ formatDateTime(record.request?.createdAt) }}</strong>
                 </div>
+
                 <div class="detail">
-                  <span>Expires</span>
+                  <span>{{ 'History.Labels.Expires' | translate }}</span>
                   <strong>{{ formatDateTime(record.request?.expiresAt) }}</strong>
                 </div>
               </div>
@@ -147,27 +211,41 @@
               <div class="offer-summary">
                 <div class="offer-meta">
                   <div>
-                    <span>Offer submitted</span>
+                    <span>{{ 'History.Labels.OfferSubmitted' | translate }}</span>
                     <strong>{{ formatDateTime(record.offer.createdAt) }}</strong>
                   </div>
+
                   <div>
-                    <span>Offered price</span>
+                    <span>{{ 'History.Labels.OfferedPrice' | translate }}</span>
                     <strong>{{ formatCurrency(record.offer.offeredPrice) }}</strong>
                   </div>
+
                   <div>
-                    <span>Availability window</span>
-                    <strong>{{ formatDate(record.offer.preferredDate) }} – {{ formatDate(record.offer.preferredTimeSlot) }}</strong>
+                    <span>{{ 'History.Labels.Availability' | translate }}</span>
+                    <strong>
+                      {{ formatDate(record.offer.preferredDate) }}
+                      –
+                      {{ formatDate(record.offer.preferredTimeSlot) }}
+                    </strong>
                   </div>
+
                   <div>
-                    <span>Estimated duration</span>
-                    <strong>{{ formatDuration(record.offer.estimatedDurationMinutes) }}</strong>
+                    <span>{{ 'History.Labels.Duration' | translate }}</span>
+                    <strong>
+                      {{ formatDuration(record.offer.estimatedDurationMinutes) }}
+                    </strong>
                   </div>
                 </div>
-                <p class="offer-description">{{ record.offer.description }}</p>
 
-                @if(record.offer.rejectionReason){
+                <p class="offer-description">
+                  {{ record.offer.description }}
+                </p>
+
+                @if (record.offer.rejectionReason) {
                   <div class="alert warning">
-                    <strong>Reason provided:</strong>
+                    <strong>
+                      {{ 'History.Labels.ReasonProvided' | translate }}
+                    </strong>
                     <span>{{ record.offer.rejectionReason }}</span>
                   </div>
                 }

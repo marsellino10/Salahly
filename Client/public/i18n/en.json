@@ -1129,5 +1129,73 @@
       "Description": "Every inactive submission has been reviewed. Great job!",
       "Refresh": "Refresh to double-check"
     }
+  },
+  "History": {
+    "Eyebrow": "Offer archive",
+    "Title": "History & insights",
+    "Subtitle": "Review every offer you have submitted with instant context about the customer request, budget expectations, and deadlines.",
+
+    "Stats": {
+      "TotalOffers": "Total offers",
+      "AllTime": "All time",
+      "Pending": "Pending decisions",
+      "PendingHint": "Waiting for customers",
+      "Accepted": "Accepted",
+      "AcceptedHint": "Secured jobs",
+      "Rejected": "Rejected",
+      "RejectedHint": "Follow up or archive",
+      "WithdrawnExpired": "Withdrawn / Expired",
+      "WithdrawnExpiredHint": "Need attention"
+    },
+
+    "Actions": {
+      "Refresh": "Refresh feed"
+    },
+
+    "Filters": {
+      "OfferStatus": "Offer status",
+      "Matches": "records match the current filter.",
+      "ShowAll": "Show all offers"
+    },
+
+    "Empty": {
+      "Title": "No offers match this filter",
+      "Description": "Change the status filter to review other offers or submit a new one from the opportunities feed."
+    },
+
+    "Statuses": {
+      "All": "All statuses",
+      "Pending": "Pending review",
+      "Accepted": "Accepted",
+      "Rejected": "Rejected",
+      "Withdrawn": "Withdrawn",
+      "Expired": "Expired"
+    },
+
+    "Labels": {
+      "OfferStatus": "Offer status",
+      "Craft": "Craft",
+      "Customer": "Customer",
+      "Budget": "Budget",
+      "CityArea": "City / area",
+      "Address": "Address",
+      "RequestCreated": "Request created",
+      "Expires": "Expires",
+      "OfferSubmitted": "Offer submitted",
+      "OfferedPrice": "Offered price",
+      "Availability": "Availability window",
+      "Duration": "Estimated duration",
+      "ReasonProvided": "Reason provided:"
+    },
+
+    "Fallbacks": {
+      "RequestUnavailable": "Service request unavailable",
+      "DetailsUnavailable": "The service request details are no longer available.",
+      "HiddenCustomer": "Hidden for privacy",
+      "GeneralServices": "General services",
+      "AddressNotShared": "Address not shared yet",
+      "LocationUnavailable": "Location unavailable",
+      "Open": "Open"
+    }
   }
 }

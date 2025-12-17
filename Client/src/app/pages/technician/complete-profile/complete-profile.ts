@@ -39,7 +39,7 @@ export class CompleteProfile implements OnInit {
   private readonly _craftService = inject(CraftService);
   private readonly _areaService = inject(AreaService);
   private readonly _router = inject(Router);
-  private readonly _translate = inject(TranslateService);
+  readonly _translate = inject(TranslateService);
 
   crafts: Craft[] = [];
   areas: Area[] = [];

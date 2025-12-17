@@ -214,7 +214,8 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin: 0 10px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 300px));
   gap: 1.25rem;
 }
 

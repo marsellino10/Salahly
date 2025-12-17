@@ -5,6 +5,7 @@ import { CraftsmanOfferDto, CraftsmanOffersService, CraftsmanOfferStatus } from 
 import { CraftsmanServiceRequestService } from '../../../core/services/craftsman-service-request.service';
 import { ServiceRequestDto, ServiceRequestStatus } from '../../../core/services/services-requests.service';
 import { RouterLink } from "@angular/router";
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type OfferHistoryRecord = {
   offer: CraftsmanOfferDto;
@@ -14,7 +15,7 @@ type OfferHistoryRecord = {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink,TranslateModule],
   templateUrl: './history.html',
   styleUrl: './history.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +23,7 @@ type OfferHistoryRecord = {
 export class History implements OnInit {
   private readonly _requestsService = inject(CraftsmanServiceRequestService);
   private readonly _offersService = inject(CraftsmanOffersService);
+  readonly translate = inject(TranslateService);
 
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
@@ -72,12 +74,12 @@ export class History implements OnInit {
   });
 
   readonly statusOptions: { value: 'all' | CraftsmanOfferStatus; label: string }[] = [
-    { value: 'all', label: 'All statuses' },
-    { value: CraftsmanOfferStatus.Pending, label: 'Pending review' },
-    { value: CraftsmanOfferStatus.Accepted, label: 'Accepted' },
-    { value: CraftsmanOfferStatus.Rejected, label: 'Rejected' },
-    { value: CraftsmanOfferStatus.Withdrawn, label: 'Withdrawn' },
-    { value: CraftsmanOfferStatus.Expired, label: 'Expired' },
+    { value: 'all', label: this.translate.instant('History.Statuses.All') },
+    { value: CraftsmanOfferStatus.Pending, label: this.translate.instant('History.Statuses.Pending') },
+    { value: CraftsmanOfferStatus.Accepted, label: this.translate.instant('History.Statuses.Accepted') },
+    { value: CraftsmanOfferStatus.Rejected, label: this.translate.instant('History.Statuses.Rejected') },
+    { value: CraftsmanOfferStatus.Withdrawn, label: this.translate.instant('History.Statuses.Withdrawn') },
+    { value: CraftsmanOfferStatus.Expired, label: this.translate.instant('History.Statuses.Expired') }
   ];
 
   ngOnInit(): void {
@@ -140,15 +142,15 @@ export class History implements OnInit {
   getOfferStatusLabel(status: CraftsmanOfferStatus | string): string {
     switch (this.normalizeOfferStatus(status)) {
       case CraftsmanOfferStatus.Accepted:
-        return 'Accepted';
+        return this.translate.instant('History.Statuses.Accepted');
       case CraftsmanOfferStatus.Rejected:
-        return 'Rejected';
+        return this.translate.instant('History.Statuses.Rejected');
       case CraftsmanOfferStatus.Withdrawn:
-        return 'Withdrawn';
+        return this.translate.instant('History.Statuses.Withdrawn');
       case CraftsmanOfferStatus.Expired:
-        return 'Expired';
+        return this.translate.instant('History.Statuses.Expired');
       default:
-        return 'Pending';
+        return this.translate.instant('History.Statuses.Pending');
     }
   }
 
